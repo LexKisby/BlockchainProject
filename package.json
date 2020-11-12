@@ -1,0 +1,29 @@
+{
+  "name": "blockchainproject",
+  "version": "1.0.0",
+  "description": "blockchain game utilising the ethereum platform to control trading and other mechanics between users",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LexKisby/BlockchainProject.git"
+  },
+  "keywords": [
+    "trading",
+    "crypto",
+    "cryptocurrency",
+    "ethereum",
+    "blockchain"
+  ],
+  "author": "LexKisby",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LexKisby/BlockchainProject/issues"
+  },
+  "homepage": "https://github.com/LexKisby/BlockchainProject#readme",
+  "dependencies": {
+    "web3": "^1.3.0"
+  }
+}
