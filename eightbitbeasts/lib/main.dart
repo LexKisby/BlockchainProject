@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
         // or simply save your changes to "hot reload" in a Flutter IDE).
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
-        primarySwatch: Colors.blue,
+        primaryColor: Colors.deepPurple,
       ),
       home: Root(),
     );
@@ -101,21 +101,6 @@ class RootState extends State<Root> {
       ),
     );
   }
-
-/*
-  @override 
-  Widget build(BuildContext context) {
-    return PageView(
-      controller: _controller,
-      children: [
-        InventoryPage(),
-        AuctionPage(),
-        CapturePage(),
-        HatchingPage(),
-        SettingsPage()
-      ],
-    );
-  }*/
 }
 
 class InventoryPage extends StatelessWidget {
@@ -171,7 +156,7 @@ class SettingsPage extends StatelessWidget {
       appBar: AppBar(
       title: Text("Settings")
       ),
-      body: Center(child: Text("hmm"))
+      body: SettingsContent(),
     );
   }
 }
