@@ -58,53 +58,62 @@ class SettingsContentState extends State<SettingsContent> {
 
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: ListView(
-                padding: const EdgeInsets.only(bottom: 88),
+      body: Column(
+        children: <Widget>[
+          Container(
+          padding: EdgeInsets.fromLTRB(4, 4, 4, 4),
+        child: Card(
+          shape: BeveledRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(7))),
+        color: Theme.of(context).primaryColor,
+        child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   ListTile(
-                    title: Text("Time Control"),
-                    trailing: Text("Using: " +  DateFormat("dd/MM/yyyy").format(currentDay) +"  "+ currentTime.format(context)),
+                    title: Text("Time Control", style: TextStyle(color: Theme.of(context).textTheme.bodyText1.color),),
+                    subtitle: Text("Using: " +  DateFormat("dd/MM/yyyy").format(currentDay) +"  "+ currentTime.format(context), style: TextStyle(color: Theme.of(context).textTheme.bodyText1.color),),
                   ),
+                  Divider(),
                   SwitchListTile(
-                    title: Text("Use Custom Time"),
+                    title: Text("Use Custom Time:", style: TextStyle(color: Theme.of(context).textTheme.bodyText1.color)),
                     value: _useCustomTime,
                     onChanged: _onUseCustomTimeChanged,
                   ),
+                  Divider(),
                   ListTile(
-
-                    title: Text("Pick Custom Time: ")
+                    title: Text("Pick Custom Time: ", style: TextStyle(color: Theme.of(context).textTheme.bodyText1.color) )
                   ),
                      Row(
                       children: <Widget>[
-                        Expanded(child:IconButton(icon: Icon(Icons.calendar_today), onPressed: () {
+                        Expanded(child:IconButton(color: Theme.of(context).textTheme.bodyText1.color, icon: Icon(Icons.calendar_today_sharp), onPressed: () {
                             _showDatePicker();
                         })),
-                        Expanded(child:IconButton(icon: Icon(Icons.schedule), onPressed: () {
+                        Expanded(child:IconButton(color: Theme.of(context).textTheme.bodyText1.color, icon: Icon(Icons.history_sharp), onPressed: () {
                           _showTimePicker();
                         })),
-                        const Divider(
-                          color: Colors.black,
-                          height: 4,
-                          thickness: 4,
-                        )
-                        /*IconButton(
-                          icon: Icon(Icons.calendar_today),
-                          /*onPressed: () {
-                            _showDatePicker();
-                          },*/
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.schedule),
-                          /*onPressed: () {
-                            _showTimePicker();
-                          }*/
-                        )
-                      */]
+                      ]
                     )
                 
                  ]),
-            )   
+            ) 
+          ), 
+          Container(
+            padding: EdgeInsets.all(4),
+            child: Card(
+              shape: BeveledRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(7))),
+              color: Theme.of(context).primaryColor,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ListTile(
+                    title: Text("Wallet Credentials", style: TextStyle(color: Theme.of(context).textTheme.bodyText1.color))
+                  )
+                ]
+              )
+
+            )
+          ) 
+        
+        ])
     );
   }
 } 
