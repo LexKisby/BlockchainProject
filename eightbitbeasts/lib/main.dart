@@ -118,7 +118,7 @@ class InventoryPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Inventory"),),
-      body: Center(child: Text("yo"))
+      body: InventoryContent()
     );
     
   }

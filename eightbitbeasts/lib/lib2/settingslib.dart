@@ -105,7 +105,8 @@ class SettingsContentState extends State<SettingsContent> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   ListTile(
-                    title: Text("Wallet Credentials", style: TextStyle(color: Theme.of(context).textTheme.bodyText1.color))
+                    title: Text("Wallet Credentials", style: TextStyle(color: Theme.of(context).textTheme.bodyText1.color)),
+                    subtitle: Text("Change wallet details in metamask", style: TextStyle(color: Theme.of(context).textTheme.bodyText1.color))
                   )
                 ]
               )
