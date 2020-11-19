@@ -22,10 +22,10 @@ class MyApp extends StatelessWidget {
         // or simply save your changes to "hot reload" in a Flutter IDE).
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
-        
+
         primaryColor: const Color(0xff1d1d1d),
         accentColor: const Color(0xffee5622),
-        canvasColor:  const Color(0xff121212),
+        canvasColor: const Color(0xff121212),
         backgroundColor: const Color(0xff362234),
         textTheme: TextTheme(
           bodyText1: TextStyle(
@@ -49,8 +49,8 @@ class RootState extends State<Root> {
     initialPage: 0,
   );
 
-  @override 
-  void dispose(){
+  @override
+  void dispose() {
     _controller.dispose();
     super.dispose();
   }
@@ -77,30 +77,15 @@ class RootState extends State<Root> {
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-          icon: Icon(Icons.library_books_sharp),
-          label: "Inventory"
-          ),
-
+              icon: Icon(Icons.library_books_sharp), label: "Inventory"),
           BottomNavigationBarItem(
-            icon: Icon(Icons.gavel_sharp),
-            label: "Auctions"
-          ),
-
+              icon: Icon(Icons.gavel_sharp), label: "Auctions"),
           BottomNavigationBarItem(
-            icon: Icon(Icons.security_sharp),
-            label: "Capture"
-          ),
-
+              icon: Icon(Icons.security_sharp), label: "Capture"),
           BottomNavigationBarItem(
-            icon: Icon(Icons.flare_sharp),
-            label: "Hatch"
-          ),
-
+              icon: Icon(Icons.flare_sharp), label: "Hatch"),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings_applications_sharp),
-            label: "Settings"
-          )
-
+              icon: Icon(Icons.settings_applications_sharp), label: "Settings")
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Theme.of(context).accentColor,
@@ -117,22 +102,19 @@ class InventoryPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Inventory"),),
-      body: InventoryContent()
-    );
-    
+        appBar: AppBar(
+          title: Text("Inventory"),
+        ),
+        body: InventoryContent());
   }
-} 
+}
 
 class AuctionPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-    appBar: AppBar(
-      title: Text("Market")
-    ),
-    body: Center(child: Text("sup"))
-    );
+        appBar: AppBar(title: Text("Market")),
+        body: Center(child: Text("sup")));
   }
 }
 
@@ -140,11 +122,8 @@ class CapturePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-      title: Text("Capture")
-    ),
-    body: Center(child: Text("cool beans"))
-    );
+        appBar: AppBar(title: Text("Capture")),
+        body: Center(child: Text("cool beans")));
   }
 }
 
@@ -152,10 +131,8 @@ class HatchingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-      title: Text("Hatch")
-    ), body: Center(child: Text("whooop"))
-    );
+        appBar: AppBar(title: Text("Hatch")),
+        body: Center(child: Text("whooop")));
   }
 }
 
@@ -163,9 +140,7 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-      title: Text("Settings")
-      ),
+      appBar: AppBar(title: Text("Settings")),
       body: SettingsContent(),
     );
   }
