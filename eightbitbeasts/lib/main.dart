@@ -1,16 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:web3dart/web3dart.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/foundation.dart';
 import 'PageLibrary.dart';
 
 void main() {
   runApp(MyApp());
 }
 
+/*  All providers are initialised in main */
+//myWalletProvider will provide the wallet details for transactions, tho currently
+// will just store an address
+final myWalletProvider = ChangeNotifierProvider<MyWalletChangeNotifier>((ref) {
+  return MyWalletChangeNotifier();
+});
+
+final myMonstersProvider =
+    ChangeNotifierProvider<MyMonstersChangeNotifier>((ref) {
+  return MyMonstersChangeNotifier();
+});
+
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return ProviderScope(
+        child: MaterialApp(
       title: '8Bit Beasts',
       theme: ThemeData(
         // This is the theme of your application.
@@ -34,7 +49,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       home: Root(),
-    );
+    ));
   }
 }
 

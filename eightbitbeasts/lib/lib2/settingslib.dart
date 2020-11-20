@@ -110,23 +110,34 @@ class SettingsContentState extends State<SettingsContent> {
               ])
             ]),
           )),
-      Container(
-          padding: EdgeInsets.all(4),
-          child: Card(
-              shape: BeveledRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(7))),
-              color: Theme.of(context).primaryColor,
-              child: Column(mainAxisSize: MainAxisSize.min, children: [
-                ListTile(
-                    title: Text("Wallet Credentials",
-                        style: TextStyle(
-                            color:
-                                Theme.of(context).textTheme.bodyText1.color)),
-                    subtitle: Text("Change wallet details in metamask",
-                        style: TextStyle(
-                            color:
-                                Theme.of(context).textTheme.bodyText1.color)))
-              ])))
+      SettingsWalletCard(),
     ]));
+  }
+}
+
+class SettingsWalletCard extends ConsumerWidget {
+  @override
+  build(BuildContext context, ScopedReader watch) {
+    final address = watch(myWalletProvider);
+    return Container(
+        padding: EdgeInsets.all(4),
+        child: Card(
+            shape: BeveledRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(7))),
+            color: Theme.of(context).primaryColor,
+            child: Column(mainAxisSize: MainAxisSize.min, children: [
+              ListTile(
+                  title: Text("Wallet Credentials",
+                      style: TextStyle(
+                          color: Theme.of(context).textTheme.bodyText1.color)),
+                  subtitle: Text("Change wallet details in metamask",
+                      style: TextStyle(
+                          color: Theme.of(context).textTheme.bodyText1.color))),
+              ListTile(
+                  title: Text("Current Address: ${address.address}",
+                      style: TextStyle(
+                          color: Theme.of(context).textTheme.bodyText1.color))),
+              FloatingActionButton(onPressed: () => address.increment())
+            ])));
   }
 }
