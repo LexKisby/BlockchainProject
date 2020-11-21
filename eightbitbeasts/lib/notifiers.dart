@@ -34,7 +34,7 @@ class MyMonstersChangeNotifier extends ChangeNotifier {
       dna: 17374827,
     ));
     info.add(Monster(
-        name: "GALROCK",
+        name: "0123456",
         id: 2,
         grade: 3,
         stats: "001004003005003006012003008",

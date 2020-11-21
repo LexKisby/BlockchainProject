@@ -156,7 +156,7 @@ class _MonsterFlipCardState extends State<MonsterFlipCard> {
                                     widget.monster.grade.toString() +
                                     " Beast",
                                 style: TextStyle(
-                                    fontSize: 14,
+                                    fontSize: 9,
                                     color: Theme.of(context)
                                         .textTheme
                                         .bodyText1
@@ -179,7 +179,7 @@ class _MonsterFlipCardState extends State<MonsterFlipCard> {
                       transform: Matrix4.translationValues(4, 0, 0),
                       child: Text(widget.monster.name,
                           style: TextStyle(
-                              fontSize: 25,
+                              fontSize: 20,
                               color: Theme.of(context)
                                   .textTheme
                                   .bodyText1
@@ -201,7 +201,7 @@ class _MonsterFlipCardState extends State<MonsterFlipCard> {
                         icon: Icons.hd_sharp,
                         iconsize: 24,
                         text: widget.monster.stats.substring(0, 3),
-                        fontsize: 20)),
+                        fontsize: 17)),
                 GridView.count(
                   primary: false,
                   childAspectRatio: itemWidth / itemHeight,
@@ -212,42 +212,42 @@ class _MonsterFlipCardState extends State<MonsterFlipCard> {
                         icon: Icons.open_with_sharp,
                         iconsize: 15,
                         text: widget.monster.stats.substring(3, 6),
-                        fontsize: 15),
+                        fontsize: 12),
                     Stat(
                         icon: Icons.format_align_justify,
                         iconsize: 15,
                         text: widget.monster.stats.substring(6, 9),
-                        fontsize: 15),
+                        fontsize: 12),
                     Stat(
                         icon: Icons.wallet_giftcard,
                         iconsize: 15,
                         text: widget.monster.stats.substring(9, 12),
-                        fontsize: 15),
+                        fontsize: 12),
                     Stat(
                         icon: Icons.pages_outlined,
                         iconsize: 15,
                         text: widget.monster.stats.substring(12, 15),
-                        fontsize: 15),
+                        fontsize: 12),
                     Stat(
                         icon: Icons.data_usage_sharp,
                         iconsize: 15,
                         text: widget.monster.stats.substring(15, 18),
-                        fontsize: 15),
+                        fontsize: 12),
                     Stat(
                         icon: Icons.amp_stories_sharp,
                         iconsize: 15,
                         text: widget.monster.stats.substring(18, 21),
-                        fontsize: 15),
+                        fontsize: 12),
                     Stat(
                         icon: Icons.mail_outline,
                         iconsize: 15,
                         text: widget.monster.stats.substring(21, 24),
-                        fontsize: 15),
+                        fontsize: 12),
                     Stat(
                         icon: Icons.radio_button_checked_outlined,
                         iconsize: 15,
                         text: widget.monster.stats.substring(24, 27),
-                        fontsize: 15),
+                        fontsize: 12),
                   ],
                 ),
               ]))),
@@ -279,9 +279,10 @@ class Stat extends StatelessWidget {
                   color: Theme.of(context).textTheme.bodyText1.color))),
       Expanded(
           child: Transform(
-              transform: Matrix4.translationValues(6, 0, 0),
+              transform: Matrix4.translationValues(0, 0, 0),
               child: Text(text,
                   style: TextStyle(
+                      fontFamily: "PressStart2P",
                       fontSize: fontsize,
                       color: Theme.of(context).textTheme.bodyText1.color)))),
     ]));

@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
         // or simply save your changes to "hot reload" in a Flutter IDE).
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
-
+        fontFamily: 'PressStart2P',
         primaryColor: const Color(0xff1d1d1d),
         accentColor: const Color(0xffee5622),
         canvasColor: const Color(0xff121212),
@@ -107,6 +107,8 @@ class RootState extends State<Root> {
         backgroundColor: Theme.of(context).primaryColor,
         unselectedItemColor: Theme.of(context).textTheme.bodyText1.color,
         onTap: _onItemTapped,
+        selectedFontSize: 7,
+        unselectedFontSize: 7,
         type: BottomNavigationBarType.fixed,
       ),
     );
