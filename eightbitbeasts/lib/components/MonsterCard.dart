@@ -67,26 +67,54 @@ class _MonsterCardState extends State<MonsterCard> {
 }
 
 class MonsterFlipCard extends StatefulWidget {
-  final String name;
-  final String dna;
+  final Monster monster;
   final Image img;
-  final int n;
-  final String stats;
 
-  const MonsterFlipCard(
-      {@required this.name, this.dna, this.img, this.n, this.stats});
+  const MonsterFlipCard({@required this.monster, this.img});
 
   @override
   State createState() => _MonsterFlipCardState();
 }
 
 class _MonsterFlipCardState extends State<MonsterFlipCard> {
-  Text dna;
-  Image img;
-  IconData grade = Icons.filter_1_sharp;
+  IconData getGradeIcon(grade) {
+    switch (grade) {
+      case 1:
+        return Icons.filter_1_sharp;
+        break;
+      case 2:
+        return Icons.filter_2_sharp;
+        break;
+      case 3:
+        return Icons.filter_3_sharp;
+        break;
+      case 4:
+        return Icons.filter_4_sharp;
+        break;
+      case 5:
+        return Icons.filter_5_sharp;
+        break;
+      case 6:
+        return Icons.filter_6_sharp;
+        break;
+      case 7:
+        return Icons.filter_7_sharp;
+        break;
+      case 8:
+        return Icons.filter_8_sharp;
+        break;
+      case 9:
+        return Icons.filter_9_sharp;
+        break;
+      case 0:
+        return Icons.filter_9_plus_sharp;
+        break;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    IconData grade = getGradeIcon(widget.monster.grade);
     var size = MediaQuery.of(context).size;
     final double itemWidth = size.width / 4;
     final double itemHeight = size.height / 30;
@@ -105,7 +133,7 @@ class _MonsterFlipCardState extends State<MonsterFlipCard> {
                     child: Container(
                       height: 21,
                       child: ListTile(
-                          title: Text(widget.name,
+                          title: Text(widget.monster.name,
                               style: TextStyle(
                                   fontSize: 20,
                                   color: Theme.of(context)
@@ -123,7 +151,10 @@ class _MonsterFlipCardState extends State<MonsterFlipCard> {
                                 color:
                                     Theme.of(context).textTheme.bodyText1.color,
                                 size: 18),
-                            Text(" Grade " + widget.n.toString() + " Beast",
+                            Text(
+                                " Grade " +
+                                    widget.monster.grade.toString() +
+                                    " Beast",
                                 style: TextStyle(
                                     fontSize: 14,
                                     color: Theme.of(context)
@@ -142,11 +173,11 @@ class _MonsterFlipCardState extends State<MonsterFlipCard> {
                 Row(children: [
                   Padding(
                       padding: EdgeInsets.all(4),
-                      child: Icon(Icons.filter_1_sharp,
+                      child: Icon(grade,
                           color: Theme.of(context).textTheme.bodyText1.color)),
                   Transform(
                       transform: Matrix4.translationValues(4, 0, 0),
-                      child: Text(widget.name,
+                      child: Text(widget.monster.name,
                           style: TextStyle(
                               fontSize: 25,
                               color: Theme.of(context)
@@ -169,7 +200,7 @@ class _MonsterFlipCardState extends State<MonsterFlipCard> {
                     child: Stat(
                         icon: Icons.hd_sharp,
                         iconsize: 24,
-                        text: "99",
+                        text: widget.monster.stats.substring(0, 3),
                         fontsize: 20)),
                 GridView.count(
                   primary: false,
@@ -180,42 +211,42 @@ class _MonsterFlipCardState extends State<MonsterFlipCard> {
                     Stat(
                         icon: Icons.open_with_sharp,
                         iconsize: 15,
-                        text: "1",
+                        text: widget.monster.stats.substring(3, 6),
                         fontsize: 15),
                     Stat(
                         icon: Icons.format_align_justify,
                         iconsize: 15,
-                        text: "2",
+                        text: widget.monster.stats.substring(6, 9),
                         fontsize: 15),
                     Stat(
                         icon: Icons.wallet_giftcard,
                         iconsize: 15,
-                        text: "7",
+                        text: widget.monster.stats.substring(9, 12),
                         fontsize: 15),
                     Stat(
                         icon: Icons.pages_outlined,
                         iconsize: 15,
-                        text: "4",
+                        text: widget.monster.stats.substring(12, 15),
                         fontsize: 15),
                     Stat(
                         icon: Icons.data_usage_sharp,
                         iconsize: 15,
-                        text: "1",
+                        text: widget.monster.stats.substring(15, 18),
                         fontsize: 15),
                     Stat(
                         icon: Icons.amp_stories_sharp,
                         iconsize: 15,
-                        text: "2",
+                        text: widget.monster.stats.substring(18, 21),
                         fontsize: 15),
                     Stat(
                         icon: Icons.mail_outline,
                         iconsize: 15,
-                        text: "3",
+                        text: widget.monster.stats.substring(21, 24),
                         fontsize: 15),
                     Stat(
                         icon: Icons.radio_button_checked_outlined,
                         iconsize: 15,
-                        text: "999",
+                        text: widget.monster.stats.substring(24, 27),
                         fontsize: 15),
                   ],
                 ),
