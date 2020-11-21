@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:web3dart/web3dart.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/foundation.dart';
+import 'package:pixel_border/pixel_border.dart';
+import 'package:http/http.dart';
+import 'package:web3dart/web3dart.dart';
 import 'PageLibrary.dart';
 
 void main() {
@@ -42,6 +44,11 @@ class MyApp extends StatelessWidget {
         accentColor: const Color(0xffee5622),
         canvasColor: const Color(0xff121212),
         backgroundColor: const Color(0xff362234),
+        buttonTheme: ButtonThemeData(
+            shape: PixelBorder(
+          pixelSize: 5,
+          borderRadius: BorderRadius.circular(10),
+        )),
         textTheme: TextTheme(
           bodyText1: TextStyle(
             color: const Color(0xfffef0d1),
@@ -59,10 +66,21 @@ class Root extends StatefulWidget {
 }
 
 class RootState extends State<Root> {
+  //set up ethereum client
+  Client httpClient;
+  Web3Client ethClient;
+
   int _selectedIndex = 0;
   PageController _controller = PageController(
     initialPage: 0,
   );
+
+  @override
+  void initState() {
+    super.initState();
+    httpClient = new Client();
+    ethClient = new Web3Client("http://localhost:8545", httpClient);
+  }
 
   @override
   void dispose() {

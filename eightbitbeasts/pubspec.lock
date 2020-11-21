@@ -172,6 +172,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.9.2"
+  pixel_border:
+    dependency: "direct main"
+    description:
+      name: pixel_border
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.0"
   pointycastle:
     dependency: transitive
     description:

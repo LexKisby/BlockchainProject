@@ -18,6 +18,22 @@ class InventoryContent extends ConsumerWidget {
             monster: myMonstersInfo.info[0], img: myMonstersInfo.imgs[0]),
         MonsterFlipCard(
             monster: myMonstersInfo.info[1], img: myMonstersInfo.imgs[1]),
+        MonsterFlipCard(
+            monster: myMonstersInfo.info[2], img: myMonstersInfo.imgs[2]),
+        MonsterFlipCard(
+            monster: myMonstersInfo.info[3], img: myMonstersInfo.imgs[2]),
+        MonsterFlipCard(
+            monster: myMonstersInfo.info[4], img: myMonstersInfo.imgs[2]),
+        MonsterFlipCard(
+            monster: myMonstersInfo.info[5], img: myMonstersInfo.imgs[2]),
+        MonsterFlipCard(
+            monster: myMonstersInfo.info[6], img: myMonstersInfo.imgs[2]),
+        MonsterFlipCard(
+            monster: myMonstersInfo.info[7], img: myMonstersInfo.imgs[2]),
+        MonsterFlipCard(
+            monster: myMonstersInfo.info[8], img: myMonstersInfo.imgs[2]),
+        MonsterFlipCard(
+            monster: myMonstersInfo.info[9], img: myMonstersInfo.imgs[2])
       ],
     );
   }

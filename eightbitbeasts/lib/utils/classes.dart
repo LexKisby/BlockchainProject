@@ -12,7 +12,7 @@ class Monster {
 
   String name;
   int id;
-  int grade;
+  double grade;
   String stats;
   int dna;
   Image img;

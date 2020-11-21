@@ -1,71 +1,5 @@
 part of page_classes;
 
-class MonsterCard extends StatefulWidget {
-  final String name;
-  final String dna;
-  final Image img;
-  final int n;
-  final String stats;
-
-  const MonsterCard(
-      {@required this.name, this.dna, this.img, this.n, this.stats});
-
-  @override
-  State createState() => _MonsterCardState();
-}
-
-class _MonsterCardState extends State<MonsterCard> {
-  Text dna;
-  Image img;
-  IconData grade = Icons.filter_1_sharp;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-        color: Theme.of(context).primaryColor,
-        shape: BeveledRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(7))),
-        clipBehavior: Clip.antiAlias,
-        child: Column(mainAxisSize: MainAxisSize.min, children: [
-          widget.img,
-          Transform(
-              transform: Matrix4.translationValues(-6, -15, 0.0),
-              child: Container(
-                height: 21,
-                child: ListTile(
-                    title: /*Transform(transform: Matrix4.translationValues(-6, -13, 0.0),   child: */ Text(
-                        widget.name,
-                        style: TextStyle(
-                            fontSize: 20,
-                            color:
-                                Theme.of(context).textTheme.bodyText1.color))),
-              )),
-          Transform(
-              transform: Matrix4.translationValues(-6, -15, 0.0),
-              child: Container(
-                  height: 18,
-                  child: ListTile(
-                    title: Row(children: [
-                      Icon(grade,
-                          color: Theme.of(context).textTheme.bodyText1.color,
-                          size: 18),
-                      Text(" Grade " + widget.n.toString() + " Beast",
-                          style: TextStyle(
-                              fontSize: 14,
-                              color:
-                                  Theme.of(context).textTheme.bodyText1.color)),
-                    ]),
-                  ))),
-          ListTile(
-            title: Center(
-                child: Text("stats: " + widget.stats,
-                    style: TextStyle(
-                        color: Theme.of(context).textTheme.bodyText1.color))),
-          )
-        ]));
-  }
-}
-
 class MonsterFlipCard extends StatefulWidget {
   final Monster monster;
   final Image img;
@@ -110,11 +44,86 @@ class _MonsterFlipCardState extends State<MonsterFlipCard> {
         return Icons.filter_9_plus_sharp;
         break;
     }
+    return Icons.error;
+  }
+
+  Color getGradeColor(grade) {
+    switch (grade) {
+      case 1:
+        return Colors.amber[400];
+        break;
+      case 2:
+        return Colors.lightBlue[100];
+        break;
+      case 3:
+        return Colors.purple[100];
+        break;
+      case 4:
+        return Colors.lime[300];
+        break;
+      case 5:
+        return Colors.blue;
+        break;
+      case 6:
+        return Colors.deepPurple[700];
+        break;
+      case 7:
+        return Colors.red[300];
+        break;
+      case 8:
+        return Colors.green[200];
+        break;
+      case 9:
+        return Colors.brown[700];
+        break;
+      case 0:
+        return Colors.black;
+        break;
+    }
+    return Colors.black;
+  }
+
+  double getElevation(grade) {
+    switch (grade) {
+      case 1:
+        return 30;
+        break;
+      case 2:
+        return 20;
+        break;
+      case 3:
+        return 14;
+        break;
+      case 4:
+        return 13;
+        break;
+      case 5:
+        return 11;
+        break;
+      case 6:
+        return 13;
+        break;
+      case 7:
+        return 7;
+        break;
+      case 8:
+        return 0;
+        break;
+      case 9:
+        return 0;
+        break;
+      case 0:
+        return 0;
+        break;
+    }
+    return 0;
   }
 
   @override
   Widget build(BuildContext context) {
     IconData grade = getGradeIcon(widget.monster.grade);
+    Color typeColor = getGradeColor(widget.monster.grade);
+    double elevation = getElevation(widget.monster.grade);
     var size = MediaQuery.of(context).size;
     final double itemWidth = size.width / 4;
     final double itemHeight = size.height / 30;
@@ -123,8 +132,13 @@ class _MonsterFlipCardState extends State<MonsterFlipCard> {
       child: FlipCard(
           front: Card(
               color: Theme.of(context).primaryColor,
-              shape: BeveledRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(7))),
+              shadowColor: typeColor,
+              elevation: elevation,
+              shape: PixelBorder(
+                  style: BorderStyle.solid,
+                  borderColor: typeColor,
+                  pixelSize: 3,
+                  borderRadius: BorderRadius.circular(15)),
               clipBehavior: Clip.antiAlias,
               child: Column(mainAxisSize: MainAxisSize.min, children: [
                 widget.img,
@@ -142,7 +156,7 @@ class _MonsterFlipCardState extends State<MonsterFlipCard> {
                                       .color))),
                     )),
                 Transform(
-                    transform: Matrix4.translationValues(-6, -15, 0.0),
+                    transform: Matrix4.translationValues(2, -15, 0.0),
                     child: Container(
                         height: 18,
                         child: ListTile(
@@ -156,7 +170,7 @@ class _MonsterFlipCardState extends State<MonsterFlipCard> {
                                     widget.monster.grade.toString() +
                                     " Beast",
                                 style: TextStyle(
-                                    fontSize: 9,
+                                    fontSize: 8,
                                     color: Theme.of(context)
                                         .textTheme
                                         .bodyText1
@@ -166,20 +180,26 @@ class _MonsterFlipCardState extends State<MonsterFlipCard> {
               ])),
           back: Card(
               color: Theme.of(context).primaryColor,
-              shape: BeveledRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(7))),
+              elevation: elevation,
+              shadowColor: typeColor,
+              shape: PixelBorder(
+                  pixelSize: 3,
+                  borderColor: typeColor,
+                  style: BorderStyle.solid,
+                  borderRadius: BorderRadius.circular(15)),
               clipBehavior: Clip.antiAlias,
               child: Column(mainAxisSize: MainAxisSize.min, children: [
                 Row(children: [
                   Padding(
-                      padding: EdgeInsets.all(4),
+                      padding: EdgeInsets.fromLTRB(10, 8, 4, 4),
                       child: Icon(grade,
+                          size: 23,
                           color: Theme.of(context).textTheme.bodyText1.color)),
                   Transform(
-                      transform: Matrix4.translationValues(4, 0, 0),
+                      transform: Matrix4.translationValues(-1, 3, 0),
                       child: Text(widget.monster.name,
                           style: TextStyle(
-                              fontSize: 20,
+                              fontSize: 18,
                               color: Theme.of(context)
                                   .textTheme
                                   .bodyText1
@@ -190,7 +210,7 @@ class _MonsterFlipCardState extends State<MonsterFlipCard> {
                   width: itemWidth * 2,
                   child: Center(
                       child: Transform(
-                          transform: Matrix4.translationValues(0, 20, 0),
+                          transform: Matrix4.translationValues(0, 30, 0),
                           child: Divider(
                             color: Colors.white,
                           ))),
@@ -273,13 +293,13 @@ class Stat extends StatelessWidget {
         child: Row(children: [
       Expanded(
           child: Transform(
-              transform: Matrix4.translationValues(3, 0, 0),
+              transform: Matrix4.translationValues(0, 0, 0),
               child: Icon(icon,
                   size: iconsize,
                   color: Theme.of(context).textTheme.bodyText1.color))),
       Expanded(
           child: Transform(
-              transform: Matrix4.translationValues(0, 0, 0),
+              transform: Matrix4.translationValues(-4, 0, 0),
               child: Text(text,
                   style: TextStyle(
                       fontFamily: "PressStart2P",
