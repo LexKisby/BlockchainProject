@@ -1,1 +1,29 @@
-[]
+[
+    {
+        "name": "set",
+        "outputs": [],
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "new_value"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "function",
+        "gas": 35225
+      },
+      {
+        "name": "get",
+        "outputs": [
+          {
+            "type": "uint256",
+            "name": ""
+          }
+        ],
+        "inputs": [],
+        "stateMutability": "view",
+        "type": "function",
+        "gas": 1091,
+        "constant": true
+      }
+]

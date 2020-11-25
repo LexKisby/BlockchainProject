@@ -17,3 +17,12 @@ class Monster {
   int dna;
   Image img;
 }
+
+class Auction {
+  Monster monster;
+  String startTime;
+  double duration;
+  double startPrice;
+  double endPrice;
+  String seller;
+}

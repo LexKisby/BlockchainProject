@@ -1,0 +1,51 @@
+{
+  "contractName": "VyperStorage",
+  "abi": [
+    {
+      "name": "set",
+      "outputs": [],
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "new_value"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function",
+      "gas": 35225
+    },
+    {
+      "name": "get",
+      "outputs": [
+        {
+          "type": "uint256",
+          "name": ""
+        }
+      ],
+      "inputs": [],
+      "stateMutability": "view",
+      "type": "function",
+      "gas": 1091,
+      "constant": true
+    }
+  ],
+  "bytecode": "0x61005b56341561000a57600080fd5b600436101561001857610051565b600035601c526360fe47b1600051141561003457600435600055005b636d4ce63c60005114156100505760005460005260206000f350005b5b60006000fd5b61000461005b0361000460003961000461005b036000f3",
+  "deployedBytecode": "0x341561000a57600080fd5b600436101561001857610051565b600035601c526360fe47b1600051141561003457600435600055005b636d4ce63c60005114156100505760005460005260206000f350005b5b60006000fd",
+  "source": "stored_data: uint256\n\n@external\ndef set(new_value : uint256):\n    self.stored_data = new_value\n\n@external\n@view\ndef get() -> uint256:\n    return self.stored_data\n",
+  "sourcePath": "C:/Users/kisby/Documents/GIT/BlockchainProject/eightbitbeasts/smart_contracts/vyper_practice/contracts/VyperStorage.vy",
+  "compiler": {
+    "name": "vyper",
+    "version": "0.2.7+commit.0b3f3b3"
+  },
+  "networks": {
+    "5777": {
+      "events": {},
+      "links": {},
+      "address": "0xD884F69c076Df9dD5C6d6021BF636272db3f0379",
+      "transactionHash": "0xd1dd2db2d17eaabe11206dbe4ed2a876dd5631a97ef8db6643c277fb4498ad53"
+    }
+  },
+  "schemaVersion": "3.3.2",
+  "updatedAt": "2020-11-25T15:53:36.811Z",
+  "networkType": "ethereum"
+}

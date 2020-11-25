@@ -79,7 +79,7 @@ class RootState extends State<Root> {
   void initState() {
     super.initState();
     httpClient = new Client();
-    ethClient = new Web3Client("http://localhost:8545", httpClient);
+    ethClient = new Web3Client("http://localhost:7545", httpClient);
   }
 
   @override
@@ -91,6 +91,14 @@ class RootState extends State<Root> {
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+      _controller.animateToPage(index,
+          duration: Duration(milliseconds: 500), curve: Curves.ease);
+    });
+  }
+
+  void pageChanged(index) {
+    setState(() {
+      _selectedIndex = index;
     });
   }
 
@@ -99,6 +107,9 @@ class RootState extends State<Root> {
     return Scaffold(
       body: PageView(
         controller: _controller,
+        onPageChanged: (index) {
+          pageChanged(index);
+        },
         children: [
           InventoryPage(),
           AuctionPage(),

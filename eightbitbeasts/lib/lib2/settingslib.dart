@@ -32,6 +32,34 @@ class SettingsContentState extends State<SettingsContent> {
       initialDate: customDay,
       firstDate: DateTime(2020, 1),
       lastDate: DateTime(2100, 1),
+      builder: (context, child) {
+        return Theme(
+          data: ThemeData(
+            fontFamily: 'PressStart2P',
+            textTheme: TextTheme(
+              headline4: TextStyle(fontSize: 18),
+            ),
+            accentColor: Theme.of(context).accentColor,
+            primaryColor: Theme.of(context).primaryColor,
+            colorScheme: ColorScheme(
+              primary: Theme.of(context).accentColor,
+              primaryVariant: Theme.of(context).primaryColor,
+              onPrimary: Theme.of(context).textTheme.bodyText1.color,
+              secondary: Theme.of(context).backgroundColor,
+              onSecondary: Theme.of(context).textTheme.bodyText1.color,
+              secondaryVariant: Theme.of(context).backgroundColor,
+              error: Colors.red,
+              onError: Colors.white,
+              surface: Theme.of(context).backgroundColor,
+              onSurface: Theme.of(context).textTheme.bodyText1.color,
+              background: Colors.black,
+              onBackground: Theme.of(context).textTheme.bodyText1.color,
+              brightness: Brightness.dark,
+            ),
+          ),
+          child: child,
+        );
+      },
     );
     if (picked != null && picked != customDay) {
       setState(() {
@@ -45,6 +73,34 @@ class SettingsContentState extends State<SettingsContent> {
     final picked = await showTimePicker(
       context: context,
       initialTime: customTime,
+      builder: (context, child) {
+        return Theme(
+          data: ThemeData(
+            fontFamily: 'PressStart2P',
+            textTheme: TextTheme(
+              headline2: TextStyle(fontSize: 32),
+            ),
+            accentColor: Theme.of(context).accentColor,
+            primaryColor: Theme.of(context).primaryColor,
+            colorScheme: ColorScheme(
+              primary: Theme.of(context).accentColor,
+              primaryVariant: Theme.of(context).primaryColor,
+              onPrimary: Theme.of(context).textTheme.bodyText1.color,
+              secondary: Theme.of(context).backgroundColor,
+              onSecondary: Theme.of(context).textTheme.bodyText1.color,
+              secondaryVariant: Theme.of(context).backgroundColor,
+              error: Colors.red,
+              onError: Colors.white,
+              surface: Theme.of(context).backgroundColor,
+              onSurface: Theme.of(context).textTheme.bodyText1.color,
+              background: Colors.black,
+              onBackground: Theme.of(context).textTheme.bodyText1.color,
+              brightness: Brightness.dark,
+            ),
+          ),
+          child: child,
+        );
+      },
     );
     if (picked != null && picked != customTime) {
       setState(() {
@@ -76,7 +132,8 @@ class SettingsContentState extends State<SettingsContent> {
                       "  " +
                       currentTime.format(context),
                   style: TextStyle(
-                      color: Theme.of(context).textTheme.bodyText1.color),
+                      color: Theme.of(context).textTheme.bodyText1.color,
+                      fontSize: 12),
                 ),
               ),
               Divider(),
