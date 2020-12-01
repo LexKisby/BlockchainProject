@@ -22,6 +22,10 @@ final myMonstersProvider =
   return MyMonstersChangeNotifier();
 });
 
+final myEthDataProvider = ChangeNotifierProvider<EthChangeNotifier>((ref) {
+  return EthChangeNotifier();
+});
+
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
@@ -75,12 +79,12 @@ class RootState extends State<Root> {
     initialPage: 0,
   );
 
-  @override
-  void initState() {
-    super.initState();
-    httpClient = new Client();
-    ethClient = new Web3Client("http://localhost:7545", httpClient);
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   httpClient = new Client();
+  //   ethClient = new Web3Client("http://localhost:7545", httpClient);
+  // }
 
   @override
   void dispose() {
@@ -150,6 +154,11 @@ class InventoryPage extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
           title: Text("Inventory"),
+          actions: <Widget>[
+            Column(
+              children: [InitWidget()],
+            )
+          ],
         ),
         body: InventoryContent());
   }
@@ -168,8 +177,21 @@ class CapturePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text("Capture")),
-        body: Center(child: Text("cool beans")));
+        appBar: AppBar(
+          title: Text("Capture"),
+          actions: [
+            Column(
+              children: [
+                Padding(padding: EdgeInsets.all(2)),
+                Ruby(),
+                //Padding(padding: EdgeInsets.all(2)),
+                Essence()
+              ],
+            ),
+            Padding(padding: EdgeInsets.all(4)),
+          ],
+        ),
+        body: Center(child: Ruby()));
   }
 }
 

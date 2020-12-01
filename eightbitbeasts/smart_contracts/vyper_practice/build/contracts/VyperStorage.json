@@ -2,6 +2,57 @@
   "contractName": "VyperStorage",
   "abi": [
     {
+      "name": "CheckedSt",
+      "inputs": [
+        {
+          "type": "address",
+          "name": "name",
+          "indexed": false
+        },
+        {
+          "type": "uint256",
+          "name": "new_num",
+          "indexed": false
+        }
+      ],
+      "anonymous": false,
+      "type": "event"
+    },
+    {
+      "name": "CheckedRuby",
+      "inputs": [
+        {
+          "type": "address",
+          "name": "name",
+          "indexed": false
+        },
+        {
+          "type": "uint256",
+          "name": "new_num",
+          "indexed": false
+        }
+      ],
+      "anonymous": false,
+      "type": "event"
+    },
+    {
+      "name": "CheckedEss",
+      "inputs": [
+        {
+          "type": "address",
+          "name": "name",
+          "indexed": false
+        },
+        {
+          "type": "uint256",
+          "name": "new_num",
+          "indexed": false
+        }
+      ],
+      "anonymous": false,
+      "type": "event"
+    },
+    {
       "name": "set",
       "outputs": [],
       "inputs": [
@@ -12,7 +63,7 @@
       ],
       "stateMutability": "nonpayable",
       "type": "function",
-      "gas": 35225
+      "gas": 37162
     },
     {
       "name": "get",
@@ -25,13 +76,64 @@
       "inputs": [],
       "stateMutability": "view",
       "type": "function",
-      "gas": 1091,
-      "constant": true
+      "gas": 1091
+    },
+    {
+      "name": "getRubyBalance",
+      "outputs": [
+        {
+          "type": "uint256",
+          "name": ""
+        }
+      ],
+      "inputs": [],
+      "stateMutability": "view",
+      "type": "function",
+      "gas": 1121
+    },
+    {
+      "name": "setRubyBalance",
+      "outputs": [],
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "new_value"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function",
+      "gas": 37252
+    },
+    {
+      "name": "getEssenceBalance",
+      "outputs": [
+        {
+          "type": "uint256",
+          "name": ""
+        }
+      ],
+      "inputs": [],
+      "stateMutability": "view",
+      "type": "function",
+      "gas": 1181
+    },
+    {
+      "name": "setEssenceBalance",
+      "outputs": [],
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "new_value"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function",
+      "gas": 37312
     }
   ],
-  "bytecode": "0x61005b56341561000a57600080fd5b600436101561001857610051565b600035601c526360fe47b1600051141561003457600435600055005b636d4ce63c60005114156100505760005460005260206000f350005b5b60006000fd5b61000461005b0361000460003961000461005b036000f3",
-  "deployedBytecode": "0x341561000a57600080fd5b600436101561001857610051565b600035601c526360fe47b1600051141561003457600435600055005b636d4ce63c60005114156100505760005460005260206000f350005b5b60006000fd",
-  "source": "stored_data: uint256\n\n@external\ndef set(new_value : uint256):\n    self.stored_data = new_value\n\n@external\n@view\ndef get() -> uint256:\n    return self.stored_data\n",
+  "bytecode": "0x61015856341561000a57600080fd5b60043610156100185761014e565b600035601c526360fe47b16000511415610067576004356000553361014052600435610160527f6d7f6c848c2aaaf585664ba8b51c95242cf7e2fab0eb3da4e669175145e8e18c6040610140a1005b636d4ce63c60005114156100835760005460005260206000f350005b63b6ca39cd600051141561009f5760015460005260206000f350005b63b444aa3960005114156100e8576004356001553361014052600435610160527ff65ff05b409b6f6459f6e7ee06264f877d1d4c068c325b1af3c3109386aaf6f06040610140a1005b630361cd0a60005114156101045760025460005260206000f350005b6399e08ac9600051141561014d576004356002553361014052600435610160527fb2f18d1e7ccc8f7fea61eb6c03e79c2ae323d213238a0732c7ad1f9d614d3b256040610140a1005b5b60006000fd5b61000461015803610004600039610004610158036000f3",
+  "deployedBytecode": "0x341561000a57600080fd5b60043610156100185761014e565b600035601c526360fe47b16000511415610067576004356000553361014052600435610160527f6d7f6c848c2aaaf585664ba8b51c95242cf7e2fab0eb3da4e669175145e8e18c6040610140a1005b636d4ce63c60005114156100835760005460005260206000f350005b63b6ca39cd600051141561009f5760015460005260206000f350005b63b444aa3960005114156100e8576004356001553361014052600435610160527ff65ff05b409b6f6459f6e7ee06264f877d1d4c068c325b1af3c3109386aaf6f06040610140a1005b630361cd0a60005114156101045760025460005260206000f350005b6399e08ac9600051141561014d576004356002553361014052600435610160527fb2f18d1e7ccc8f7fea61eb6c03e79c2ae323d213238a0732c7ad1f9d614d3b256040610140a1005b5b60006000fd",
+  "source": "# @version >=0.2.4 <3.0.0\n\n\nstored_data: uint256\nruby: uint256\nessence: uint256\n\n\nevent CheckedSt:\n    name: address\n    new_num: uint256\n\nevent CheckedRuby:\n    name: address\n    new_num: uint256\n\nevent CheckedEss:\n    name: address\n    new_num: uint256\n\n@external\ndef set(new_value : uint256):\n    self.stored_data = new_value\n    log CheckedSt(msg.sender, new_value)\n\n@external\n@view\ndef get() -> uint256:\n    return self.stored_data\n\n\n\n\n\n@external\n@view\ndef getRubyBalance() -> uint256:\n    return self.ruby\n\n@external\ndef setRubyBalance(new_value: uint256):\n    self.ruby = new_value\n    log CheckedRuby(msg.sender, new_value)\n    \n@external\n@view\ndef getEssenceBalance() -> uint256:\n    return self.essence\n\n@external\ndef setEssenceBalance(new_value: uint256):\n    self.essence = new_value\n    log CheckedEss(msg.sender, new_value)",
   "sourcePath": "C:/Users/kisby/Documents/GIT/BlockchainProject/eightbitbeasts/smart_contracts/vyper_practice/contracts/VyperStorage.vy",
   "compiler": {
     "name": "vyper",
@@ -46,6 +148,5 @@
     }
   },
   "schemaVersion": "3.3.2",
-  "updatedAt": "2020-11-25T15:53:36.811Z",
-  "networkType": "ethereum"
+  "updatedAt": "2020-11-26T18:38:24.290Z"
 }

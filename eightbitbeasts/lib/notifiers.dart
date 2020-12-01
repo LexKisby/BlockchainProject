@@ -1,5 +1,22 @@
 part of page_classes;
 
+class InitWidget extends ConsumerWidget {
+  build(BuildContext context, ScopedReader watch) {
+    final update = watch(myEthDataProvider);
+    update.init();
+    return Container();
+  }
+}
+
+class UpdateWidget extends ConsumerWidget {
+  build(BuildContext context, ScopedReader watch) {
+    final update = watch(myEthDataProvider);
+    return FloatingActionButton(onPressed: () {
+      update.update();
+    });
+  }
+}
+
 class MyWalletChangeNotifier extends ChangeNotifier {
   MyWalletChangeNotifier([this.address = 0]);
 
@@ -18,8 +35,8 @@ class EthData {
   double essence;
   List<Monster> marketMonstersForBreeding;
   List<Auction> marketMonstersForBuying;
-  bool hasMonsterList;
-  bool hasCurrency;
+  bool hasMonsterList = false;
+  bool hasCurrency = false;
 }
 
 class EthChangeNotifier extends ChangeNotifier {
@@ -28,15 +45,32 @@ class EthChangeNotifier extends ChangeNotifier {
   Web3Client ethClient;
 
   void init() {
+    data = new EthData();
     httpClient = new Client();
-    ethClient = new Web3Client("http://localhost:7545", httpClient);
+    ethClient = new Web3Client("http://127.0.0.1:7545", httpClient);
     data.hasMonsterList = false;
     data.hasCurrency = false;
+    data.rubies = 0;
+    data.essence = 0;
+    print('getting currency');
+    //getCurrency('0x0b1B455acfbB4476c879c96EcDF315913FD22518');
+    data.hasCurrency = true;
     return;
   }
 
+  void update() {
+    print('updating');
+    data.rubies += 1;
+    data.essence += 10000;
+    //getCurrency('0x0b1B455acfbB4476c879c96EcDF315913FD22518');
+    print('done');
+    //get other stuffs again.
+  }
+
+//#########################################################################################
   Future<DeployedContract> loadContract() async {
-    String abi = await rootBundle.loadString("assets/abi/abi.json");
+    String abi = await rootBundle.loadString("/assets/abi/abi.json");
+    print('loaded abi');
     String contractAddress = "0x0b1B455acfbB4476c879c96EcDF315913FD22518";
 
     final contract = DeployedContract(ContractAbi.fromJson(abi, "test"),
@@ -57,7 +91,8 @@ class EthChangeNotifier extends ChangeNotifier {
   Future<String> submit(String functionName, List<dynamic> args) async {
     final contract = await loadContract();
     final ethFunction = contract.function(functionName);
-    EthPrivateKey credentials = EthPrivateKey.fromHex('boo');
+    EthPrivateKey credentials = EthPrivateKey.fromHex(
+        'ca33eca722358473bd0a8a2db70ffdedf44b4cd1ed3ae4f1981759dda149de7c');
     Transaction transaction = Transaction.callContract(
         contract: contract, function: ethFunction, parameters: args);
     final response = await ethClient.sendTransaction(credentials, transaction,
@@ -65,17 +100,18 @@ class EthChangeNotifier extends ChangeNotifier {
     return response;
   }
 
-  //Ingame currency, non erc20 token, called 'gold'
+//##############################################################################################
+  //Ingame currency, non erc20 token, called 'ruby'
   Future<void> getRubyBalance(String targetAddress) async {
     EthereumAddress address = EthereumAddress.fromHex(targetAddress);
-    List<dynamic> response = await query("getRubyBalanceFrom", [address]);
+    List<dynamic> response = await query("getRubyBalance", []);
     data.rubies = response[0];
   }
 
   //ingame currency, is an erc 20 token, rare, called "Essence"
   Future<void> getEssenceBalance(String targetAddress) async {
     EthereumAddress address = EthereumAddress.fromHex(targetAddress);
-    List<dynamic> response = await query("getEssenceBalanceFrom", [address]);
+    List<dynamic> response = await query("getEssenceBalance", []);
     data.essence = response[0];
   }
 
@@ -84,6 +120,8 @@ class EthChangeNotifier extends ChangeNotifier {
     await getRubyBalance(targetAddress);
     data.hasCurrency = true;
   }
+//Other functions to get stuffs like market monsters, and inventory.
+
 }
 
 class MyMonstersChangeNotifier extends ChangeNotifier {

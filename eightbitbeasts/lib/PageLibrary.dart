@@ -14,6 +14,7 @@ import 'package:pixel_border/pixel_border.dart';
 import 'package:flutter/services.dart';
 
 part "components/MonsterCard.dart";
+part "components/Currency.dart";
 
 part "ethlogic/ethlogic.dart";
 

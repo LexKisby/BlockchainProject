@@ -194,7 +194,8 @@ class SettingsWalletCard extends ConsumerWidget {
                   title: Text("Current Address: ${address.address}",
                       style: TextStyle(
                           color: Theme.of(context).textTheme.bodyText1.color))),
-              FloatingActionButton(onPressed: () => address.increment())
+              FloatingActionButton(onPressed: () => address.increment()),
+              UpdateWidget(),
             ])));
   }
 }
