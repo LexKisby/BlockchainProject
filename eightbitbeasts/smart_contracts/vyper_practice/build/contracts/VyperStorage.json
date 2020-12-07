@@ -76,7 +76,8 @@
       "inputs": [],
       "stateMutability": "view",
       "type": "function",
-      "gas": 1091
+      "gas": 1091,
+      "constant": true
     },
     {
       "name": "getRubyBalance",
@@ -89,7 +90,8 @@
       "inputs": [],
       "stateMutability": "view",
       "type": "function",
-      "gas": 1121
+      "gas": 1121,
+      "constant": true
     },
     {
       "name": "setRubyBalance",
@@ -115,7 +117,8 @@
       "inputs": [],
       "stateMutability": "view",
       "type": "function",
-      "gas": 1181
+      "gas": 1181,
+      "constant": true
     },
     {
       "name": "setEssenceBalance",
@@ -141,12 +144,65 @@
   },
   "networks": {
     "5777": {
-      "events": {},
+      "events": {
+        "0x6d7f6c848c2aaaf585664ba8b51c95242cf7e2fab0eb3da4e669175145e8e18c": {
+          "name": "CheckedSt",
+          "inputs": [
+            {
+              "type": "address",
+              "name": "name",
+              "indexed": false
+            },
+            {
+              "type": "uint256",
+              "name": "new_num",
+              "indexed": false
+            }
+          ],
+          "anonymous": false,
+          "type": "event"
+        },
+        "0xf65ff05b409b6f6459f6e7ee06264f877d1d4c068c325b1af3c3109386aaf6f0": {
+          "name": "CheckedRuby",
+          "inputs": [
+            {
+              "type": "address",
+              "name": "name",
+              "indexed": false
+            },
+            {
+              "type": "uint256",
+              "name": "new_num",
+              "indexed": false
+            }
+          ],
+          "anonymous": false,
+          "type": "event"
+        },
+        "0xb2f18d1e7ccc8f7fea61eb6c03e79c2ae323d213238a0732c7ad1f9d614d3b25": {
+          "name": "CheckedEss",
+          "inputs": [
+            {
+              "type": "address",
+              "name": "name",
+              "indexed": false
+            },
+            {
+              "type": "uint256",
+              "name": "new_num",
+              "indexed": false
+            }
+          ],
+          "anonymous": false,
+          "type": "event"
+        }
+      },
       "links": {},
       "address": "0xD884F69c076Df9dD5C6d6021BF636272db3f0379",
-      "transactionHash": "0xd1dd2db2d17eaabe11206dbe4ed2a876dd5631a97ef8db6643c277fb4498ad53"
+      "transactionHash": "0xce94876549309439945012c6fe3ead19532e32c55ac4e591dfa22890827dbb64"
     }
   },
   "schemaVersion": "3.3.2",
-  "updatedAt": "2020-11-26T18:38:24.290Z"
+  "updatedAt": "2020-12-07T16:52:56.991Z",
+  "networkType": "ethereum"
 }

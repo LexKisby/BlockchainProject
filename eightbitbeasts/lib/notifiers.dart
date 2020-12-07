@@ -44,36 +44,171 @@ class EthChangeNotifier extends ChangeNotifier {
   Client httpClient;
   Web3Client ethClient;
 
-  void init() {
+  void init() async {
     data = new EthData();
     httpClient = new Client();
-    ethClient = new Web3Client("http://127.0.0.1:7545", httpClient);
+    ethClient = new Web3Client(
+        "https://rinkeby.infura.io/v3/c0ba200103214c0b9b002e5591ab09f7",
+        httpClient);
     data.hasMonsterList = false;
     data.hasCurrency = false;
     data.rubies = 0;
     data.essence = 0;
     print('getting currency');
-    //getCurrency('0x0b1B455acfbB4476c879c96EcDF315913FD22518');
+    await getCurrency('0x0b1B455acfbB4476c879c96EcDF315913FD22518');
+    print('got currency');
     data.hasCurrency = true;
     return;
   }
 
-  void update() {
+  void update() async {
     print('updating');
-    data.rubies += 1;
-    data.essence += 10000;
-    //getCurrency('0x0b1B455acfbB4476c879c96EcDF315913FD22518');
+    //data.rubies += 1;
+    //data.essence += 10000;
+    //10.0.await setRubyBalance('0x0b1B455acfbB4476c879c96EcDF315913FD22518', 5);
+    print('set balance of rubies');
+    await getCurrency('0x0b1B455acfbB4476c879c96EcDF315913FD22518');
     print('done');
     //get other stuffs again.
   }
 
 //#########################################################################################
   Future<DeployedContract> loadContract() async {
-    String abi = await rootBundle.loadString("/assets/abi/abi.json");
-    print('loaded abi');
+    String prepABI = """[
+    {
+      "name": "CheckedSt",
+      "inputs": [
+        {
+          "type": "address",
+          "name": "name",
+          "indexed": false
+        },
+        {
+          "type": "uint256",
+          "name": "new_num",
+          "indexed": false
+        }
+      ],
+      "anonymous": false,
+      "type": "event"
+    },
+    {
+      "name": "CheckedRuby",
+      "inputs": [
+        {
+          "type": "address",
+          "name": "name",
+          "indexed": false
+        },
+        {
+          "type": "uint256",
+          "name": "new_num",
+          "indexed": false
+        }
+      ],
+      "anonymous": false,
+      "type": "event"
+    },
+    {
+      "name": "CheckedEss",
+      "inputs": [
+        {
+          "type": "address",
+          "name": "name",
+          "indexed": false
+        },
+        {
+          "type": "uint256",
+          "name": "new_num",
+          "indexed": false
+        }
+      ],
+      "anonymous": false,
+      "type": "event"
+    },
+    {
+      "name": "set",
+      "outputs": [],
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "new_value"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function",
+      "gas": 37162
+    },
+    {
+      "name": "get",
+      "outputs": [
+        {
+          "type": "uint256",
+          "name": ""
+        }
+      ],
+      "inputs": [],
+      "stateMutability": "view",
+      "type": "function",
+      "gas": 1091
+    },
+    {
+      "name": "getRubyBalance",
+      "outputs": [
+        {
+          "type": "uint256",
+          "name": ""
+        }
+      ],
+      "inputs": [],
+      "stateMutability": "view",
+      "type": "function",
+      "gas": 1121
+    },
+    {
+      "name": "setRubyBalance",
+      "outputs": [],
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "new_value"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function",
+      "gas": 37252
+    },
+    {
+      "name": "getEssenceBalance",
+      "outputs": [
+        {
+          "type": "uint256",
+          "name": ""
+        }
+      ],
+      "inputs": [],
+      "stateMutability": "view",
+      "type": "function",
+      "gas": 1181
+    },
+    {
+      "name": "setEssenceBalance",
+      "outputs": [],
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "new_value"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function",
+      "gas": 37312
+    }
+  ]""";
+    //String abi = await rootBundle.loadString(prepABI);
     String contractAddress = "0x0b1B455acfbB4476c879c96EcDF315913FD22518";
 
-    final contract = DeployedContract(ContractAbi.fromJson(abi, "test"),
+    final contract = DeployedContract(ContractAbi.fromJson(prepABI, "test"),
         EthereumAddress.fromHex(contractAddress));
     return contract;
   }
@@ -82,21 +217,26 @@ class EthChangeNotifier extends ChangeNotifier {
   Future<List<dynamic>> query(String functionName, List<dynamic> args) async {
     final contract = await loadContract();
     final ethFunction = contract.function(functionName);
+    print('sending query');
     final response = await ethClient.call(
         contract: contract, function: ethFunction, params: args);
+    print('response recieved');
     return response;
   }
 
   //general function to transact with contract
   Future<String> submit(String functionName, List<dynamic> args) async {
     final contract = await loadContract();
+    print('contract Loaded');
     final ethFunction = contract.function(functionName);
+    print('loaded function from contract');
     EthPrivateKey credentials = EthPrivateKey.fromHex(
         'ca33eca722358473bd0a8a2db70ffdedf44b4cd1ed3ae4f1981759dda149de7c');
     Transaction transaction = Transaction.callContract(
         contract: contract, function: ethFunction, parameters: args);
     final response = await ethClient.sendTransaction(credentials, transaction,
         fetchChainIdFromNetworkId: true);
+    print('recieved submit response');
     return response;
   }
 
@@ -119,6 +259,11 @@ class EthChangeNotifier extends ChangeNotifier {
     await getEssenceBalance(targetAddress);
     await getRubyBalance(targetAddress);
     data.hasCurrency = true;
+  }
+
+  Future<void> setRubyBalance(String targetAddress, int amount) async {
+    String response = await submit("setRubyBalance", [5]);
+    print(response);
   }
 //Other functions to get stuffs like market monsters, and inventory.
 
@@ -209,7 +354,7 @@ class MyMonstersChangeNotifier extends ChangeNotifier {
       dna: 390473,
     ));
     imgs.addAll([
-      Image.asset("lib/assets/fox.png"),
+      Image.asset("lib/assets/abi/square.jpg"),
       Image.asset("lib/assets/fox.png"),
       Image.asset("lib/assets/fox.png")
     ]);
