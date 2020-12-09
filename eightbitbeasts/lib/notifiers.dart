@@ -31,10 +31,12 @@ class MyWalletChangeNotifier extends ChangeNotifier {
 class EthData {
   List<Monster> monsterList;
   List<Image> monsterImageList;
+  List<Image> auctionMonsterImages;
+  List<Image> donorMonsterImages;
   double rubies;
   double essence;
-  List<Monster> marketMonstersForBreeding;
-  List<Auction> marketMonstersForBuying;
+  List<Monster> marketMonstersForDonor;
+  List<Auction> marketMonstersForAuction;
   bool hasMonsterList = false;
   bool hasCurrency = false;
 }
@@ -43,8 +45,14 @@ class EthChangeNotifier extends ChangeNotifier {
   EthData data;
   Client httpClient;
   Web3Client ethClient;
+  bool initiated;
 
   void init() async {
+    initiated ??= false;
+    if (initiated) {
+      return;
+    }
+    initiated = true;
     data = new EthData();
     httpClient = new Client();
     ethClient = new Web3Client(
@@ -54,159 +62,46 @@ class EthChangeNotifier extends ChangeNotifier {
     data.hasCurrency = false;
     data.rubies = 0;
     data.essence = 0;
-    print('getting currency');
-    await getCurrency('0x0b1B455acfbB4476c879c96EcDF315913FD22518');
-    print('got currency');
+    data.monsterList = [];
+    data.marketMonstersForAuction = [];
+    data.marketMonstersForDonor = [];
+    await getCurrency(myAddress);
     data.hasCurrency = true;
+
+    notifyListeners();
     return;
   }
 
   void update() async {
     print('updating');
-    //data.rubies += 1;
-    //data.essence += 10000;
-    //10.0.await setRubyBalance('0x0b1B455acfbB4476c879c96EcDF315913FD22518', 5);
-    print('set balance of rubies');
-    await getCurrency('0x0b1B455acfbB4476c879c96EcDF315913FD22518');
+    //test the contract on the block rn
+    print("testing");
+    await testFunction();
+    await getCurrency(myAddress);
+
+    //other junk
+    data.marketMonstersForDonor.add(Monster(
+      name: 'MOBIUS',
+      id: 1,
+      grade: 1,
+      stats: "000000000000000000000000000",
+      dna: 17374827,
+    ));
+
     print('done');
-    //get other stuffs again.
+    notifyListeners();
+    return;
   }
 
 //#########################################################################################
+  //Functions to load contract and query/submit to the blockchain
+//#########################################################################################
+
+  //Load contract
   Future<DeployedContract> loadContract() async {
-    String prepABI = """[
-    {
-      "name": "CheckedSt",
-      "inputs": [
-        {
-          "type": "address",
-          "name": "name",
-          "indexed": false
-        },
-        {
-          "type": "uint256",
-          "name": "new_num",
-          "indexed": false
-        }
-      ],
-      "anonymous": false,
-      "type": "event"
-    },
-    {
-      "name": "CheckedRuby",
-      "inputs": [
-        {
-          "type": "address",
-          "name": "name",
-          "indexed": false
-        },
-        {
-          "type": "uint256",
-          "name": "new_num",
-          "indexed": false
-        }
-      ],
-      "anonymous": false,
-      "type": "event"
-    },
-    {
-      "name": "CheckedEss",
-      "inputs": [
-        {
-          "type": "address",
-          "name": "name",
-          "indexed": false
-        },
-        {
-          "type": "uint256",
-          "name": "new_num",
-          "indexed": false
-        }
-      ],
-      "anonymous": false,
-      "type": "event"
-    },
-    {
-      "name": "set",
-      "outputs": [],
-      "inputs": [
-        {
-          "type": "uint256",
-          "name": "new_value"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function",
-      "gas": 37162
-    },
-    {
-      "name": "get",
-      "outputs": [
-        {
-          "type": "uint256",
-          "name": ""
-        }
-      ],
-      "inputs": [],
-      "stateMutability": "view",
-      "type": "function",
-      "gas": 1091
-    },
-    {
-      "name": "getRubyBalance",
-      "outputs": [
-        {
-          "type": "uint256",
-          "name": ""
-        }
-      ],
-      "inputs": [],
-      "stateMutability": "view",
-      "type": "function",
-      "gas": 1121
-    },
-    {
-      "name": "setRubyBalance",
-      "outputs": [],
-      "inputs": [
-        {
-          "type": "uint256",
-          "name": "new_value"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function",
-      "gas": 37252
-    },
-    {
-      "name": "getEssenceBalance",
-      "outputs": [
-        {
-          "type": "uint256",
-          "name": ""
-        }
-      ],
-      "inputs": [],
-      "stateMutability": "view",
-      "type": "function",
-      "gas": 1181
-    },
-    {
-      "name": "setEssenceBalance",
-      "outputs": [],
-      "inputs": [
-        {
-          "type": "uint256",
-          "name": "new_value"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function",
-      "gas": 37312
-    }
-  ]""";
+    String prepABI = abi_raw;
     //String abi = await rootBundle.loadString(prepABI);
-    String contractAddress = "0x0b1B455acfbB4476c879c96EcDF315913FD22518";
+    String contractAddress = contract_address;
 
     final contract = DeployedContract(ContractAbi.fromJson(prepABI, "test"),
         EthereumAddress.fromHex(contractAddress));
@@ -244,15 +139,15 @@ class EthChangeNotifier extends ChangeNotifier {
   //Ingame currency, non erc20 token, called 'ruby'
   Future<void> getRubyBalance(String targetAddress) async {
     EthereumAddress address = EthereumAddress.fromHex(targetAddress);
-    List<dynamic> response = await query("getRubyBalance", []);
-    data.rubies = response[0];
+    List<dynamic> response = await query("getRubyBalance", [address]);
+    data.rubies = double.parse(response[0].toString());
   }
 
   //ingame currency, is an erc 20 token, rare, called "Essence"
   Future<void> getEssenceBalance(String targetAddress) async {
     EthereumAddress address = EthereumAddress.fromHex(targetAddress);
-    List<dynamic> response = await query("getEssenceBalance", []);
-    data.essence = response[0];
+    List<dynamic> response = await query("getEssenceBalance", [address]);
+    data.essence = double.parse(response[0].toString());
   }
 
   Future<void> getCurrency(String targetAddress) async {
@@ -261,9 +156,13 @@ class EthChangeNotifier extends ChangeNotifier {
     data.hasCurrency = true;
   }
 
-  Future<void> setRubyBalance(String targetAddress, int amount) async {
-    String response = await submit("setRubyBalance", [5]);
-    print(response);
+  Future<void> testFunction() async {
+    List<dynamic> response1 = await query("retrieve", []);
+    print("retrieve value:  " + response1[0].toString());
+    EthereumAddress address = EthereumAddress.fromHex(myAddress);
+    List<dynamic> response3 = await query("getRubyBalance", [address]);
+    print("rubies:    " + response3[0].toString());
+    //String response2 = await submit("setEssenceBalance", [20]);
   }
 //Other functions to get stuffs like market monsters, and inventory.
 

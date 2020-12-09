@@ -71,21 +71,10 @@ class Root extends StatefulWidget {
 }
 
 class RootState extends State<Root> {
-  //set up ethereum client
-  Client httpClient;
-  Web3Client ethClient;
-
   int _selectedIndex = 0;
   PageController _controller = PageController(
     initialPage: 0,
   );
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   httpClient = new Client();
-  //   ethClient = new Web3Client("http://localhost:7545", httpClient);
-  // }
 
   @override
   void dispose() {
@@ -128,11 +117,11 @@ class RootState extends State<Root> {
           BottomNavigationBarItem(
               icon: Icon(Icons.library_books_sharp), label: "Inventory"),
           BottomNavigationBarItem(
-              icon: Icon(Icons.gavel_sharp), label: "Auctions"),
+              icon: Icon(Icons.gavel_sharp), label: "Market"),
           BottomNavigationBarItem(
-              icon: Icon(Icons.security_sharp), label: "Capture"),
+              icon: Icon(Icons.security_sharp), label: "Battle"),
           BottomNavigationBarItem(
-              icon: Icon(Icons.flare_sharp), label: "Hatch"),
+              icon: Icon(Icons.flare_sharp), label: "Extract"),
           BottomNavigationBarItem(
               icon: Icon(Icons.settings_applications_sharp), label: "Settings")
         ],
@@ -168,9 +157,32 @@ class InventoryPage extends StatelessWidget {
 class AuctionPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(title: Text("Market")),
-        body: Center(child: Text("sup")));
+    return DefaultTabController(
+        length: 2,
+        child: Scaffold(
+          appBar: AppBar(
+              title: Text("Market"),
+              actions: [
+                Column(children: [
+                  Padding(padding: EdgeInsets.all(2)),
+                  Ruby(),
+                  Essence()
+                ])
+              ],
+              bottom: TabBar(
+                isScrollable: false,
+                tabs: [
+                  Tab(text: "auction"),
+                  Tab(text: "donor"),
+                ],
+              )),
+          body: TabBarView(
+            children: [
+              AuctionContent(),
+              DonorContent(),
+            ],
+          ),
+        ));
   }
 }
 
@@ -185,7 +197,6 @@ class CapturePage extends StatelessWidget {
               children: [
                 Padding(padding: EdgeInsets.all(2)),
                 Ruby(),
-                //Padding(padding: EdgeInsets.all(2)),
                 Essence()
               ],
             ),
@@ -200,7 +211,18 @@ class HatchingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text("Hatch")),
+        appBar: AppBar(
+          title: Text("Hatch"),
+          actions: [
+            Column(
+              children: [
+                Padding(padding: EdgeInsets.all(2)),
+                Ruby(),
+                Essence()
+              ],
+            )
+          ],
+        ),
         body: Center(child: Text("whooop")));
   }
 }
@@ -209,7 +231,16 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Settings")),
+      appBar: AppBar(
+        title: Text("Settings"),
+        actions: [
+          Column(children: [
+            Padding(padding: EdgeInsets.all(2)),
+            Ruby(),
+            Essence()
+          ])
+        ],
+      ),
       body: SettingsContent(),
     );
   }
