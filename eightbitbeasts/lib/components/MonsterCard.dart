@@ -308,3 +308,58 @@ class Stat extends StatelessWidget {
     ]));
   }
 }
+
+class MonsterPicSmall extends StatelessWidget {
+  final Monster data;
+
+  MonsterPicSmall({this.data});
+
+  Color getGradeColor(grade) {
+    switch (grade) {
+      case 1:
+        return Colors.amber[400];
+        break;
+      case 2:
+        return Colors.lightBlue[100];
+        break;
+      case 3:
+        return Colors.purple[100];
+        break;
+      case 4:
+        return Colors.lime[300];
+        break;
+      case 5:
+        return Colors.blue;
+        break;
+      case 6:
+        return Colors.deepPurple[700];
+        break;
+      case 7:
+        return Colors.red[300];
+        break;
+      case 8:
+        return Colors.green[200];
+        break;
+      case 9:
+        return Colors.brown[700];
+        break;
+      case 0:
+        return Colors.black;
+        break;
+    }
+    return Colors.black;
+  }
+
+  @override
+  build(BuildContext context) {
+    return Card(
+      shape: PixelBorder(
+        style: BorderStyle.solid,
+        borderColor: getGradeColor(data.grade),
+        pixelSize: 2,
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: data.img,
+    );
+  }
+}

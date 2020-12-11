@@ -20,9 +20,18 @@ class Monster {
 
 class Auction {
   Monster monster;
-  String startTime;
+  double startTime;
   double duration;
   double startPrice;
   double endPrice;
   String seller;
+
+  Auction({
+    this.monster,
+    this.startTime,
+    this.duration,
+    this.startPrice,
+    this.endPrice,
+    this.seller,
+  });
 }

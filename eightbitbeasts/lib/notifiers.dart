@@ -35,7 +35,7 @@ class EthData {
   List<Image> donorMonsterImages;
   double rubies;
   double essence;
-  List<Monster> marketMonstersForDonor;
+  List<Auction> marketMonstersForDonor;
   List<Auction> marketMonstersForAuction;
   bool hasMonsterList = false;
   bool hasCurrency = false;
@@ -80,12 +80,52 @@ class EthChangeNotifier extends ChangeNotifier {
     await getCurrency(myAddress);
 
     //other junk
-    data.marketMonstersForDonor.add(Monster(
-      name: 'MOBIUS',
-      id: 1,
-      grade: 1,
-      stats: "000000000000000000000000000",
-      dna: 17374827,
+    data.marketMonstersForAuction.add(Auction(
+      monster: Monster(
+        name: 'MOBIUS',
+        id: 1,
+        grade: 1,
+        stats: "000000000000000000000000000",
+        dna: 17374827,
+        img: Image.asset("lib/assets/fox.png"),
+      ),
+      startTime: 1607650841,
+      duration: 50,
+      startPrice: 10000,
+      endPrice: 10,
+      seller: "yo mama",
+    ));
+
+    data.marketMonstersForDonor.add(Auction(
+      monster: Monster(
+        name: 'FOBIUS',
+        id: 1,
+        grade: 2,
+        stats: "000000000000000000000000000",
+        dna: 17374827,
+        img: Image.asset("lib/assets/fox.png"),
+      ),
+      startTime: 1607650841,
+      duration: 5000,
+      startPrice: 10000,
+      endPrice: 10,
+      seller: "yo mama",
+    ));
+
+    data.marketMonstersForAuction.add(Auction(
+      monster: Monster(
+        name: 'TOBIUS',
+        id: 1,
+        grade: 5,
+        stats: "000000000000000000000000000",
+        dna: 17374827,
+        img: Image.asset("lib/assets/fox.png"),
+      ),
+      startTime: 1607650841,
+      duration: 5000,
+      startPrice: 10000,
+      endPrice: 10,
+      seller: "yo mama",
     ));
 
     print('done');
