@@ -356,7 +356,7 @@ class MonsterPicSmall extends StatelessWidget {
       shape: PixelBorder(
         style: BorderStyle.solid,
         borderColor: getGradeColor(data.grade),
-        pixelSize: 2,
+        pixelSize: 1,
         borderRadius: BorderRadius.circular(6),
       ),
       child: data.img,

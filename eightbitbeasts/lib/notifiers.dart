@@ -90,7 +90,7 @@ class EthChangeNotifier extends ChangeNotifier {
         img: Image.asset("lib/assets/fox.png"),
       ),
       startTime: 1607650841,
-      duration: 50,
+      duration: 500000,
       startPrice: 10000,
       endPrice: 10,
       seller: "yo mama",
