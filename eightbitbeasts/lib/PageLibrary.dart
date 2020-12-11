@@ -23,6 +23,7 @@ part "lib2/Auctionlib.dart";
 part "lib2/Capturelib.dart";
 part "lib2/Hatchlib.dart";
 part "lib2/settingslib.dart";
+part "lib2/Detailslib.dart";
 
 part "utils/classes.dart";
 part "utils/style.dart";

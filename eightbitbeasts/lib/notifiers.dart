@@ -72,7 +72,15 @@ class EthChangeNotifier extends ChangeNotifier {
     return;
   }
 
+  Future<void> marketRefresh() async {
+    //normally gets stuff from blockchain
+    //await getMarketMonsters();
+    print("refreshed monsters");
+  }
+
   void update() async {
+    data.marketMonstersForAuction = [];
+    data.marketMonstersForDonor = [];
     print('updating');
     //test the contract on the block rn
     print("testing");
@@ -85,7 +93,7 @@ class EthChangeNotifier extends ChangeNotifier {
         name: 'MOBIUS',
         id: 1,
         grade: 1,
-        stats: "000000000000000000000000000",
+        stats: "000003300000044000000000000",
         dna: 17374827,
         img: Image.asset("lib/assets/fox.png"),
       ),
@@ -99,7 +107,7 @@ class EthChangeNotifier extends ChangeNotifier {
     data.marketMonstersForDonor.add(Auction(
       monster: Monster(
         name: 'FOBIUS',
-        id: 1,
+        id: 2,
         grade: 2,
         stats: "000000000000000000000000000",
         dna: 17374827,
@@ -115,9 +123,9 @@ class EthChangeNotifier extends ChangeNotifier {
     data.marketMonstersForAuction.add(Auction(
       monster: Monster(
         name: 'TOBIUS',
-        id: 1,
+        id: 3,
         grade: 5,
-        stats: "000000000000000000000000000",
+        stats: "499900000000380460000000100",
         dna: 17374827,
         img: Image.asset("lib/assets/fox.png"),
       ),
@@ -198,10 +206,10 @@ class EthChangeNotifier extends ChangeNotifier {
 
   Future<void> testFunction() async {
     List<dynamic> response1 = await query("retrieve", []);
-    print("retrieve value:  " + response1[0].toString());
+    print("retrieve value:    " + response1[0].toString());
     EthereumAddress address = EthereumAddress.fromHex(myAddress);
     List<dynamic> response3 = await query("getRubyBalance", [address]);
-    print("rubies:    " + response3[0].toString());
+    print("rubies:        " + response3[0].toString());
     //String response2 = await submit("setEssenceBalance", [20]);
   }
 //Other functions to get stuffs like market monsters, and inventory.

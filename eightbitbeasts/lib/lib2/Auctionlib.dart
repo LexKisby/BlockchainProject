@@ -5,11 +5,16 @@ class AuctionContent extends ConsumerWidget {
   build(BuildContext context, ScopedReader watch) {
     final info = watch(myEthDataProvider);
 
-    return ListView.builder(
-      itemBuilder: (context, position) {
-        return MarketRow(data: info.data.marketMonstersForAuction[position]);
+    return RefreshIndicator(
+      child: ListView.builder(
+        itemBuilder: (context, position) {
+          return MarketRow(data: info.data.marketMonstersForAuction[position]);
+        },
+        itemCount: info.data.marketMonstersForAuction.length,
+      ),
+      onRefresh: () {
+        return info.marketRefresh();
       },
-      itemCount: info.data.marketMonstersForAuction.length,
     );
   }
 }
@@ -61,64 +66,62 @@ class MarketRow extends StatelessWidget {
 
   @override
   build(BuildContext context) {
-    /*
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(3, 1, 3, 0),
-      child: Row(children: [
-        Container(
-            height: 70,
-            width: 70,
-            child: Hero(
-                tag: data.monster.id,
-                child: MonsterPicSmall(data: data.monster))),
-        Padding(padding: EdgeInsets.only(left: 10)),
-        Text(data.monster.name,
-            style:
-                TextStyle(color: Theme.of(context).textTheme.bodyText1.color)),
-        Padding(padding: EdgeInsets.only(left: 10)),
-        Text(price(),
-            style:
-                TextStyle(color: Theme.of(context).textTheme.bodyText1.color)),
-        Spacer(),
-        time(context),
-      ]),
-    ); 
-    */
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-            height: 60,
-            width: 60,
-            child: Hero(
-                tag: data.monster.id,
-                child: MonsterPicSmall(data: data.monster))),
+          height: 60,
+          width: 60,
+          child: Stack(
+            children: [
+              Container(width: 10, height: 10),
+              Hero(
+                  tag: data.monster.id,
+                  child: MonsterPicSmall(data: data.monster)),
+            ],
+          ),
+        ),
         Expanded(
           child: Container(
             height: 60,
-            child: Card(
-              color: Theme.of(context).primaryColor,
-              shape: PixelBorder(
-                style: BorderStyle.solid,
-                borderColor: Theme.of(context).backgroundColor,
-                pixelSize: 1,
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: ListTile(
-                dense: true,
-                title: Text(data.monster.name,
-                    style: TextStyle(
-                        color: Theme.of(context).textTheme.bodyText1.color)),
-                subtitle: Row(
-                  children: [
-                    price(context),
-                    Spacer(),
-                    time(context),
-                  ],
+            child: Hero(
+              tag: data.monster.id.toString() + "card",
+              child: Card(
+                color: Theme.of(context).primaryColor,
+                shape: PixelBorder(
+                  style: BorderStyle.solid,
+                  borderColor: Theme.of(context).backgroundColor,
+                  pixelSize: 1,
+                  borderRadius: BorderRadius.circular(6),
                 ),
-                trailing: Transform(
-                  transform: Matrix4.translationValues(10, -6, 0),
-                  child: trailing(context),
+                child: ListTile(
+                  onTap: () {
+                    print("tapped " + data.seller);
+                    Navigator.of(context).push(PageRouteBuilder(
+                      opaque: false,
+                      pageBuilder: (context, animation, secondaryAnimation) =>
+                          Material(
+                              type: MaterialType.transparency,
+                              child: AuctionDetails(data: data)),
+                    ));
+                  },
+                  dense: true,
+                  title: Text(
+                    data.monster.name,
+                    style: TextStyle(
+                        color: Theme.of(context).textTheme.bodyText1.color),
+                  ),
+                  subtitle: Row(
+                    children: [
+                      price(context),
+                      Spacer(),
+                      time(context),
+                    ],
+                  ),
+                  trailing: Transform(
+                    transform: Matrix4.translationValues(10, -6, 0),
+                    child: trailing(context),
+                  ),
                 ),
               ),
             ),
@@ -134,11 +137,16 @@ class DonorContent extends ConsumerWidget {
   build(BuildContext context, ScopedReader watch) {
     final info = watch(myEthDataProvider);
 
-    return ListView.builder(
-      itemBuilder: (context, position) {
-        return MarketRow(data: info.data.marketMonstersForDonor[position]);
+    return RefreshIndicator(
+      child: ListView.builder(
+        itemBuilder: (context, position) {
+          return MarketRow(data: info.data.marketMonstersForDonor[position]);
+        },
+        itemCount: info.data.marketMonstersForDonor.length,
+      ),
+      onRefresh: () {
+        return info.marketRefresh();
       },
-      itemCount: info.data.marketMonstersForDonor.length,
     );
   }
 }
