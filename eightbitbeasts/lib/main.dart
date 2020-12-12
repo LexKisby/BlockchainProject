@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter/foundation.dart';
+//import 'package:flutter/foundation.dart';
 import 'package:pixel_border/pixel_border.dart';
-import 'package:http/http.dart';
-import 'package:web3dart/web3dart.dart';
+//import 'package:http/http.dart';
+//import 'package:web3dart/web3dart.dart';
 import 'PageLibrary.dart';
 
 void main() {
@@ -137,7 +137,12 @@ class InventoryPage extends StatelessWidget {
           title: Text("Inventory"),
           actions: <Widget>[
             Column(
-              children: [InitWidget()],
+              children: [
+                Padding(padding: EdgeInsets.all(2)),
+                Ruby(),
+                Essence(),
+                InitWidget()
+              ],
             )
           ],
         ),
@@ -217,20 +222,33 @@ class CapturePage extends StatelessWidget {
 class HatchingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text("Hatch"),
-          actions: [
-            Column(
-              children: [
-                Padding(padding: EdgeInsets.all(2)),
-                Ruby(),
-                Essence()
+    return DefaultTabController(
+        length: 2,
+        child: Scaffold(
+          appBar: AppBar(
+              title: Text("Extract"),
+              actions: [
+                Column(
+                  children: [
+                    Padding(padding: EdgeInsets.all(2)),
+                    Ruby(),
+                    Essence()
+                  ],
+                ),
               ],
-            )
-          ],
-        ),
-        body: Center(child: Text("whooop")));
+              bottom: TabBar(
+                tabs: [
+                  Tab(text: "lab"),
+                  Tab(text: "incubator"),
+                ],
+              )),
+          body: TabBarView(
+            children: [
+              LabContent(),
+              IncubatorContent(),
+            ],
+          ),
+        ));
   }
 }
 

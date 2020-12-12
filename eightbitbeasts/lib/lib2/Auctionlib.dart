@@ -211,33 +211,36 @@ class MarketRow extends StatelessWidget {
                   pixelSize: 1,
                   borderRadius: BorderRadius.circular(6),
                 ),
-                child: ListTile(
-                  onTap: () {
-                    print("tapped " + data.seller);
-                    Navigator.of(context).push(PageRouteBuilder(
-                      opaque: false,
-                      pageBuilder: (context, animation, secondaryAnimation) =>
-                          Material(
-                              type: MaterialType.transparency,
-                              child: AuctionDetails(data: data)),
-                    ));
-                  },
-                  dense: true,
-                  title: Text(
-                    data.monster.name,
-                    style: TextStyle(
-                        color: Theme.of(context).textTheme.bodyText1.color),
-                  ),
-                  subtitle: Row(
-                    children: [
-                      price(context),
-                      Spacer(),
-                      time(context),
-                    ],
-                  ),
-                  trailing: Transform(
-                    transform: Matrix4.translationValues(10, -6, 0),
-                    child: trailing(context),
+                child: Container(
+                  transform: Matrix4.translationValues(0, -4, 0),
+                  child: ListTile(
+                    onTap: () {
+                      print("tapped " + data.seller);
+                      Navigator.of(context).push(PageRouteBuilder(
+                        opaque: false,
+                        pageBuilder: (context, animation, secondaryAnimation) =>
+                            Material(
+                                type: MaterialType.transparency,
+                                child: AuctionDetails(data: data)),
+                      ));
+                    },
+                    dense: true,
+                    title: Text(
+                      data.monster.name,
+                      style: TextStyle(
+                          color: Theme.of(context).textTheme.bodyText1.color),
+                    ),
+                    subtitle: Row(
+                      children: [
+                        price(context),
+                        Spacer(),
+                        time(context),
+                      ],
+                    ),
+                    trailing: Transform(
+                      transform: Matrix4.translationValues(10, -3, 0),
+                      child: trailing(context),
+                    ),
                   ),
                 ),
               ),

@@ -135,7 +135,11 @@ class AuctionDetails extends StatelessWidget {
                                           child: Text("current price",
                                               style: style(10.toDouble()))),
                                       Spacer(),
-                                      Row(children: [Spacer(), price()])
+                                      Row(children: [
+                                        EssenceIcon(height: 24.0),
+                                        Spacer(),
+                                        price()
+                                      ])
                                     ],
                                   ),
                                 ),

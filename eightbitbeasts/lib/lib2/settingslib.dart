@@ -195,7 +195,7 @@ class SettingsWalletCard extends ConsumerWidget {
                   title: Text("Wallet Credentials",
                       style: TextStyle(
                           color: Theme.of(context).textTheme.bodyText1.color)),
-                  subtitle: Text("Enter new Private Key and Public address",
+                  subtitle: Text("Enter new Private Key",
                       style: TextStyle(
                           fontSize: 10,
                           color: Theme.of(context).textTheme.bodyText1.color))),

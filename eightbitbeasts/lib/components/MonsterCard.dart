@@ -353,6 +353,7 @@ class MonsterPicSmall extends StatelessWidget {
   @override
   build(BuildContext context) {
     return Card(
+      color: Theme.of(context).primaryColor,
       shape: PixelBorder(
         style: BorderStyle.solid,
         borderColor: getGradeColor(data.grade),

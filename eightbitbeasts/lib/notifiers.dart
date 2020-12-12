@@ -60,13 +60,27 @@ class EthChangeNotifier extends ChangeNotifier {
     data.myMarketMonstersForDonor = [];
     data.monsterList = [];
     data.monsterImageList = [];
+    data.myMonsterExtracts = [];
     data.myPublicAddress = myAddress;
     data.myPrivateKey = myPrivateKey;
+    data.incubating = [];
+
     await getCurrency(data.myPublicAddress);
     data.hasCurrency = true;
 
     notifyListeners();
     return;
+  }
+
+//###############################################
+// mini update functions
+//###############################################
+  Future<void> inventoryRefresh() async {
+    //await getMyMonsters();
+    await getCurrency(data.myPublicAddress);
+
+    await testFunction();
+    notifyListeners();
   }
 
   void updateCredentials(value) {
@@ -79,15 +93,30 @@ class EthChangeNotifier extends ChangeNotifier {
   }
 
   Future<void> marketRefresh() async {
-    //normally gets stuff from blockchain
-    //then sorts into my monsters on sale
     //await getMarketMonsters();
     print("refreshed monsters");
     await getCurrency(data.myPublicAddress);
-
     notifyListeners();
   }
 
+  Future<void> battleRefresh() async {
+    //await getBattleInfo();
+    notifyListeners();
+  }
+
+  Future<void> leaderBoardsRefresh() async {
+    //await getLeaderBoards();
+    notifyListeners();
+  }
+
+  Future<void> labRefresh() async {
+    //await getLabInfo();
+    notifyListeners();
+  }
+
+//#################################################
+// refresh everything
+//#################################################
   void update() async {
     data.marketMonstersForAuction = [];
     data.marketMonstersForDonor = [];
@@ -95,19 +124,42 @@ class EthChangeNotifier extends ChangeNotifier {
     data.myMarketMonstersForDonor = [];
     data.monsterList = [];
     data.monsterImageList = [];
-    print('updating');
+    data.myMonsterExtracts = [];
+    data.incubating = [];
     await getCurrency(data.myPublicAddress);
-    //test the contract on the block rn
-    print("testing");
+    //await getMyMonsters();
+    //await getMarketMonsters();
+    //await getBattleInfo();
+    //await getLeaderBoards();
+
     await testFunction();
-    print("finished");
+
     notifyListeners();
     return;
   }
 
   Future<void> testFunction() async {
-    String response2 = await submit("setEssenceBalance", [BigInt.from(30)]);
-    print("setting balance:   " + response2);
+    data.incubating.add(Monster(
+        name: "MYSTERY1",
+        id: 37,
+        grade: 8,
+        stats: "???????????????????????????",
+        dna: 82938202303211,
+        img: Image.asset("lib/assets/mysteryBox.png")));
+    data.incubating.add(Monster(
+        name: "MYSTERY2",
+        id: 38,
+        grade: 7,
+        stats: "???????????????????????????",
+        dna: 82938202303211,
+        img: Image.asset("lib/assets/mysteryBox.png")));
+    data.incubating.add(Monster(
+        name: "MYSTERY3",
+        id: 39,
+        grade: 3,
+        stats: "???????????????????????????",
+        dna: 82938202303211,
+        img: Image.asset("lib/assets/mysteryBox.png")));
     data.marketMonstersForAuction.add(Auction(
       monster: Monster(
         name: 'MOBIUS',
@@ -115,7 +167,7 @@ class EthChangeNotifier extends ChangeNotifier {
         grade: 1,
         stats: "000003300000044000000000000",
         dna: 17374827,
-        img: Image.asset("lib/assets/fox.png"),
+        img: Image.asset("lib/assets/bigRuby.png"),
       ),
       startTime: 1607650841,
       duration: 500000,
@@ -193,10 +245,31 @@ class EthChangeNotifier extends ChangeNotifier {
       stats: "999999999999999999999999999",
       dna: 390473,
     ));
+    data.myMonsterExtracts.add(Monster(
+        name: "FRANK",
+        id: 6,
+        grade: 2,
+        stats: "311113611357362265020520209",
+        dna: 583938540,
+        img: Image.asset("lib/assets/fox.png")));
+    data.myMonsterExtracts.add(Monster(
+        name: "JANGO",
+        id: 7,
+        grade: 7,
+        stats: "311113611357362265020520209",
+        dna: 583938540,
+        img: Image.asset("lib/assets/bee.png")));
+    data.myMonsterExtracts.add(Monster(
+        name: "FRANK",
+        id: 8,
+        grade: 5,
+        stats: "311113611357362265020520209",
+        dna: 583938540,
+        img: Image.asset("lib/assets/bigRuby.png")));
 
     data.monsterImageList.addAll([
-      Image.asset("lib/assets/abi/square.jpg"),
-      Image.asset("lib/assets/fox.png"),
+      Image.asset("lib/assets/bigRuby.png"),
+      Image.asset("lib/assets/bigEssence.png"),
       Image.asset("lib/assets/fox.png"),
       Image.asset("lib/assets/fox.png"),
       Image.asset("lib/assets/fox.png"),

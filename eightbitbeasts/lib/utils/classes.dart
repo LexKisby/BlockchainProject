@@ -51,6 +51,10 @@ class EthData {
   List<Auction>
       myMarketMonstersForAuction; //My monsters in the market for Auction
   List<Auction> myMarketMonstersForDonor; //My monsters in the market for Donor
+  List<Monster> myMonsterExtracts; // Monster extracts in user possesion
+  List<Monster> incubating; //Monsters just born
+  List<Monster> recovering; //Monsters that are not in the ready state
+  List<Monster> ready; // Monsters that are in the ready state
 
   String myPublicAddress;
   String myPrivateKey;

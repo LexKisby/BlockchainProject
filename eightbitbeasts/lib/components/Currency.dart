@@ -6,8 +6,11 @@ class Ruby extends ConsumerWidget {
     final ethData = watch(myEthDataProvider);
     return Container(
         child: Row(children: [
-      Icon(Icons.local_atm_sharp,
-          color: Theme.of(context).textTheme.bodyText1.color, size: 22),
+      Container(
+        height: 20,
+        width: 20,
+        child: Image.asset("lib/assets/ruby.png"),
+      ),
       SizedBox(
         height: 25,
         width: 120,
@@ -38,8 +41,11 @@ class Essence extends ConsumerWidget {
     final ethData = watch(myEthDataProvider);
     return Container(
         child: Row(children: [
-      Icon(Icons.euro_sharp,
-          color: Theme.of(context).textTheme.bodyText1.color, size: 22),
+      Container(
+        height: 20,
+        width: 20,
+        child: Image.asset("lib/assets/essence.png"),
+      ),
       SizedBox(
         height: 25,
         width: 120,
@@ -61,5 +67,33 @@ class Essence extends ConsumerWidget {
             ])),
       )
     ]));
+  }
+}
+
+class RubyIcon extends StatelessWidget {
+  RubyIcon({
+    this.height,
+  });
+
+  final double height;
+  @override
+  build(BuildContext context) {
+    return Container(
+        height: height,
+        width: height,
+        child: Image.asset("lib/assets/ruby.png"));
+  }
+}
+
+class EssenceIcon extends StatelessWidget {
+  EssenceIcon({this.height});
+  final double height;
+
+  build(BuildContext context) {
+    return Container(
+      height: height,
+      width: height,
+      child: Image.asset("lib/assets/essence.png"),
+    );
   }
 }
