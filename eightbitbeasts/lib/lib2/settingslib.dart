@@ -120,7 +120,7 @@ class SettingsContentState extends State<SettingsContent> {
                 borderRadius: BorderRadius.all(Radius.circular(7))),
             color: Theme.of(context).primaryColor,
             child: Column(mainAxisSize: MainAxisSize.min, children: [
-              ListTile(
+              /*ListTile(
                 title: Text(
                   "Time Control",
                   style: TextStyle(
@@ -164,7 +164,15 @@ class SettingsContentState extends State<SettingsContent> {
                         onPressed: () {
                           _showTimePicker();
                         })),
-              ])
+              ])*/
+              Center(
+                child: Container(
+                  height: 120,
+                  child: Center(
+                    child: Text("potentially some other stuffs"),
+                  ),
+                ),
+              ),
             ]),
           )),
       SettingsWalletCard(),
@@ -175,7 +183,7 @@ class SettingsContentState extends State<SettingsContent> {
 class SettingsWalletCard extends ConsumerWidget {
   @override
   build(BuildContext context, ScopedReader watch) {
-    final address = watch(myWalletProvider);
+    final data = watch(myEthDataProvider);
     return Container(
         padding: EdgeInsets.all(4),
         child: Card(
@@ -187,15 +195,74 @@ class SettingsWalletCard extends ConsumerWidget {
                   title: Text("Wallet Credentials",
                       style: TextStyle(
                           color: Theme.of(context).textTheme.bodyText1.color)),
-                  subtitle: Text("Change wallet details in metamask",
+                  subtitle: Text("Enter new Private Key and Public address",
                       style: TextStyle(
+                          fontSize: 10,
                           color: Theme.of(context).textTheme.bodyText1.color))),
               ListTile(
-                  title: Text("Current Address: ${address.address}",
+                  title: Text(
+                      "Current Address: \n\n" + data.data.myPublicAddress,
                       style: TextStyle(
+                          fontSize: 10,
                           color: Theme.of(context).textTheme.bodyText1.color))),
-              FloatingActionButton(onPressed: () => address.increment()),
-              UpdateWidget(),
+              WalletForm(),
+              Divider(
+                color: Theme.of(context).textTheme.bodyText1.color,
+              ),
+              ListTile(
+                title: Text(
+                  "Refresh all information in the app:",
+                  style: TextStyle(
+                    fontSize: 10,
+                    color: Theme.of(context).textTheme.bodyText1.color,
+                  ),
+                ),
+                trailing: UpdateWidget(),
+              ),
             ])));
+  }
+}
+
+class WalletForm extends ConsumerWidget {
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  build(BuildContext context, ScopedReader watch) {
+    final data = watch(myEthDataProvider);
+    return Form(
+        key: _formKey,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              Container(
+                height: 50,
+                width: 250,
+                child: TextFormField(validator: (value) {
+                  if (value.isEmpty) {
+                    return "Please enter key";
+                  }
+                  if (value.trim().length != 64) {
+                    return "Wrong length";
+                  }
+                  data.updateCredentials(value);
+                  return null;
+                }),
+              ),
+              Spacer(),
+              RaisedButton(
+                onPressed: () {
+                  if (_formKey.currentState.validate()) {
+                    // If the form is valid, display a Snackbar.
+                    Scaffold.of(context).showSnackBar(
+                        SnackBar(content: Text('Processing Data')));
+                  }
+                },
+                color: Theme.of(context).accentColor,
+                child: Icon(Icons.keyboard_arrow_right_sharp),
+              )
+            ],
+          ),
+        ));
   }
 }

@@ -11,9 +11,13 @@ class InitWidget extends ConsumerWidget {
 class UpdateWidget extends ConsumerWidget {
   build(BuildContext context, ScopedReader watch) {
     final update = watch(myEthDataProvider);
-    return FloatingActionButton(onPressed: () {
-      update.update();
-    });
+    return RaisedButton(
+      onPressed: () {
+        update.update();
+      },
+      child: Icon(Icons.refresh_sharp),
+      color: Theme.of(context).accentColor,
+    );
   }
 }
 
@@ -26,22 +30,6 @@ class MyWalletChangeNotifier extends ChangeNotifier {
     address++;
     notifyListeners();
   }
-}
-
-class EthData {
-  List<Monster> monsterList; //Monsters in my inventory
-  List<Image> monsterImageList; //Images for the monsters in my inventory
-  List<Image> auctionMonsterImages; //Images for the monsters for auction
-  List<Image> donorMonsterImages; // Imahes for the monsters for extraction
-  double rubies; //number of rubies in possession
-  double essence; // number of essence in possession
-  List<Auction> marketMonstersForDonor; //monsters for sale
-  List<Auction> marketMonstersForAuction; // monsters for extraction
-  List<Auction> myMarketMonstersForAuction; //My monsters in the market
-  List<Auction> myMarketMonstersForDonor;
-
-  bool hasMonsterList = false;
-  bool hasCurrency = false;
 }
 
 class EthChangeNotifier extends ChangeNotifier {
@@ -72,11 +60,22 @@ class EthChangeNotifier extends ChangeNotifier {
     data.myMarketMonstersForDonor = [];
     data.monsterList = [];
     data.monsterImageList = [];
-    await getCurrency(myAddress);
+    data.myPublicAddress = myAddress;
+    data.myPrivateKey = myPrivateKey;
+    await getCurrency(data.myPublicAddress);
     data.hasCurrency = true;
 
     notifyListeners();
     return;
+  }
+
+  void updateCredentials(value) {
+    data.myPrivateKey = value;
+    var byteString = hexToBytes(value);
+    var publicKey = privateKeyBytesToPublic(byteString);
+    data.myPublicAddress = bytesToHex(publicKeyToAddress(publicKey));
+    notifyListeners();
+    update();
   }
 
   Future<void> marketRefresh() async {
@@ -84,7 +83,7 @@ class EthChangeNotifier extends ChangeNotifier {
     //then sorts into my monsters on sale
     //await getMarketMonsters();
     print("refreshed monsters");
-    await getCurrency(myAddress);
+    await getCurrency(data.myPublicAddress);
 
     notifyListeners();
   }
@@ -97,11 +96,18 @@ class EthChangeNotifier extends ChangeNotifier {
     data.monsterList = [];
     data.monsterImageList = [];
     print('updating');
+    await getCurrency(data.myPublicAddress);
     //test the contract on the block rn
     print("testing");
     await testFunction();
+    print("finished");
+    notifyListeners();
+    return;
+  }
 
-    //other junk
+  Future<void> testFunction() async {
+    String response2 = await submit("setEssenceBalance", [BigInt.from(30)]);
+    print("setting balance:   " + response2);
     data.marketMonstersForAuction.add(Auction(
       monster: Monster(
         name: 'MOBIUS',
@@ -197,8 +203,6 @@ class EthChangeNotifier extends ChangeNotifier {
     ]);
 
     print('done');
-    notifyListeners();
-    return;
   }
 
 //#########################################################################################
@@ -220,7 +224,6 @@ class EthChangeNotifier extends ChangeNotifier {
   Future<List<dynamic>> query(String functionName, List<dynamic> args) async {
     final contract = await loadContract();
     final ethFunction = contract.function(functionName);
-    print('sending query');
     final response = await ethClient.call(
         contract: contract, function: ethFunction, params: args);
     print('response recieved');
@@ -230,13 +233,13 @@ class EthChangeNotifier extends ChangeNotifier {
   //general function to transact with contract
   Future<String> submit(String functionName, List<dynamic> args) async {
     final contract = await loadContract();
-    print('contract Loaded');
     final ethFunction = contract.function(functionName);
     print('loaded function from contract');
-    EthPrivateKey credentials = EthPrivateKey.fromHex(
-        'ca33eca722358473bd0a8a2db70ffdedf44b4cd1ed3ae4f1981759dda149de7c');
+    EthPrivateKey credentials = EthPrivateKey.fromHex(data.myPrivateKey);
+    print("privateKeyLoaded");
     Transaction transaction = Transaction.callContract(
         contract: contract, function: ethFunction, parameters: args);
+    print("transaction Loaded");
     final response = await ethClient.sendTransaction(credentials, transaction,
         fetchChainIdFromNetworkId: true);
     print('recieved submit response');
@@ -264,14 +267,12 @@ class EthChangeNotifier extends ChangeNotifier {
     data.hasCurrency = true;
   }
 
-  Future<void> testFunction() async {
-    List<dynamic> response1 = await query("retrieve", []);
-    print("retrieve value:    " + response1[0].toString());
-    EthereumAddress address = EthereumAddress.fromHex(myAddress);
-    List<dynamic> response3 = await query("getRubyBalance", [address]);
-    print("rubies:        " + response3[0].toString());
-    //String response2 = await submit("setEssenceBalance", [20]);
+  Future<void> getMarketMonsters() async {
+    List<dynamic> response = await query("getMarketMonsters", []);
+    data.marketMonstersForAuction = response[0];
+    data.marketMonstersForDonor = response[1];
   }
+
 //Other functions to get stuffs like market monsters, and inventory.
 
 }

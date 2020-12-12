@@ -38,3 +38,22 @@ class Auction {
     this.isMine,
   });
 }
+
+class EthData {
+  List<Monster> monsterList; //Monsters in my inventory
+  List<Image> monsterImageList; //Images for the monsters in my inventory
+  List<Image> auctionMonsterImages; //Images for the monsters for auction
+  List<Image> donorMonsterImages; // Imahes for the monsters for extraction
+  double rubies; //number of rubies in possession
+  double essence; // number of essence in possession
+  List<Auction> marketMonstersForDonor; //monsters for sale
+  List<Auction> marketMonstersForAuction; // monsters for extraction
+  List<Auction>
+      myMarketMonstersForAuction; //My monsters in the market for Auction
+  List<Auction> myMarketMonstersForDonor; //My monsters in the market for Donor
+
+  String myPublicAddress;
+  String myPrivateKey;
+  bool hasMonsterList = false;
+  bool hasCurrency = false;
+}

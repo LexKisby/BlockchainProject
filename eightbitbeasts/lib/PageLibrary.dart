@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/all.dart';
+import 'package:web3dart/crypto.dart';
 import 'package:web3dart/web3dart.dart';
 import 'package:intl/intl.dart';
 import 'dart:async';
@@ -30,6 +31,8 @@ part "utils/style.dart";
 part "notifiers.dart";
 
 const myAddress = "0x6c7382C47830C20B1A2746dDd5Bb48f2EaB08795";
+const myPrivateKey =
+    '09fa63a415d391bcc3bfbd9025eb88e0da80d9924e1e7ed00b665261d14061a5';
 const contract_address = "0x06108514fD453A242Bd8B4f35A9487F6200508Fa";
 const abi_raw = """[
 	{
