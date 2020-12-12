@@ -4,6 +4,7 @@ class InventoryContent extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ScopedReader watch) {
     final data = watch(myEthDataProvider);
+    var monsterList = data.data.monsterList ?? [];
     var size = MediaQuery.of(context).size;
     final double itemWidth = size.width / 2;
     final double itemHeight = size.height / 3.1;
@@ -36,12 +37,12 @@ class InventoryContent extends ConsumerWidget {
     return GridView.builder(
       itemBuilder: (context, position) {
         return MonsterFlipCard(
-            monster: data.data.monsterList[position],
+            monster: monsterList[position],
             img: data.data.monsterImageList[position]);
       },
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           childAspectRatio: itemWidth / itemHeight, crossAxisCount: 2),
-      itemCount: data.data.monsterList.length,
+      itemCount: monsterList.length,
     );
   }
 }

@@ -182,21 +182,35 @@ class AuctionPage extends StatelessWidget {
 class CapturePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text("Capture"),
-          actions: [
-            Column(
-              children: [
-                Padding(padding: EdgeInsets.all(2)),
-                Ruby(),
-                Essence()
+    return DefaultTabController(
+        length: 3,
+        child: Scaffold(
+          appBar: AppBar(
+              title: Text("Battle"),
+              actions: [
+                Column(
+                  children: [
+                    Padding(padding: EdgeInsets.all(2)),
+                    Ruby(),
+                    Essence()
+                  ],
+                ),
               ],
-            ),
-            Padding(padding: EdgeInsets.all(4)),
-          ],
-        ),
-        body: Center(child: Ruby()));
+              bottom: TabBar(
+                tabs: [
+                  Tab(text: "capture"),
+                  Tab(text: "PvP"),
+                  Tab(text: "leaderboards"),
+                ],
+              )),
+          body: TabBarView(
+            children: [
+              CaptureContent(),
+              PvPContent(),
+              LeaderBoards(),
+            ],
+          ),
+        ));
   }
 }
 
