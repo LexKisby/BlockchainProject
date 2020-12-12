@@ -26,6 +26,8 @@ class Auction {
   double endPrice;
   String seller;
 
+  bool isMine;
+
   Auction({
     this.monster,
     this.startTime,
@@ -33,5 +35,6 @@ class Auction {
     this.startPrice,
     this.endPrice,
     this.seller,
+    this.isMine,
   });
 }

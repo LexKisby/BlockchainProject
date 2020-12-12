@@ -269,20 +269,7 @@ class AuctionDetails extends StatelessWidget {
                               ],
                             ),
                           ),
-                          ButtonBar(
-                            children: [
-                              FlatButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: Text("return", style: style(15.0))),
-                              RaisedButton(
-                                  color: Theme.of(context).accentColor,
-                                  disabledColor: Colors.grey,
-                                  onPressed: expired() ? null : () => buy(),
-                                  child: Text("buy", style: style(15.0)))
-                            ],
-                          ),
+                          MarketButtons(data: data),
                         ],
                       ),
                     ),
@@ -293,6 +280,70 @@ class AuctionDetails extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class MarketButtons extends ConsumerWidget {
+  MarketButtons({this.data});
+  final data;
+
+  TextStyle style(fontsize) {
+    return TextStyle(
+      fontFamily: 'PressStart2P',
+      fontSize: fontsize,
+      color: const Color(0xfffef0d1),
+    );
+  }
+
+  void retrieve() {
+//TODO
+    print("retrieve monster");
+  }
+
+  void buy() {
+    //TODO
+    print("buying monster");
+  }
+
+  bool isMine() {
+    return data.isMine;
+  }
+
+  bool expired() {
+    double now = DateTime.now().millisecondsSinceEpoch.toDouble() / 1000;
+    double passed = now - data.startTime;
+    double percentage = passed / data.duration;
+    double price =
+        data.startPrice - (data.startPrice - data.endPrice) * percentage;
+
+    if (price < data.endPrice) {
+      return true;
+    }
+    return false;
+  }
+
+  @override
+  build(BuildContext context, ScopedReader watch) {
+    final info = watch(myEthDataProvider);
+    return ButtonBar(
+      children: [
+        FlatButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text("return", style: style(15.0))),
+        RaisedButton(
+          disabledColor: Colors.grey,
+          color: Theme.of(context).accentColor,
+          onPressed: isMine()
+              ? () => retrieve()
+              : expired()
+                  ? null
+                  : () => buy(),
+          child: Text(isMine() ? "retrieve" : "buy", style: style(15.0)),
+        ),
+      ],
     );
   }
 }

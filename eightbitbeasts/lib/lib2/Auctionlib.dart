@@ -19,6 +19,123 @@ class AuctionContent extends ConsumerWidget {
   }
 }
 
+class DonorContent extends ConsumerWidget {
+  @override
+  build(BuildContext context, ScopedReader watch) {
+    final info = watch(myEthDataProvider);
+
+    return RefreshIndicator(
+      child: ListView.builder(
+        itemBuilder: (context, position) {
+          return MarketRow(data: info.data.marketMonstersForDonor[position]);
+        },
+        itemCount: info.data.marketMonstersForDonor.length,
+      ),
+      onRefresh: () {
+        return info.marketRefresh();
+      },
+    );
+  }
+}
+
+class MyMarketContent extends ConsumerWidget {
+  @override
+  build(BuildContext context, ScopedReader watch) {
+    final info = watch(myEthDataProvider);
+
+    return RefreshIndicator(
+      child: ListView(
+        children: [
+          Container(
+            height: 50,
+            child: Center(
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    RaisedButton(
+                      color: Theme.of(context).backgroundColor,
+                      onPressed: () {
+                        //TODO
+                        print("add auction");
+                      },
+                      child: Text("add auction",
+                          style: TextStyle(
+                              color:
+                                  Theme.of(context).textTheme.bodyText1.color)),
+                    ),
+                    RaisedButton(
+                      color: Theme.of(context).backgroundColor,
+                      onPressed: () {
+                        //TODO
+                        print("add extract");
+                      },
+                      child: Text("add extract",
+                          style: TextStyle(
+                              color:
+                                  Theme.of(context).textTheme.bodyText1.color)),
+                    )
+                  ]),
+            ),
+          ),
+          Container(
+            height: 40,
+            child: Card(
+                color: Theme.of(context).primaryColor,
+                shape: PixelBorder(
+                  style: BorderStyle.solid,
+                  borderColor: Theme.of(context).backgroundColor,
+                  pixelSize: 1,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Center(
+                    child: Text("for auction",
+                        style: TextStyle(
+                            color:
+                                Theme.of(context).textTheme.bodyText1.color)))),
+          ),
+          ListView.builder(
+            shrinkWrap: true,
+            physics: ClampingScrollPhysics(),
+            itemBuilder: (context, position) {
+              return MarketRow(
+                  data: info.data.myMarketMonstersForAuction[position]);
+            },
+            itemCount: info.data.myMarketMonstersForAuction.length,
+          ),
+          Container(
+            height: 40,
+            child: Card(
+                color: Theme.of(context).primaryColor,
+                shape: PixelBorder(
+                  style: BorderStyle.solid,
+                  borderColor: Theme.of(context).backgroundColor,
+                  pixelSize: 1,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Center(
+                    child: Text("for extraction",
+                        style: TextStyle(
+                            color:
+                                Theme.of(context).textTheme.bodyText1.color)))),
+          ),
+          ListView.builder(
+            shrinkWrap: true,
+            physics: ClampingScrollPhysics(),
+            itemBuilder: (context, position) {
+              return MarketRow(
+                  data: info.data.myMarketMonstersForDonor[position]);
+            },
+            itemCount: info.data.myMarketMonstersForDonor.length,
+          )
+        ],
+      ),
+      onRefresh: () {
+        return info.marketRefresh();
+      },
+    );
+  }
+}
+
 class MarketRow extends StatelessWidget {
   final Auction data;
 
@@ -128,25 +245,6 @@ class MarketRow extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-class DonorContent extends ConsumerWidget {
-  @override
-  build(BuildContext context, ScopedReader watch) {
-    final info = watch(myEthDataProvider);
-
-    return RefreshIndicator(
-      child: ListView.builder(
-        itemBuilder: (context, position) {
-          return MarketRow(data: info.data.marketMonstersForDonor[position]);
-        },
-        itemCount: info.data.marketMonstersForDonor.length,
-      ),
-      onRefresh: () {
-        return info.marketRefresh();
-      },
     );
   }
 }

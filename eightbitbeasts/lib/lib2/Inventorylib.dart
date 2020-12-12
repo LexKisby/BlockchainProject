@@ -3,14 +3,11 @@ part of page_classes;
 class InventoryContent extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ScopedReader watch) {
-    final myMonstersInfo = watch(myMonstersProvider);
-    myMonstersInfo.update();
-    final numOfMonsters = myMonstersInfo.info.length;
-    print(numOfMonsters);
+    final data = watch(myEthDataProvider);
     var size = MediaQuery.of(context).size;
     final double itemWidth = size.width / 2;
     final double itemHeight = size.height / 3.1;
-    return GridView.count(
+    /*return GridView.count(
       crossAxisCount: 2,
       childAspectRatio: itemWidth / itemHeight,
       children: [
@@ -35,6 +32,16 @@ class InventoryContent extends ConsumerWidget {
         MonsterFlipCard(
             monster: myMonstersInfo.info[9], img: myMonstersInfo.imgs[2])
       ],
+    );*/
+    return GridView.builder(
+      itemBuilder: (context, position) {
+        return MonsterFlipCard(
+            monster: data.data.monsterList[position],
+            img: data.data.monsterImageList[position]);
+      },
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          childAspectRatio: itemWidth / itemHeight, crossAxisCount: 2),
+      itemCount: data.data.monsterList.length,
     );
   }
 }

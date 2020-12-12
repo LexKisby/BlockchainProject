@@ -29,14 +29,17 @@ class MyWalletChangeNotifier extends ChangeNotifier {
 }
 
 class EthData {
-  List<Monster> monsterList;
-  List<Image> monsterImageList;
-  List<Image> auctionMonsterImages;
-  List<Image> donorMonsterImages;
-  double rubies;
-  double essence;
-  List<Auction> marketMonstersForDonor;
-  List<Auction> marketMonstersForAuction;
+  List<Monster> monsterList; //Monsters in my inventory
+  List<Image> monsterImageList; //Images for the monsters in my inventory
+  List<Image> auctionMonsterImages; //Images for the monsters for auction
+  List<Image> donorMonsterImages; // Imahes for the monsters for extraction
+  double rubies; //number of rubies in possession
+  double essence; // number of essence in possession
+  List<Auction> marketMonstersForDonor; //monsters for sale
+  List<Auction> marketMonstersForAuction; // monsters for extraction
+  List<Auction> myMarketMonstersForAuction; //My monsters in the market
+  List<Auction> myMarketMonstersForDonor;
+
   bool hasMonsterList = false;
   bool hasCurrency = false;
 }
@@ -65,6 +68,10 @@ class EthChangeNotifier extends ChangeNotifier {
     data.monsterList = [];
     data.marketMonstersForAuction = [];
     data.marketMonstersForDonor = [];
+    data.myMarketMonstersForAuction = [];
+    data.myMarketMonstersForDonor = [];
+    data.monsterList = [];
+    data.monsterImageList = [];
     await getCurrency(myAddress);
     data.hasCurrency = true;
 
@@ -74,18 +81,25 @@ class EthChangeNotifier extends ChangeNotifier {
 
   Future<void> marketRefresh() async {
     //normally gets stuff from blockchain
+    //then sorts into my monsters on sale
     //await getMarketMonsters();
     print("refreshed monsters");
+    await getCurrency(myAddress);
+
+    notifyListeners();
   }
 
   void update() async {
     data.marketMonstersForAuction = [];
     data.marketMonstersForDonor = [];
+    data.myMarketMonstersForAuction = [];
+    data.myMarketMonstersForDonor = [];
+    data.monsterList = [];
+    data.monsterImageList = [];
     print('updating');
     //test the contract on the block rn
     print("testing");
     await testFunction();
-    await getCurrency(myAddress);
 
     //other junk
     data.marketMonstersForAuction.add(Auction(
@@ -102,6 +116,7 @@ class EthChangeNotifier extends ChangeNotifier {
       startPrice: 10000,
       endPrice: 10,
       seller: "yo mama",
+      isMine: false,
     ));
 
     data.marketMonstersForDonor.add(Auction(
@@ -118,9 +133,10 @@ class EthChangeNotifier extends ChangeNotifier {
       startPrice: 10000,
       endPrice: 10,
       seller: "yo mama",
+      isMine: false,
     ));
 
-    data.marketMonstersForAuction.add(Auction(
+    data.myMarketMonstersForAuction.add(Auction(
       monster: Monster(
         name: 'TOBIUS',
         id: 3,
@@ -134,7 +150,51 @@ class EthChangeNotifier extends ChangeNotifier {
       startPrice: 10000,
       endPrice: 10,
       seller: "yo mama",
+      isMine: true,
     ));
+
+    data.monsterList.add(Monster(
+      name: 'MOBIUS',
+      id: 1,
+      grade: 1,
+      stats: "000000000000000000000000000",
+      dna: 17374827,
+    ));
+    data.monsterList.add(Monster(
+        name: "0123456",
+        id: 2,
+        grade: 1,
+        stats: "001004003005003006012003008",
+        dna: 23842938));
+    data.monsterList.add(Monster(
+      name: "MATT",
+      id: 3,
+      grade: 3,
+      stats: "999999999999999999999999999",
+      dna: 390473,
+    ));
+    data.monsterList.add(Monster(
+      name: "VELINA",
+      id: 4,
+      grade: 2,
+      stats: "999999999999999999999999999",
+      dna: 390473,
+    ));
+    data.monsterList.add(Monster(
+      name: "MATT",
+      id: 5,
+      grade: 5,
+      stats: "999999999999999999999999999",
+      dna: 390473,
+    ));
+
+    data.monsterImageList.addAll([
+      Image.asset("lib/assets/abi/square.jpg"),
+      Image.asset("lib/assets/fox.png"),
+      Image.asset("lib/assets/fox.png"),
+      Image.asset("lib/assets/fox.png"),
+      Image.asset("lib/assets/fox.png"),
+    ]);
 
     print('done');
     notifyListeners();

@@ -149,7 +149,7 @@ class AuctionPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-        length: 2,
+        length: 3,
         child: Scaffold(
           appBar: AppBar(
               title: Text("Market"),
@@ -164,13 +164,15 @@ class AuctionPage extends StatelessWidget {
                 isScrollable: false,
                 tabs: [
                   Tab(text: "auction"),
-                  Tab(text: "donor"),
+                  Tab(text: "extract"),
+                  Tab(text: "mine"),
                 ],
               )),
           body: TabBarView(
             children: [
               AuctionContent(),
               DonorContent(),
+              MyMarketContent(),
             ],
           ),
         ));
