@@ -107,7 +107,12 @@ library SafeMath16 {
     }
 
     function add(uint16 a, uint16 b) internal pure returns (uint16) {
-        uint16 c = a + b;
+        uint16 c;
+        if (a + b >= a) {
+            c = a + b;
+        } else {
+            c = 65535;
+        }
         assert(c >= a);
         return c;
     }

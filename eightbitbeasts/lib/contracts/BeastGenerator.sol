@@ -59,6 +59,7 @@ contract BeastGenerator is Owner {
         uint16 winCount;
         uint16 lossCount;
         uint8 grade;
+        uint8 extractionsRemaining;
         uint8[22] dna;
     }
 
@@ -66,7 +67,7 @@ contract BeastGenerator is Owner {
 
     mapping(uint256 => address) public beastToTamer;
     mapping(address => uint256) tamerBeastCount;
-    mapping(bytes32 => bool) public hashedDnaExists;
+    mapping(bytes32 => bool) hashedDnaExists;
 
     //Pass newly created beast to here to finalise
     function _initialiseBeast(
@@ -87,12 +88,25 @@ contract BeastGenerator is Owner {
                 0,
                 0,
                 _grade,
+                _extractionsFromDna(_dna),
                 _dna
             )
         );
         beastToTamer[id] = msg.sender;
         tamerBeastCount[msg.sender] = tamerBeastCount[msg.sender].add(1);
+        hashedDnaExists[keccak256(abi.encodePacked(_dna))] = true;
         emit NewBeast(id, _name, _dna);
+    }
+
+    function _extractionsFromDna(uint8[22] memory _dna)
+        internal
+        pure
+        returns (uint8)
+    {
+        if (_dna[0] == 0) {
+            return 1;
+        }
+        return 10;
     }
 
     //given a grade, create dna string.
@@ -137,6 +151,12 @@ contract BeastGenerator is Owner {
                 rawDna[index]++;
                 attempts++;
                 passingUnique = _checkUniqueDna(rawDna);
+            }
+            if (attempts > 100) {
+                require(
+                    passingUnique == false,
+                    "unable to generate unique dna"
+                );
             }
         }
         return rawDna;
@@ -302,26 +322,17 @@ contract BeastGenerator is Owner {
     function howManyBeasts() external view returns (uint256) {
         return beasts.length;
     }
+    //#########################################
+    //TEST FUNCTIONS
+    //#########################################
 
+    /*
     function testGenerateDnaFromGrade(uint8 _grade)
         external
         view
         returns (uint8[22] memory)
     {
         uint8[22] memory dna = _generateRandomDnaFromGrade(_grade);
-        return dna;
-    }
-
-    function testAvg(uint8 num) external pure returns (uint32) {
-        return _getAvgX100FromGrade(num);
-    }
-
-    function testCleanDna(uint8[22] calldata _dna)
-        external
-        pure
-        returns (uint8[22] memory)
-    {
-        uint8[22] memory dna = _cleanDna(_dna);
         return dna;
     }
 
@@ -334,11 +345,7 @@ contract BeastGenerator is Owner {
         return (yes, grade);
     }
 
-    function testDigits(uint256 num) external pure returns (uint8[51] memory) {
-        return _generateDigits(num);
-    }
-
     function testUnique(uint8[22] calldata dna) external view returns (bool) {
         return _checkUniqueDna(dna);
-    }
+    } */
 }
