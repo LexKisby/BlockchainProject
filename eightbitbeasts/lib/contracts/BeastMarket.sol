@@ -5,7 +5,7 @@ pragma experimental ABIEncoderV2;
 import "./BeastFusion.sol";
 import "./SafeMath.sol";
 
-contract MarketBeasts is BeastFusion {
+contract BeastMarket is BeastFusion {
     using SafeMath for uint256;
     using SafeMath32 for uint32;
     using SafeMath16 for uint16;

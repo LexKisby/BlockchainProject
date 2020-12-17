@@ -309,6 +309,7 @@ contract BeastGenerator is Owner {
     }
 
     function generateStarterBeast(string memory _name) external {
+        require(tamerBeastCount[msg.sender] == 0, "You already own beasts");
         uint8[22] memory dna = _generateRandomDnaFromGrade(10);
         Stats memory stats = Stats(12, 2, 4, 3, 1, 0, 2, 1, 2);
         _initialiseBeast(_name, dna, stats, _gradeFromDna(dna));
