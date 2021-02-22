@@ -65,7 +65,7 @@ class EthChangeNotifier extends ChangeNotifier {
     data.myPrivateKey = myPrivateKey;
     data.incubating = [];
 
-    await getCurrency(data.myPublicAddress);
+    //await getCurrency(data.myPublicAddress);
     data.hasCurrency = true;
 
     notifyListeners();
@@ -77,7 +77,7 @@ class EthChangeNotifier extends ChangeNotifier {
 //###############################################
   Future<void> inventoryRefresh() async {
     //await getMyMonsters();
-    await getCurrency(data.myPublicAddress);
+    //await getCurrency(data.myPublicAddress);
 
     await testFunction();
     notifyListeners();
@@ -95,7 +95,7 @@ class EthChangeNotifier extends ChangeNotifier {
   Future<void> marketRefresh() async {
     //await getMarketMonsters();
     print("refreshed monsters");
-    await getCurrency(data.myPublicAddress);
+    //await getCurrency(data.myPublicAddress);
     notifyListeners();
   }
 
@@ -118,6 +118,8 @@ class EthChangeNotifier extends ChangeNotifier {
 // refresh everything
 //#################################################
   void update() async {
+    data.rubies = 0;
+    data.essence = 0;
     data.marketMonstersForAuction = [];
     data.marketMonstersForDonor = [];
     data.myMarketMonstersForAuction = [];
@@ -126,7 +128,7 @@ class EthChangeNotifier extends ChangeNotifier {
     data.monsterImageList = [];
     data.myMonsterExtracts = [];
     data.incubating = [];
-    await getCurrency(data.myPublicAddress);
+    //await getCurrency(data.myPublicAddress);
     //await getMyMonsters();
     //await getMarketMonsters();
     //await getBattleInfo();
@@ -187,7 +189,7 @@ class EthChangeNotifier extends ChangeNotifier {
         img: Image.asset("lib/assets/fox.png"),
       ),
       startTime: 1607650841,
-      duration: 5000,
+      duration: 5000000,
       startPrice: 10000,
       endPrice: 10,
       seller: "yo mama",
@@ -283,19 +285,19 @@ class EthChangeNotifier extends ChangeNotifier {
 //#########################################################################################
 
   //Load contract
-  Future<DeployedContract> loadContract() async {
-    String prepABI = abi_raw;
-    //String abi = await rootBundle.loadString(prepABI);
-    String contractAddress = contract_address;
+  Future<DeployedContract> loadContract(int type) async {
+    String prepABI = abi_raw[type];
+    String contractAddress = contract_addresses[type];
 
-    final contract = DeployedContract(ContractAbi.fromJson(prepABI, "test"),
+    final contract = DeployedContract(ContractAbi.fromJson(prepABI, "contract"),
         EthereumAddress.fromHex(contractAddress));
     return contract;
   }
 
   //general function to query contract
-  Future<List<dynamic>> query(String functionName, List<dynamic> args) async {
-    final contract = await loadContract();
+  Future<List<dynamic>> query(
+      String functionName, List<dynamic> args, int type) async {
+    final contract = await loadContract(type);
     final ethFunction = contract.function(functionName);
     final response = await ethClient.call(
         contract: contract, function: ethFunction, params: args);
@@ -304,8 +306,9 @@ class EthChangeNotifier extends ChangeNotifier {
   }
 
   //general function to transact with contract
-  Future<String> submit(String functionName, List<dynamic> args) async {
-    final contract = await loadContract();
+  Future<String> submit(
+      String functionName, List<dynamic> args, int type) async {
+    final contract = await loadContract(type);
     final ethFunction = contract.function(functionName);
     print('loaded function from contract');
     EthPrivateKey credentials = EthPrivateKey.fromHex(data.myPrivateKey);
@@ -323,14 +326,14 @@ class EthChangeNotifier extends ChangeNotifier {
   //Ingame currency, non erc20 token, called 'ruby'
   Future<void> getRubyBalance(String targetAddress) async {
     EthereumAddress address = EthereumAddress.fromHex(targetAddress);
-    List<dynamic> response = await query("getRubyBalance", [address]);
+    List<dynamic> response = await query("getRubyBalance", [address], 0);
     data.rubies = double.parse(response[0].toString());
   }
 
   //ingame currency, is an erc 20 token, rare, called "Essence"
   Future<void> getEssenceBalance(String targetAddress) async {
     EthereumAddress address = EthereumAddress.fromHex(targetAddress);
-    List<dynamic> response = await query("getEssenceBalance", [address]);
+    List<dynamic> response = await query("getEssenceBalance", [address], 0);
     data.essence = double.parse(response[0].toString());
   }
 
@@ -341,7 +344,7 @@ class EthChangeNotifier extends ChangeNotifier {
   }
 
   Future<void> getMarketMonsters() async {
-    List<dynamic> response = await query("getMarketMonsters", []);
+    List<dynamic> response = await query("getMarketMonsters", [], 0);
     data.marketMonstersForAuction = response[0];
     data.marketMonstersForDonor = response[1];
   }
