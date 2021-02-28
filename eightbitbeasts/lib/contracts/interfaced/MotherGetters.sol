@@ -18,7 +18,23 @@ contract MotherGetter is MotherCore {
         return beasts(_beastId);
     }
 
-    function getCurrency() external returns (uint256[2] memory) {
+    function getCurrency() external view returns (uint256[2] memory) {
         return currency[msg.sender];
+    }
+
+    function getBeastsByTamer(address _tamer)
+        external
+        view
+        returns (Beast[] memory)
+    {
+        Beast[] memory result = new Beast[](tamerBeastCount[_tamer]);
+        uint256 counter = 0;
+        for (uint256 i = 0; i < beasts.length; i++) {
+            if (beastToTamer[i] == _tamer) {
+                result[counter] = beasts[i];
+                counter++;
+            }
+        }
+        return result;
     }
 }

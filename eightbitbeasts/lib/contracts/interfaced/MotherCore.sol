@@ -8,6 +8,9 @@ contract MotherCore is Owner {
 
     //values
     uint256 minRecoveryPeriod = 1 days;
+    uint256 levelUpPrice = 100; //rubies
+    uint256 levelUpXp = 100; //xp
+    uint256 etherFee = 0.001 ether;
 
     //Events
 
@@ -15,6 +18,8 @@ contract MotherCore is Owner {
     event LvlUp(uint256 beastId, string name, uint32 lvl);
     event NewTamer(uint256 tamerId, address tamerAddress);
     event StatBoost(uint256 beastId, string name, Stats stats);
+    event NameChange(uint256 beastId, string newName);
+    event ContractUpdate(string aspect, uint256 newValue);
 
     //structs
 
@@ -87,8 +92,30 @@ contract MotherCore is Owner {
         _;
     }
 
+    modifier beastOwner(uint256 _beastId) {
+        require(
+            msg.sender == beastToTamer[_beastId],
+            "You do not own this beast"
+        );
+        _;
+    }
+
     function addTrusted(address _address) external isOwner() {
         trustedAddresses[_address] = true;
+    }
+
+    function removeTrusted(address _address) external isOwner() {
+        trustedAddresses[_address] = false;
+    }
+
+    function withdraw() external isOwner() {
+        address _owner = _getOwner();
+        address payable = payable(_owner);
+        owner.transfer(address(this).balance);
+    }
+
+    function checkBalance() external view isOwner() returns (uint256) {
+        return address(this).balance;
     }
 
     //functions below will control beast generation and fusion, all internal. user facing functions will be in child contracts
