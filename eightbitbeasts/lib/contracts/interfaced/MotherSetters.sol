@@ -57,6 +57,7 @@ contract MotherSetter is MotherGetter {
         beasts[_beastId].stats.accuracy = _accuracy;
         beasts[_beastId].stats.constitution = _constitution;
         beasts[_beastId].stats.intelligence = _intelligence;
+        emit StatBoost(_beastId, beasts[_beastId].name, beasts[_beastId].stats);
     }
 
     //#######
@@ -76,6 +77,7 @@ contract MotherSetter is MotherGetter {
         beastToTamer[_beastId] == _to;
         tamerBeastCount[_from] -= 1;
         tamerBeastCount[_to] += 1;
+        emit BeastTransfer(_beastId, _from, _to);
     }
 
     function transferRubies(

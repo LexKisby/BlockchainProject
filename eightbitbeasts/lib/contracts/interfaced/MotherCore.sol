@@ -20,6 +20,7 @@ contract MotherCore is Owner {
     event StatBoost(uint256 beastId, string name, Stats stats);
     event NameChange(uint256 beastId, string newName);
     event ContractUpdate(string aspect, uint256 newValue);
+    event BeastTransfer(uint256 beastId, address from, address to);
 
     //structs
 
@@ -35,6 +36,7 @@ contract MotherCore is Owner {
         uint16 intelligence;
     }
 
+    //Not used, exists only for reference
     struct Dna {
         uint8 speciesPrimary;
         uint8 speciesSecondary;
