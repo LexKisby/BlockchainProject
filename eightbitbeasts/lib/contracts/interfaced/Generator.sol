@@ -52,32 +52,6 @@ contract Generator is Owner {
     //handles the generation of new monsters
     uint256 minRecoveryPeriod = 1 days;
 
-    struct Stats {
-        uint16 hp;
-        uint16 attackSpeed;
-        uint16 evasion;
-        uint16 primaryDamage;
-        uint16 secondaryDamage;
-        uint16 resistance;
-        uint16 accuracy;
-        uint16 constitution;
-        uint16 intelligence;
-    }
-
-    struct Beast {
-        string name;
-        Stats stats;
-        uint256 id;
-        uint32 level;
-        uint32 xp;
-        uint32 readyTime;
-        uint16 winCount;
-        uint16 lossCount;
-        uint8 grade;
-        uint8 extractionsRemaining;
-        uint8[22] dna;
-    }
-
     //needs changing
     address MotherAddress = 0x06012c8cf97BEaD5deAe237070F9587f8E7A266d;
     MotherInterface MotherContract = MotherInterface(MotherAddress);
