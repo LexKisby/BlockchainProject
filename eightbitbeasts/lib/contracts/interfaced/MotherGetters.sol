@@ -37,4 +37,12 @@ contract MotherGetter is MotherCore {
         }
         return result;
     }
+
+    function getTamerBeastCount(address _tamer)
+        external
+        view
+        returns (uint256)
+    {
+        return tamerBeastCount[_tamer];
+    }
 }

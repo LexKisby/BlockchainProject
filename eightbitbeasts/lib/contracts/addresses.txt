@@ -3,3 +3,4 @@ Generator Contract =
 Fusion Contract = 
 Market Contract = 
 Battle Contract = 
+LeaderBoard Contract = 
