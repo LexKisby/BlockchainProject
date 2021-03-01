@@ -115,9 +115,10 @@ contract BeastGenerator is Owner {
         view
         returns (uint8[22] memory)
     {
-        uint256 rand = uint256(
-            keccak256(abi.encodePacked(msg.sender, block.timestamp, _grade))
-        );
+        uint256 rand =
+            uint256(
+                keccak256(abi.encodePacked(msg.sender, block.timestamp, _grade))
+            );
         uint8[51] memory digits = _generateDigits(rand);
         uint8[22] memory rawDna;
         rawDna[0] = digits[0];
@@ -176,6 +177,7 @@ contract BeastGenerator is Owner {
         return digits;
     }
 
+    //useless, foir testing only
     function _checkDnaForGrade(uint8[22] memory _dna, uint8 _grade)
         internal
         pure

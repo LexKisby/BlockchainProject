@@ -48,6 +48,7 @@ contract MotherInterface {
 
 contract Generator is Owner {
     //handles the generation of new monsters
+    uint256 minRecoveryPeriod = 1 days;
 
     struct Stats {
         uint16 hp;

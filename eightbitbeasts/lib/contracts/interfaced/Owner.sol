@@ -10,9 +10,9 @@ contract Owner {
     address private owner;
     mapping(address => bool) trustedAddresses;
 
-    modifier isTrusted(address _address) {
+    modifier isTrusted() {
         require(
-            trustedAddresses[_address] == true,
+            trustedAddresses[msg.sender] == true,
             "Request is not from a trusted source"
         );
         _;
