@@ -1,18 +1,34 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity >=0.7.0 <0.8.0;
+pragma solidity >=0.8.0 <0.9.0;
 
 /**
  * @title Owner
  * @dev Set & change owner
  */
 contract Owner {
-
     address private owner;
-    
+    mapping(address => bool) trustedAddresses;
+
+    modifier isTrusted(address _address) {
+        require(
+            trustedAddresses[_address] == true,
+            "Request is not from a trusted source"
+        );
+        _;
+    }
+
+    function addTrusted(address _address) external isOwner() {
+        trustedAddresses[_address] = true;
+    }
+
+    function removeTrusted(address _address) external isOwner() {
+        trustedAddresses[_address] = false;
+    }
+
     // event for EVM logging
     event OwnerSet(address indexed oldOwner, address indexed newOwner);
-    
+
     // modifier to check if caller is owner
     modifier isOwner() {
         // If the first argument of 'require' evaluates to 'false', execution terminates and all
@@ -23,12 +39,13 @@ contract Owner {
         require(msg.sender == owner, "Caller is not owner");
         _;
     }
-    
+
     /**
      * @dev Set contract deployer as owner
      */
     constructor() {
         owner = msg.sender; // 'msg.sender' is sender of current call, contract deployer for a constructor
+        trustedAddresses[owner] = true;
         emit OwnerSet(address(0), owner);
     }
 
@@ -42,7 +59,7 @@ contract Owner {
     }
 
     /**
-     * @dev Return owner address 
+     * @dev Return owner address
      * @return address of owner
      */
     function _getOwner() public view returns (address) {

@@ -77,8 +77,6 @@ contract MotherCore is Owner {
     //storage
     Beast[] public beasts;
 
-    mapping(address => bool) trustedAddresses;
-
     mapping(uint256 => address) public beastToTamer;
     mapping(address => uint256) tamerBeastCount;
     mapping(bytes32 => bool) hashedDnaExists;
@@ -86,13 +84,6 @@ contract MotherCore is Owner {
     mapping(address => uint256[2]) currency;
 
     //modifiers
-    modifier isTrusted(address _address) {
-        require(
-            trustedAddresses[_address] == true,
-            "Request is not from a trusted source"
-        );
-        _;
-    }
 
     modifier beastOwner(uint256 _beastId) {
         require(
@@ -102,17 +93,9 @@ contract MotherCore is Owner {
         _;
     }
 
-    function addTrusted(address _address) external isOwner() {
-        trustedAddresses[_address] = true;
-    }
-
-    function removeTrusted(address _address) external isOwner() {
-        trustedAddresses[_address] = false;
-    }
-
     function withdraw() external isOwner() {
         address _owner = _getOwner();
-        address payable = payable(_owner);
+        address payable owner = payable(_owner);
         owner.transfer(address(this).balance);
     }
 

@@ -1,9 +1,21 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.1;
+pragma solidity >=0.8.0 <0.9.0;
 
 import "./Owner.sol";
 
 contract MotherInterface {
+    struct Stats {
+        uint16 hp;
+        uint16 attackSpeed;
+        uint16 evasion;
+        uint16 primaryDamage;
+        uint16 secondaryDamage;
+        uint16 resistance;
+        uint16 accuracy;
+        uint16 constitution;
+        uint16 intelligence;
+    }
+
     function createBeast(
         string calldata _name,
         Stats _stats,
@@ -35,24 +47,6 @@ contract MotherInterface {
 }
 
 contract Generator is Owner {
-    mapping(addresses => bool) trustedAddresses;
-
-    modifier isTrusted(address _address) {
-        require(
-            trustedAddresses[_address] == true,
-            "Request is not from a trusted source"
-        );
-        _;
-    }
-
-    function addTrusted(address _address) external isOwner() {
-        trustedAddresses[_address] = true;
-    }
-
-    function removeTrusted(address _address) external isOwner() {
-        trustedAddresses[_address] = false;
-    }
-
     //handles the generation of new monsters
 
     struct Stats {
