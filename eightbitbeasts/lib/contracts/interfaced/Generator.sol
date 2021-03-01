@@ -3,7 +3,7 @@ pragma solidity >=0.8.0 <0.9.0;
 
 import "./Owner.sol";
 
-contract MotherInterface {
+interface MotherInterface {
     struct Stats {
         uint16 hp;
         uint16 attackSpeed;
@@ -18,7 +18,7 @@ contract MotherInterface {
 
     function createBeast(
         string calldata _name,
-        Stats _stats,
+        Stats memory _stats,
         uint256 _level,
         uint256 _xp,
         uint256 _readyTime,
@@ -26,7 +26,7 @@ contract MotherInterface {
         uint256 _lossCount,
         uint256 _grade,
         uint256 _extractionsRemaining,
-        uint8[22] _dna,
+        uint8[22] memory _dna,
         address _address
     ) external;
 
@@ -44,6 +44,8 @@ contract MotherInterface {
     ) external;
 
     function getTamerBeastCount(address _tamer) external view returns (uint256);
+
+    function dnaExists(uint8[22] memory _dna) external view returns (bool);
 }
 
 contract Generator is Owner {
@@ -77,7 +79,7 @@ contract Generator is Owner {
     }
 
     //needs changing
-    address MotherAddress = 0x76f6e;
+    address MotherAddress = 0x06012c8cf97BEaD5deAe237070F9587f8E7A266d;
     MotherInterface MotherContract = MotherInterface(MotherAddress);
 
     //internal functions
@@ -102,7 +104,7 @@ contract Generator is Owner {
         uint8[51] memory digits;
         for (uint256 x = 0; x < 51; x++) {
             uint8 digit = uint8(_num % 10);
-            _num = _num.div(10);
+            _num = _num / 10;
             digits[x] = digit;
         }
         return digits;
@@ -115,9 +117,9 @@ contract Generator is Owner {
     {
         uint32 total = 0;
         for (uint256 x = 2; x < 22; x++) {
-            total = total.add(_dna[x]);
+            total = total + _dna[x];
         }
-        uint16 avg = uint8(total.div(20));
+        uint16 avg = uint8(total / 20);
         if (100 * avg >= 525) {
             if (avg >= 6) {
                 if (avg * 10 >= 65) {
@@ -162,7 +164,7 @@ contract Generator is Owner {
         view
         returns (bool)
     {
-        if (hashedDnaExists[keccak256(abi.encodePacked(_dna))]) {
+        if (MotherContract.dnaExists(_dna)) {
             return false;
         } else {
             return true;
@@ -174,7 +176,7 @@ contract Generator is Owner {
         pure
         returns (uint8[22] memory)
     {
-        for (uint256 x = 2; x < 22; x = x.add(2)) {
+        for (uint256 x = 2; x < 22; x = x + 2) {
             if (_dna[x] > _dna[x + 1]) {
                 uint8 temp = _dna[x];
                 _dna[x] = _dna[x + 1];
@@ -279,7 +281,8 @@ contract Generator is Owner {
     ) internal {
         uint8[22] memory dna = _generateRandomDnaFromGrade(_grade);
         uint16 num = 50 * (11 - _grade);
-        Stats memory stats = Stats(num, num, num, num, num, num, num, num, num);
+        MotherInterface.Stats memory stats =
+            MotherInterface.Stats(num, num, num, num, num, num, num, num, num);
         MotherContract.createBeast(
             _name,
             stats,
@@ -300,7 +303,8 @@ contract Generator is Owner {
         require(tbc == 0, "You already own beasts");
         uint8[22] memory dna = _generateRandomDnaFromGrade(10);
         uint8 grade = _gradeFromDna(dna);
-        Stats memory stats = Stats(12, 2, 4, 3, 1, 0, 2, 1, 2);
+        MotherInterface.Stats memory stats =
+            MotherInterface.Stats(12, 2, 4, 3, 1, 0, 2, 1, 2);
         MotherContract.createBeast(
             _name,
             stats,

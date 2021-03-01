@@ -14,7 +14,7 @@ contract MotherCore is Owner {
 
     //Events
 
-    event NewBeast(uint256 beastId, string name, uint256[22] dna);
+    event NewBeast(uint256 beastId, string name, uint8[22] dna);
     event LvlUp(uint256 beastId, string name, uint32 lvl);
     event NewTamer(uint256 tamerId, address tamerAddress);
     event StatBoost(uint256 beastId, string name, Stats stats);
@@ -145,7 +145,15 @@ contract MotherCore is Owner {
         emit NewBeast(id, _name, _dna);
     }
 
-    //############
-    //ownership
-    //############
+    function _checkUniqueDna(uint8[22] memory _dna)
+        internal
+        view
+        returns (bool)
+    {
+        if (hashedDnaExists[keccak256(abi.encodePacked(_dna))]) {
+            return false;
+        } else {
+            return true;
+        }
+    }
 }

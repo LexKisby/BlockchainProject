@@ -14,8 +14,8 @@ contract MotherGetter is MotherCore {
         return beasts;
     }
 
-    function getBeast(int256 _beastId) external view returns (Beast memory) {
-        return beasts(_beastId);
+    function getBeast(uint256 _beastId) external view returns (Beast memory) {
+        return beasts[_beastId];
     }
 
     function getCurrency() external view returns (uint256[2] memory) {
@@ -44,5 +44,9 @@ contract MotherGetter is MotherCore {
         returns (uint256)
     {
         return tamerBeastCount[_tamer];
+    }
+
+    function dnaExists(uint8[22] memory _dna) external view returns (bool) {
+        return _checkUniqueDna(_dna);
     }
 }
