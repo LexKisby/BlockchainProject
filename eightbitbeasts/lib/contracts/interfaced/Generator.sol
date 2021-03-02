@@ -272,6 +272,10 @@ contract Generator is Owner {
         );
     }
 
+    //########################
+    //external functions
+    //#############
+
     function generateStarterBeast(string memory _name) external {
         uint256 tbc = MotherContract.getTamerBeastCount(msg.sender);
         require(tbc == 0, "You already own beasts");

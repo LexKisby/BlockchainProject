@@ -8,7 +8,7 @@ contract MotherCore is Owner {
 
     //values
     uint256 minRecoveryPeriod = 1 days;
-    uint256 levelUpPrice = 100; //rubies
+    int256 levelUpPrice = 100; //rubies
     uint256 levelUpXp = 100; //xp
     uint256 etherFee = 0.001 ether;
 
@@ -81,7 +81,7 @@ contract MotherCore is Owner {
     mapping(address => uint256) tamerBeastCount;
     mapping(bytes32 => bool) hashedDnaExists;
     //currency
-    mapping(address => uint256[2]) currency;
+    mapping(address => int256[2]) currency;
 
     //modifiers
 

@@ -7,28 +7,42 @@ contract MotherSetter is MotherGetter {
     //setter functions
 
     //#####
+    //beast params
+    //#####
+    function triggerRecoveryPeriod(uint256 _beastId, uint32 _factor)
+        external
+        isTrusted()
+    {
+        beasts[_beastId].readyTime = uint32(
+            block.timestamp + _factor * minRecoveryPeriod
+        );
+    }
+
+    //#####
     //generation
     //######
 
     function createBeast(
         string calldata _name,
-        Stats _stats,
-        uint256 _level,
-        uint256 _xp,
-        uint256 _readyTime,
-        uint256 _winCount,
-        uint256 _lossCount,
-        uint256 _grade,
-        uint256 _extractionsRemaining,
-        uint8[22] _dna,
+        Stats memory _stats,
+        uint32 _level,
+        uint32 _xp,
+        uint32 _readyTime,
+        uint16 _winCount,
+        uint16 _lossCount,
+        uint8 _grade,
+        uint8 _extractionsRemaining,
+        uint8[22] memory _dna,
         address _address
     ) external isTrusted() {
         _initialiseBeast(
             _name,
             _stats,
+            _level,
+            _xp,
+            _readyTime,
             _winCount,
             _lossCount,
-            _readyTime,
             _grade,
             _extractionsRemaining,
             _dna,
@@ -37,16 +51,16 @@ contract MotherSetter is MotherGetter {
     }
 
     function setStats(
-        uint256 _beastId,
-        uint256 _hp,
-        uint256 _attackSpeed,
-        uint256 _evasion,
-        uint256 _primaryDamage,
-        uint256 _secondaryDamage,
-        uint256 _resistance,
-        uint256 _accuracy,
-        uint256 _constitution,
-        uint256 _intelligence
+        uint16 _beastId,
+        uint16 _hp,
+        uint16 _attackSpeed,
+        uint16 _evasion,
+        uint16 _primaryDamage,
+        uint16 _secondaryDamage,
+        uint16 _resistance,
+        uint16 _accuracy,
+        uint16 _constitution,
+        uint16 _intelligence
     ) external isTrusted() {
         beasts[_beastId].stats.hp = _hp;
         beasts[_beastId].stats.attackSpeed = _attackSpeed;
@@ -81,21 +95,18 @@ contract MotherSetter is MotherGetter {
     }
 
     function transferRubies(
-        uint256 _quantity,
+        int256 _quantity,
         address _from,
         address _to
     ) external isTrusted() {
-        require(
-            from_balance = currency[_from][1] >= _quantity,
-            "Insufficient funds"
-        );
+        require(currency[_from][1] >= _quantity, "Insufficient funds");
 
         currency[_from][1] -= _quantity;
         currency[_to][1] += _quantity;
     }
 
     function tranferEssence(
-        uint256 _quantity,
+        int256 _quantity,
         address _from,
         address _to
     ) external isTrusted() {
@@ -123,9 +134,9 @@ contract MotherSetter is MotherGetter {
     //Contract details
     //#######
 
-    function setLevelUpPrice(uint256 _price) external isOwner() {
+    function setLevelUpPrice(int256 _price) external isOwner() {
         levelUpPrice = _price;
-        emit ContractUpdate("levelUpPrice", _price);
+        emit ContractUpdate("levelUpPrice", uint256(_price));
     }
 
     function setXpRequired(uint256 _xp) external isOwner() {
@@ -140,13 +151,14 @@ contract MotherSetter is MotherGetter {
 
     //############
     //user facing functions
-    function levelUp(uint256 _beastId) external onlyOwner(_beastId) {
+    function levelUp(uint256 _beastId) external beastOwner(_beastId) {
         require(
             beasts[_beastId].xp >= beasts[_beastId].level * levelUpXp,
             "This beast does not have enough XP to level up"
         );
         require(
-            currency[msg.sender][1] >= levelUpPrice * beasts[_beastId].level,
+            currency[msg.sender][1] >=
+                levelUpPrice * int32(beasts[_beastId].level),
             "Insufficient funds [rubies]"
         );
         beasts[_beastId].xp = uint32(
@@ -168,14 +180,14 @@ contract MotherSetter is MotherGetter {
         currency[msg.sender][1] =
             currency[msg.sender][1] -
             levelUpPrice *
-            beasts[_beastId].level;
+            int32(beasts[_beastId].level);
         emit LvlUp(_beastId, beasts[_beastId].name, beasts[_beastId].level);
     }
 
     function changeName(uint256 _beastId, string calldata _newName)
         external
         payable
-        onlyOwner(_beastId)
+        beastOwner(_beastId)
     {
         require(msg.value == etherFee, "Incorrect funds supplied [ether]");
         beasts[_beastId].name = _newName;
