@@ -18,6 +18,11 @@ contract MotherSetter is MotherGetter {
         );
     }
 
+    function reduceExtractions(uint256 _beastId) external isTrusted() {
+        require(beasts[_beastId].extractionsRemaining > 0);
+        beasts[_beastId].extractionsRemaining--;
+    }
+
     //#####
     //generation
     //######
