@@ -128,7 +128,7 @@ contract MotherSetter is MotherGetter {
         currency[_address][1] += _quantity;
     }
 
-    function despositEssence(int256 _quantity, address _address)
+    function depositEssence(int256 _quantity, address _address)
         external
         isTrusted()
     {

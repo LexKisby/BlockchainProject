@@ -22,6 +22,14 @@ contract MotherGetter is MotherCore {
         return currency[msg.sender];
     }
 
+    function getNamedCurrency(address _address)
+        external
+        view
+        returns (int256[2] memory)
+    {
+        return currency[_address];
+    }
+
     function getBeastTamer(uint256 _beastId) external view returns (address) {
         return beastToTamer[_beastId];
     }

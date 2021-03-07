@@ -81,7 +81,7 @@ contract MotherCore is Owner {
     mapping(address => uint256) tamerBeastCount;
     mapping(bytes32 => bool) hashedDnaExists;
     //currency
-    mapping(address => int256[2]) currency;
+    mapping(address => int256[2]) public currency;
 
     //modifiers
 
