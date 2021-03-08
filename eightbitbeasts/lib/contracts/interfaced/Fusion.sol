@@ -60,19 +60,33 @@ interface MotherInterface {
     function triggerRecoveryPeriod(uint256 _beastId, uint32 _factor) external;
 }
 
-contract Fusion is Owner {
+interface MarketInterface {
     struct Extract {
         address owner;
         uint256 beastId;
         uint32 expiry;
     }
 
-    mapping(uint256 => Extract) extractToTamer;
+    function ownsExtract(uint256 _beastId, address _tamer)
+        external
+        view
+        returns (bool);
 
+    function removeExtract(uint256 _beastId) external;
+
+    function getExtract(uint256 _beastId)
+        external
+        view
+        returns (Extract memory);
+}
+
+contract Fusion is Owner {
     uint256 minRecoveryPeriod = 1 days;
 
     address MotherAddress = 0x06012c8cf97BEaD5deAe237070F9587f8E7A266d;
     MotherInterface MotherContract = MotherInterface(MotherAddress);
+    address MarketAddress = 0x06012c8cf97BEaD5deAe237070F9587f8E7A266d;
+    MarketInterface MarketContract = MarketInterface(MarketAddress);
 
     //internal helper functions
     function _checkUniqueDna(uint8[22] memory _dna)
@@ -524,8 +538,11 @@ contract Fusion is Owner {
         bool ownsExtract;
         //if we own the secondary, continue
         if (ownsSecondary != true) {
-            ownsExtract = (extractToTamer[_secondaryId].owner == msg.sender &&
-                extractToTamer[_secondaryId].expiry > block.timestamp);
+            MarketInterface.Extract memory extract =
+                MarketContract.getExtract(_secondaryId);
+            ownsExtract =
+                extract.owner == msg.sender &&
+                extract.expiry > block.timestamp;
             if (ownsExtract != true) {
                 revert("you cannot use this secondary beast");
             }
@@ -580,7 +597,7 @@ contract Fusion is Owner {
         MotherContract.triggerRecoveryPeriod(_primaryId, 2);
         //remove disposable extract by setting to 0 address
         if (ownsExtract) {
-            extractToTamer[_secondaryId].owner = address(0);
+            MarketContract.removeExtract(_secondaryId);
         }
         return success;
     }

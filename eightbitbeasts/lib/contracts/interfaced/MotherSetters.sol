@@ -18,6 +18,10 @@ contract MotherSetter is MotherGetter {
         );
     }
 
+    function setReadyTime(uint256 _beastId, uint32 _time) external isTrusted() {
+        beasts[_beastId].readyTime = _time;
+    }
+
     function reduceExtractions(uint256 _beastId) external isTrusted() {
         require(beasts[_beastId].extractionsRemaining > 0);
         beasts[_beastId].extractionsRemaining--;
