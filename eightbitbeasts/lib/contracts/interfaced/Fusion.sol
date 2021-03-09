@@ -44,16 +44,11 @@ interface MotherInterface {
         address _address
     ) external;
 
-    function getTamerBeastCount(address _tamer) external view returns (uint256);
+    function beastToTamer(uint256 _beastId) external view returns (address);
 
     function dnaExists(uint8[22] memory _dna) external view returns (bool);
 
-    function getBeast(uint256 _beastId) external view returns (Beast memory);
-
-    function isTamer(uint256 _beastId, address _tamer)
-        external
-        view
-        returns (bool);
+    function beasts(uint256 _beastId) external view returns (Beast memory);
 
     function reduceExtractions(uint256 _beastId) external;
 
@@ -535,16 +530,17 @@ contract Fusion is Owner {
     ) external returns (bool) {
         //check authorised for primary beast
         require(
-            MotherContract.isTamer(_primaryId, msg.sender),
+            MotherContract.beastToTamer(_primaryId) == msg.sender,
             "You do not own this beast"
         );
         //bring beasts into memory
         MotherInterface.Beast memory primaryBeast =
-            MotherContract.getBeast(_primaryId);
+            MotherContract.beasts(_primaryId);
         MotherInterface.Beast memory secondaryBeast =
-            MotherContract.getBeast(_secondaryId);
+            MotherContract.beasts(_secondaryId);
         //check if owns secondary
-        bool ownsSecondary = MotherContract.isTamer(_secondaryId, msg.sender);
+        bool ownsSecondary =
+            MotherContract.beastToTamer(_secondaryId) == msg.sender;
         bool ownsExtract;
         //if we own the secondary, continue
         if (ownsSecondary != true) {

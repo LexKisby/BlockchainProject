@@ -44,29 +44,28 @@ interface MotherInterface {
         address _address
     ) external;
 
-    function getTamerBeastCount(address _tamer) external view returns (uint256);
+    function tamerBeastCount(address _tamer) external view returns (uint256);
 
     function dnaExists(uint8[22] memory _dna) external view returns (bool);
 
-    function getBeast(uint256 _beastId) external view returns (Beast memory);
-
-    function isTamer(uint256 _beastId, address _tamer)
-        external
-        view
-        returns (bool);
+    function beasts(uint256 _beastId) external view returns (Beast memory);
 
     function reduceExtractions(uint256 _beastId) external;
 
     function triggerRecoveryPeriod(uint256 _beastId, uint32 _factor) external;
 
-    function getNamedCurrency(address _address)
+    function currency(address _address, uint256 _type)
         external
         view
-        returns (int256[2] memory);
+        returns (int256);
 
-    function depositRubies(int256 _quantity, address _address) external;
+    function beastToTamer(uint256 _beastId) external view returns (address);
 
-    function depositEssence(int256 _quantity, address _address) external;
+    function depositCurrency(
+        int256 _quantity,
+        address _address,
+        uint8 _type
+    ) external;
 
     function transferBeast(
         uint256 _beastId,
@@ -76,10 +75,11 @@ interface MotherInterface {
 
     function setReadyTime(uint256 _beastId, uint32 _time) external;
 
-    function transferEssence(
+    function transferCurrency(
         int256 _quantity,
         address _from,
-        address _to
+        address _to,
+        uint8 _type
     ) external;
 
     function howManyBeasts() external view returns (uint256);
@@ -136,10 +136,10 @@ contract Market is Owner {
     //#####################################
 
     function exchangeRubiesForEssence() external {
-        int256[2] memory balance = MotherContract.getNamedCurrency(msg.sender);
-        require(balance[1] >= 1000, "Insufficient funds [rubies]");
-        MotherContract.depositRubies(-1000, msg.sender);
-        MotherContract.depositEssence(10, msg.sender);
+        int256 balance = MotherContract.currency(msg.sender, 1);
+        require(balance >= 1000, "Insufficient funds [rubies]");
+        MotherContract.depositCurrency(-1000, msg.sender, 1);
+        MotherContract.depositCurrency(10, msg.sender, 0);
         emit RubiesExchangedForEssence(msg.sender);
     }
 
@@ -167,10 +167,10 @@ contract Market is Owner {
         uint32 _endTime
     ) external {
         require(
-            MotherContract.isTamer(_beastId, msg.sender),
+            MotherContract.beastToTamer(_beastId) == msg.sender,
             "You do not own this beast"
         );
-        MotherInterface.Beast memory beast = MotherContract.getBeast(_beastId);
+        MotherInterface.Beast memory beast = MotherContract.beasts(_beastId);
         require(
             beast.readyTime <= block.timestamp,
             "This beast is not yet ready"
@@ -218,10 +218,10 @@ contract Market is Owner {
         uint32 _endTime
     ) external {
         require(
-            MotherContract.isTamer(_beastId, msg.sender),
+            MotherContract.beastToTamer(_beastId) == msg.sender,
             "You do not own this beast"
         );
-        MotherInterface.Beast memory beast = MotherContract.getBeast(_beastId);
+        MotherInterface.Beast memory beast = MotherContract.beasts(_beastId);
         require(
             beast.readyTime <= block.timestamp,
             "This beast is not yet ready"
@@ -326,12 +326,13 @@ contract Market is Owner {
         uint256 deltaPrice = auction.startPrice - auction.endPrice;
         uint256 price = auction.endPrice + (deltaPrice / duration) * remaining;
         //charge
-        int256[2] memory balance = MotherContract.getNamedCurrency(msg.sender);
-        require(price < uint256(balance[0]), "Insufficient funds [essence]");
-        MotherContract.transferEssence(
+        int256 balance = MotherContract.currency(msg.sender, 0);
+        require(price < uint256(balance), "Insufficient funds [essence]");
+        MotherContract.transferCurrency(
             int256(price),
             msg.sender,
-            auction.seller
+            auction.seller,
+            0
         );
         //change owners
         MotherContract.transferBeast(_beastId, address(this), msg.sender);
@@ -357,15 +358,16 @@ contract Market is Owner {
             extractAuction.endTime > uint32(block.timestamp),
             "This auction has expired"
         );
-        int256[2] memory balance = MotherContract.getNamedCurrency(msg.sender);
+        int256 balance = MotherContract.currency(msg.sender, 0);
         require(
-            extractAuction.price < uint256(balance[0]),
+            extractAuction.price < uint256(balance),
             "Insufficient funds [essence]"
         );
-        MotherContract.transferEssence(
+        MotherContract.transferCurrency(
             int256(extractAuction.price),
             msg.sender,
-            extractAuction.seller
+            extractAuction.seller,
+            0
         );
         //change owner of extract
         extractToTamer[_beastId] = Extract(

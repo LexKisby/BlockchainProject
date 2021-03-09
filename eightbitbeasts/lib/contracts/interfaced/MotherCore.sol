@@ -78,7 +78,7 @@ contract MotherCore is Owner {
     Beast[] public beasts;
 
     mapping(uint256 => address) public beastToTamer;
-    mapping(address => uint256) tamerBeastCount;
+    mapping(address => uint256) public tamerBeastCount;
     mapping(bytes32 => bool) hashedDnaExists;
     //currency
     mapping(address => int256[2]) public currency;

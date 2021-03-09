@@ -115,59 +115,24 @@ contract MotherSetter is MotherGetter {
         emit BeastTransfer(_beastId, _from, _to);
     }
 
-    function transferRubies(
+    function tranferCurrency(
         int256 _quantity,
         address _from,
-        address _to
+        address _to,
+        uint8 _type
     ) external isTrusted() {
-        require(currency[_from][1] >= _quantity, "Insufficient funds");
+        currency[_from][_type] -= _quantity;
+        require(currency[_from][_type] >= 0, "Insufficient funds");
 
-        currency[_from][1] -= _quantity;
-        currency[_to][1] += _quantity;
+        currency[_to][_type] += _quantity;
     }
 
-    function tranferEssence(
+    function depositCurrency(
         int256 _quantity,
-        address _from,
-        address _to
+        address _address,
+        uint8 _type
     ) external isTrusted() {
-        currency[_from][0] -= _quantity;
-        require(currency[_from][0] >= 0, "Insufficient funds");
-
-        currency[_to][0] += _quantity;
-    }
-
-    function depositRubies(int256 _quantity, address _address)
-        external
-        isTrusted()
-    {
-        currency[_address][1] += _quantity;
-    }
-
-    function depositEssence(int256 _quantity, address _address)
-        external
-        isTrusted()
-    {
-        currency[_address][0] += _quantity;
-    }
-
-    //#######
-    //Contract details
-    //#######
-
-    function setLevelUpPrice(int256 _price) external isOwner() {
-        levelUpPrice = _price;
-        emit ContractUpdate("levelUpPrice", uint256(_price));
-    }
-
-    function setXpRequired(uint256 _xp) external isOwner() {
-        levelUpXp = _xp;
-        emit ContractUpdate("levelUpXp", _xp);
-    }
-
-    function setMinRecoveryPeriod(uint256 _time) external isOwner() {
-        minRecoveryPeriod = _time;
-        emit ContractUpdate("minRecoveryPeriod", _time);
+        currency[_address][_type] += _quantity;
     }
 
     //############

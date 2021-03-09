@@ -17,7 +17,7 @@ interface MotherInterface {
     }
 
     function createBeast(
-        string calldata _name,
+        string memory _name,
         Stats memory _stats,
         uint256 _level,
         uint256 _xp,
@@ -43,7 +43,7 @@ interface MotherInterface {
         uint256 _intelligence
     ) external;
 
-    function getTamerBeastCount(address _tamer) external view returns (uint256);
+    function tamerBeastCount(address _tamer) external view returns (uint256);
 
     function dnaExists(uint8[22] memory _dna) external view returns (bool);
 }
@@ -282,7 +282,7 @@ contract Generator is Owner {
     //#############
 
     function generateStarterBeast(string memory _name) external {
-        uint256 tbc = MotherContract.getTamerBeastCount(msg.sender);
+        uint256 tbc = MotherContract.tamerBeastCount(msg.sender);
         require(tbc == 0, "You already own beasts");
         uint8[22] memory dna = _generateRandomDnaFromGrade(10);
         uint8 grade = _gradeFromDna(dna);
