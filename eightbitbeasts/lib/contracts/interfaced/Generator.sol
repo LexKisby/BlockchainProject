@@ -56,6 +56,11 @@ contract Generator is Owner {
     address MotherAddress = 0x06012c8cf97BEaD5deAe237070F9587f8E7A266d;
     MotherInterface MotherContract = MotherInterface(MotherAddress);
 
+    function updateMotherAddress(address _address) external isOwner() {
+        MotherAddress = _address;
+        MotherContract = MotherInterface(MotherAddress);
+    }
+
     //internal functions
 
     //helper functions

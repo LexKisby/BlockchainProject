@@ -88,6 +88,16 @@ contract Fusion is Owner {
     address MarketAddress = 0x06012c8cf97BEaD5deAe237070F9587f8E7A266d;
     MarketInterface MarketContract = MarketInterface(MarketAddress);
 
+    function updateMotherAddress(address _address) external isOwner() {
+        MotherAddress = _address;
+        MotherContract = MotherInterface(MotherAddress);
+    }
+
+    function updateMarketAddress(address _address) external isOwner() {
+        MarketAddress = _address;
+        MarketContract = MarketInterface(MarketAddress);
+    }
+
     //internal helper functions
     function _checkUniqueDna(uint8[22] memory _dna)
         internal

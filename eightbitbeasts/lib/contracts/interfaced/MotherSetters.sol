@@ -27,6 +27,18 @@ contract MotherSetter is MotherGetter {
         beasts[_beastId].extractionsRemaining--;
     }
 
+    function battleWin(uint256 _beastId) external isTrusted() {
+        beasts[_beastId].winCount++;
+    }
+
+    function battleLoss(uint256 _beastId) external isTrusted() {
+        beasts[_beastId].lossCount++;
+    }
+
+    function addXp(uint256 _beastId, uint32 _xp) external isTrusted() {
+        beasts[_beastId].xp = beasts[_beastId].xp + _xp;
+    }
+
     //#####
     //generation
     //######
