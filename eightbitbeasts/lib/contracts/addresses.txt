@@ -4,3 +4,16 @@ Fusion Contract =
 Market Contract = 
 Battle Contract = 
 LeaderBoard Contract = 
+
+
+emergency copy paste
+
+function changeName(uint256 _beastId, string calldata _newName)
+        external
+        payable
+        beastOwner(_beastId)
+    {
+        require(msg.value == etherFee, "Incorrect funds supplied [ether]");
+        beasts[_beastId].name = _newName;
+        emit NameChange(_beastId, _newName);
+    }

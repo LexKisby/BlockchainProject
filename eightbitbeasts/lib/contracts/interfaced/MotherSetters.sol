@@ -44,7 +44,7 @@ contract MotherSetter is MotherGetter {
     //######
 
     function createBeast(
-        string calldata _name,
+        string memory _name,
         Stats memory _stats,
         uint32 _level,
         uint32 _xp,
@@ -203,15 +203,5 @@ contract MotherSetter is MotherGetter {
             levelUpPrice *
             int32(beasts[_beastId].level);
         emit LvlUp(_beastId, beasts[_beastId].name, beasts[_beastId].level);
-    }
-
-    function changeName(uint256 _beastId, string calldata _newName)
-        external
-        payable
-        beastOwner(_beastId)
-    {
-        require(msg.value == etherFee, "Incorrect funds supplied [ether]");
-        beasts[_beastId].name = _newName;
-        emit NameChange(_beastId, _newName);
     }
 }
