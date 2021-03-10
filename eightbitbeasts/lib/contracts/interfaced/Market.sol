@@ -44,10 +44,6 @@ interface MotherInterface {
         address _address
     ) external;
 
-    function tamerBeastCount(address _tamer) external view returns (uint256);
-
-    function dnaExists(uint8[22] memory _dna) external view returns (bool);
-
     function beasts(uint256 _beastId) external view returns (Beast memory);
 
     function reduceExtractions(uint256 _beastId) external;
@@ -121,7 +117,7 @@ contract Market is Owner {
         bool retrieved;
     }
 
-    mapping(uint256 => Extract) extractToTamer;
+    mapping(uint256 => Extract) public extractToTamer;
     Auction[] public auctions;
     ExtractAuction[] public extractAuctions;
 
@@ -141,21 +137,6 @@ contract Market is Owner {
         MotherContract.depositCurrency(-1000, msg.sender, 1);
         MotherContract.depositCurrency(10, msg.sender, 0);
         emit RubiesExchangedForEssence(msg.sender);
-    }
-
-    //####
-    //getters
-
-    function getAuctions() external view returns (Auction[] memory) {
-        return auctions;
-    }
-
-    function getExtractAuctions()
-        external
-        view
-        returns (ExtractAuction[] memory)
-    {
-        return extractAuctions;
     }
 
     //setters
@@ -433,23 +414,7 @@ contract Market is Owner {
         return extractsOwnedBySender;
     }
 
-    function ownsExtract(uint256 _beastId, address _tamer)
-        external
-        view
-        returns (bool)
-    {
-        return extractToTamer[_beastId].owner == _tamer;
-    }
-
     function removeExtract(uint256 _beastId) external isTrusted() {
         extractToTamer[_beastId].owner = address(0);
-    }
-
-    function getExtract(uint256 _beastId)
-        external
-        view
-        returns (Extract memory)
-    {
-        return extractToTamer[_beastId];
     }
 }

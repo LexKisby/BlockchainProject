@@ -37,6 +37,7 @@ contract MotherCore is Owner {
     }
 
     //Not used, exists only for reference
+    /**
     struct Dna {
         uint8 speciesPrimary;
         uint8 speciesSecondary;
@@ -58,7 +59,7 @@ contract MotherCore is Owner {
         uint8 mouthRec;
         uint8 eyesDom;
         uint8 extraRec;
-    }
+    }*/
 
     struct Beast {
         string name;

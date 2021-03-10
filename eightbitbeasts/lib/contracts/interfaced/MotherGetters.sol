@@ -31,6 +31,6 @@ contract MotherGetter is MotherCore {
     }
 
     function dnaExists(uint8[22] memory _dna) external view returns (bool) {
-        return _checkUniqueDna(_dna);
+        return _checkUniqueDna(_dna) == false;
     }
 }

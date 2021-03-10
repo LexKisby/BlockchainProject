@@ -62,14 +62,9 @@ interface MarketInterface {
         uint32 expiry;
     }
 
-    function ownsExtract(uint256 _beastId, address _tamer)
-        external
-        view
-        returns (bool);
-
     function removeExtract(uint256 _beastId) external;
 
-    function getExtract(uint256 _beastId)
+    function extractToTamer(uint256 _beastId)
         external
         view
         returns (Extract memory);
@@ -545,7 +540,7 @@ contract Fusion is Owner {
         //if we own the secondary, continue
         if (ownsSecondary != true) {
             MarketInterface.Extract memory extract =
-                MarketContract.getExtract(_secondaryId);
+                MarketContract.extractToTamer(_secondaryId);
             ownsExtract =
                 extract.owner == msg.sender &&
                 extract.expiry > block.timestamp;
