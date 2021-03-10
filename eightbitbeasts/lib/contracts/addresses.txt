@@ -1,7 +1,7 @@
-Mother Contract = 
-Generator Contract = 
-Fusion Contract = 
-Market Contract = 
+Mother Contract = 0x22c94BA007a721Ea20af612A1F03fB8F97a0dDd1
+Generator Contract = 0x9cd7E61B6668ef2D2820d35276eC0b6E6ceA3f10
+Fusion Contract = 0x4Fa904D83315C8D111D7253eb56c425e78846831
+Market Contract = 0xB69c947c742cCB2172345571E94D7EF31c02fD2E
 Battle Contract = 
 LeaderBoard Contract = 
 
