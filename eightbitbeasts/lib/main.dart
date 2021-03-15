@@ -17,11 +17,6 @@ final myWalletProvider = ChangeNotifierProvider<MyWalletChangeNotifier>((ref) {
   return MyWalletChangeNotifier();
 });
 
-final myMonstersProvider =
-    ChangeNotifierProvider<MyMonstersChangeNotifier>((ref) {
-  return MyMonstersChangeNotifier();
-});
-
 final myEthDataProvider = ChangeNotifierProvider<EthChangeNotifier>((ref) {
   return EthChangeNotifier();
 });

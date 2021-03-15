@@ -40,7 +40,7 @@ class _MonsterFlipCardState extends State<MonsterFlipCard> {
       case 9:
         return Icons.filter_9_sharp;
         break;
-      case 0:
+      case 10:
         return Icons.filter_9_plus_sharp;
         break;
     }
@@ -76,7 +76,7 @@ class _MonsterFlipCardState extends State<MonsterFlipCard> {
       case 9:
         return Colors.brown[700];
         break;
-      case 0:
+      case 10:
         return Colors.black;
         break;
     }
@@ -112,7 +112,7 @@ class _MonsterFlipCardState extends State<MonsterFlipCard> {
       case 9:
         return 0;
         break;
-      case 0:
+      case 10:
         return 0;
         break;
     }
@@ -143,18 +143,26 @@ class _MonsterFlipCardState extends State<MonsterFlipCard> {
               child: Column(mainAxisSize: MainAxisSize.min, children: [
                 widget.img,
                 Transform(
-                    transform: Matrix4.translationValues(-6, -15, 0.0),
+                    transform: Matrix4.translationValues(-3, -15, 0.0),
                     child: Container(
-                      height: 21,
-                      child: ListTile(
-                          title: Text(widget.monster.name,
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  color: Theme.of(context)
-                                      .textTheme
-                                      .bodyText1
-                                      .color))),
-                    )),
+                        height: 21,
+                        child: ListTile(
+                          title: Row(
+                            children: [
+                              Flexible(
+                                  child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(widget.monster.name,
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodyText1
+                                            .color)),
+                              )),
+                            ],
+                          ),
+                        ))),
                 Transform(
                     transform: Matrix4.translationValues(2, -15, 0.0),
                     child: Container(
@@ -165,16 +173,20 @@ class _MonsterFlipCardState extends State<MonsterFlipCard> {
                                 color:
                                     Theme.of(context).textTheme.bodyText1.color,
                                 size: 18),
-                            Text(
-                                " Grade " +
-                                    widget.monster.grade.toString() +
-                                    " Beast",
-                                style: TextStyle(
-                                    fontSize: 8,
-                                    color: Theme.of(context)
-                                        .textTheme
-                                        .bodyText1
-                                        .color)),
+                            Flexible(
+                                child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                  " Grade " +
+                                      widget.monster.grade.toString() +
+                                      " Beast",
+                                  style: TextStyle(
+                                      fontSize: 8,
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .bodyText1
+                                          .color)),
+                            ))
                           ]),
                         ))),
               ])),

@@ -11,10 +11,10 @@ class Monster {
   });
 
   String name;
-  int id;
+  BigInt id;
   double grade;
   String stats;
-  int dna;
+  String dna;
   Image img;
 }
 

@@ -13,8 +13,7 @@ class InventoryContent extends ConsumerWidget {
       child: GridView.builder(
         itemBuilder: (context, position) {
           return MonsterFlipCard(
-              monster: monsterList[position],
-              img: data.data.monsterImageList[position]);
+              monster: monsterList[position], img: monsterList[position].img);
         },
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             childAspectRatio: itemWidth / itemHeight, crossAxisCount: 2),

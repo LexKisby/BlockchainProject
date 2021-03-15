@@ -65,7 +65,7 @@ class EthChangeNotifier extends ChangeNotifier {
     data.myPrivateKey = myPrivateKey;
     data.incubating = [];
 
-    //await getCurrency(data.myPublicAddress);
+    await getCurrency(data.myPublicAddress);
     data.hasCurrency = true;
 
     notifyListeners();
@@ -76,11 +76,37 @@ class EthChangeNotifier extends ChangeNotifier {
 // mini update functions
 //###############################################
   Future<void> inventoryRefresh() async {
-    //await getMyMonsters();
-    //await getCurrency(data.myPublicAddress);
-
-    await testFunction();
+    List<dynamic> inv = await getInventory(data.myPublicAddress);
+    await getCurrency(data.myPublicAddress);
+    print(inv);
+    int l = inv[0].length;
+    data.monsterList = [];
+    for (int i = 0; i < l; i++) {
+      data.monsterList.add(Monster(
+          name: inv[0][i][0],
+          id: inv[0][i][2],
+          grade: double.parse(inv[0][i][8].toString()),
+          stats: makeStats(inv[0][i][1]),
+          dna: convert(inv[0][i][10]),
+          img: Image.asset("lib/assets/fox.png")));
+    }
     notifyListeners();
+  }
+
+  String convert(List<dynamic> n) {
+    String s = '';
+    for (int x = 0; x < 22; x++) {
+      s += n[x].toString();
+    }
+    return s;
+  }
+
+  String makeStats(List<dynamic> stats) {
+    String s = '';
+    for (int j = 0; j < stats.length; j++) {
+      s += stats[j].toString().padLeft(3, '0');
+    }
+    return s;
   }
 
   void updateCredentials(value) {
@@ -133,151 +159,8 @@ class EthChangeNotifier extends ChangeNotifier {
     //await getMarketMonsters();
     //await getBattleInfo();
     //await getLeaderBoards();
-
-    await testFunction();
-
     notifyListeners();
     return;
-  }
-
-  Future<void> testFunction() async {
-    data.incubating.add(Monster(
-        name: "MYSTERY1",
-        id: 37,
-        grade: 8,
-        stats: "???????????????????????????",
-        dna: 82938202303211,
-        img: Image.asset("lib/assets/mysteryBox.png")));
-    data.incubating.add(Monster(
-        name: "MYSTERY2",
-        id: 38,
-        grade: 7,
-        stats: "???????????????????????????",
-        dna: 82938202303211,
-        img: Image.asset("lib/assets/mysteryBox.png")));
-    data.incubating.add(Monster(
-        name: "MYSTERY3",
-        id: 39,
-        grade: 3,
-        stats: "???????????????????????????",
-        dna: 82938202303211,
-        img: Image.asset("lib/assets/mysteryBox.png")));
-    data.marketMonstersForAuction.add(Auction(
-      monster: Monster(
-        name: 'MOBIUS',
-        id: 1,
-        grade: 1,
-        stats: "000003300000044000000000000",
-        dna: 17374827,
-        img: Image.asset("lib/assets/bigRuby.png"),
-      ),
-      startTime: 1607650841,
-      duration: 500000,
-      startPrice: 10000,
-      endPrice: 10,
-      seller: "yo mama",
-      isMine: false,
-    ));
-
-    data.marketMonstersForDonor.add(Auction(
-      monster: Monster(
-        name: 'FOBIUS',
-        id: 2,
-        grade: 2,
-        stats: "000000000000000000000000000",
-        dna: 17374827,
-        img: Image.asset("lib/assets/fox.png"),
-      ),
-      startTime: 1607650841,
-      duration: 5000000,
-      startPrice: 10000,
-      endPrice: 10,
-      seller: "yo mama",
-      isMine: false,
-    ));
-
-    data.myMarketMonstersForAuction.add(Auction(
-      monster: Monster(
-        name: 'TOBIUS',
-        id: 3,
-        grade: 5,
-        stats: "499900000000380460000000100",
-        dna: 17374827,
-        img: Image.asset("lib/assets/fox.png"),
-      ),
-      startTime: 1607650841,
-      duration: 5000,
-      startPrice: 10000,
-      endPrice: 10,
-      seller: "yo mama",
-      isMine: true,
-    ));
-
-    data.monsterList.add(Monster(
-      name: 'MOBIUS',
-      id: 1,
-      grade: 1,
-      stats: "000000000000000000000000000",
-      dna: 17374827,
-    ));
-    data.monsterList.add(Monster(
-        name: "0123456",
-        id: 2,
-        grade: 1,
-        stats: "001004003005003006012003008",
-        dna: 23842938));
-    data.monsterList.add(Monster(
-      name: "MATT",
-      id: 3,
-      grade: 3,
-      stats: "999999999999999999999999999",
-      dna: 390473,
-    ));
-    data.monsterList.add(Monster(
-      name: "VELINA",
-      id: 4,
-      grade: 2,
-      stats: "999999999999999999999999999",
-      dna: 390473,
-    ));
-    data.monsterList.add(Monster(
-      name: "MATT",
-      id: 5,
-      grade: 5,
-      stats: "999999999999999999999999999",
-      dna: 390473,
-    ));
-    data.myMonsterExtracts.add(Monster(
-        name: "FRANK",
-        id: 6,
-        grade: 2,
-        stats: "311113611357362265020520209",
-        dna: 583938540,
-        img: Image.asset("lib/assets/fox.png")));
-    data.myMonsterExtracts.add(Monster(
-        name: "JANGO",
-        id: 7,
-        grade: 7,
-        stats: "311113611357362265020520209",
-        dna: 583938540,
-        img: Image.asset("lib/assets/bee.png")));
-    data.myMonsterExtracts.add(Monster(
-        name: "FRANK",
-        id: 8,
-        grade: 5,
-        stats: "311113611357362265020520209",
-        dna: 583938540,
-        img: Image.asset("lib/assets/bigRuby.png")));
-
-    data.monsterImageList.addAll([
-      Image.asset("lib/assets/bigRuby.png"),
-      Image.asset("lib/assets/bigEssence.png"),
-      Image.asset("lib/assets/fox.png"),
-      Image.asset("lib/assets/fox.png"),
-      Image.asset("lib/assets/fox.png"),
-    ]);
-
-    print('done');
   }
 
 //#########################################################################################
@@ -285,9 +168,9 @@ class EthChangeNotifier extends ChangeNotifier {
 //#########################################################################################
 
   //Load contract
-  Future<DeployedContract> loadContract(int type) async {
-    String prepABI = abi_raw[type];
-    String contractAddress = contract_addresses[type];
+  Future<DeployedContract> loadContract(String type) async {
+    String prepABI = contractAddresses[type][1];
+    String contractAddress = contractAddresses[type][0];
 
     final contract = DeployedContract(ContractAbi.fromJson(prepABI, "contract"),
         EthereumAddress.fromHex(contractAddress));
@@ -296,7 +179,7 @@ class EthChangeNotifier extends ChangeNotifier {
 
   //general function to query contract
   Future<List<dynamic>> query(
-      String functionName, List<dynamic> args, int type) async {
+      String functionName, List<dynamic> args, String type) async {
     final contract = await loadContract(type);
     final ethFunction = contract.function(functionName);
     final response = await ethClient.call(
@@ -307,7 +190,7 @@ class EthChangeNotifier extends ChangeNotifier {
 
   //general function to transact with contract
   Future<String> submit(
-      String functionName, List<dynamic> args, int type) async {
+      String functionName, List<dynamic> args, String type) async {
     final contract = await loadContract(type);
     final ethFunction = contract.function(functionName);
     print('loaded function from contract');
@@ -323,125 +206,31 @@ class EthChangeNotifier extends ChangeNotifier {
   }
 
 //##############################################################################################
-  //Ingame currency, non erc20 token, called 'ruby'
-  Future<void> getRubyBalance(String targetAddress) async {
-    EthereumAddress address = EthereumAddress.fromHex(targetAddress);
-    List<dynamic> response = await query("getRubyBalance", [address], 0);
-    data.rubies = double.parse(response[0].toString());
-  }
-
-  //ingame currency, is an erc 20 token, rare, called "Essence"
-  Future<void> getEssenceBalance(String targetAddress) async {
-    EthereumAddress address = EthereumAddress.fromHex(targetAddress);
-    List<dynamic> response = await query("getEssenceBalance", [address], 0);
-    data.essence = double.parse(response[0].toString());
-  }
 
   Future<void> getCurrency(String targetAddress) async {
-    await getEssenceBalance(targetAddress);
-    await getRubyBalance(targetAddress);
+    EthereumAddress address = EthereumAddress.fromHex(targetAddress);
+    List<dynamic> responseE =
+        await query("currency", [address, BigInt.from(0)], 'mother');
+    List<dynamic> responseR =
+        await query("currency", [address, BigInt.from(1)], 'mother');
+    data.essence = double.parse(responseE[0].toString());
+    data.rubies = double.parse(responseR[0].toString());
     data.hasCurrency = true;
   }
 
   Future<void> getMarketMonsters() async {
-    List<dynamic> response = await query("getMarketMonsters", [], 0);
+    List<dynamic> response = await query("getMarketMonsters", [], 'market');
     data.marketMonstersForAuction = response[0];
     data.marketMonstersForDonor = response[1];
   }
 
+  Future<List<dynamic>> getInventory(targetAddress) async {
+    EthereumAddress address = EthereumAddress.fromHex(targetAddress);
+    List<dynamic> response =
+        await query("getBeastsByTamer", [address], 'mother');
+    return response;
+  }
+
 //Other functions to get stuffs like market monsters, and inventory.
 
-}
-
-class MyMonstersChangeNotifier extends ChangeNotifier {
-  MyMonstersChangeNotifier([this.info]);
-
-  int n;
-  List<Monster> info;
-  List<Image> imgs;
-  //need function to retrieve info from blockchain
-
-  //need function to retrieve image for each monster
-  void getInventory() {}
-
-  //fake list to test provider:
-  void update() {
-    info = [];
-    imgs = [];
-    info.add(Monster(
-      name: 'MOBIUS',
-      id: 1,
-      grade: 1,
-      stats: "000000000000000000000000000",
-      dna: 17374827,
-    ));
-    info.add(Monster(
-        name: "0123456",
-        id: 2,
-        grade: 1,
-        stats: "001004003005003006012003008",
-        dna: 23842938));
-    info.add(Monster(
-      name: "MATT",
-      id: 0,
-      grade: 3,
-      stats: "999999999999999999999999999",
-      dna: 390473,
-    ));
-    info.add(Monster(
-      name: "VELINA",
-      id: 0,
-      grade: 2,
-      stats: "999999999999999999999999999",
-      dna: 390473,
-    ));
-    info.add(Monster(
-      name: "MATT",
-      id: 0,
-      grade: 5,
-      stats: "999999999999999999999999999",
-      dna: 390473,
-    ));
-    info.add(Monster(
-      name: "ALEX",
-      id: 0,
-      grade: 1,
-      stats: "999999969999979999999999999",
-      dna: 390473,
-    ));
-    info.add(Monster(
-      name: "MATT",
-      id: 0,
-      grade: 7,
-      stats: "999999999999999999999999999",
-      dna: 390473,
-    ));
-    info.add(Monster(
-      name: "MATT",
-      id: 0,
-      grade: 8,
-      stats: "999999999999999999999999999",
-      dna: 390473,
-    ));
-    info.add(Monster(
-      name: "MATT",
-      id: 0,
-      grade: 9,
-      stats: "999999999999999999999999999",
-      dna: 390473,
-    ));
-    info.add(Monster(
-      name: "MATT",
-      id: 0,
-      grade: 0,
-      stats: "999999999999999999999999999",
-      dna: 390473,
-    ));
-    imgs.addAll([
-      Image.asset("lib/assets/abi/square.jpg"),
-      Image.asset("lib/assets/fox.png"),
-      Image.asset("lib/assets/fox.png")
-    ]);
-    notifyListeners();
-  }
 }
