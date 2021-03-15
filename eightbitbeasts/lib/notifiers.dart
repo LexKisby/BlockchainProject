@@ -285,7 +285,7 @@ class EthChangeNotifier extends ChangeNotifier {
     while (n < limit && n < int.parse(response[1].toString())) {
       List<dynamic> res = await query("Auctions", [n], 'market');
       if (data.myPublicAddress.toString().toLowerCase() ==
-          res[1].toString().toLowerCase() {
+          res[1].toString().toLowerCase()) {
         data.myMarketMonstersForDonor.add(Auction(
             seller: res[1].toString(),
             startPrice: double.parse(res[2].toString()),
@@ -336,5 +336,4 @@ class EthChangeNotifier extends ChangeNotifier {
   }
 
 //Other functions to get stuffs like market monsters, and inventory.
-
 }
