@@ -7,6 +7,10 @@ class Monster {
     this.grade,
     this.stats,
     this.dna,
+    this.wins,
+    this.losses,
+    this.readyTime,
+    this.remaining,
     this.img,
   });
 
@@ -15,6 +19,10 @@ class Monster {
   double grade;
   String stats;
   String dna;
+  double wins;
+  double losses;
+  double readyTime;
+  double remaining;
   Image img;
 }
 

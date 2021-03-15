@@ -59,7 +59,6 @@ class EthChangeNotifier extends ChangeNotifier {
     data.myMarketMonstersForAuction = [];
     data.myMarketMonstersForDonor = [];
     data.monsterList = [];
-    data.monsterImageList = [];
     data.myMonsterExtracts = [];
     data.myPublicAddress = myAddress;
     data.myPrivateKey = myPrivateKey;
@@ -119,9 +118,8 @@ class EthChangeNotifier extends ChangeNotifier {
   }
 
   Future<void> marketRefresh() async {
-    //await getMarketMonsters();
-    print("refreshed monsters");
-    //await getCurrency(data.myPublicAddress);
+    await getMarketMonsters(10);
+    await getCurrency(data.myPublicAddress);
     notifyListeners();
   }
 
@@ -218,10 +216,116 @@ class EthChangeNotifier extends ChangeNotifier {
     data.hasCurrency = true;
   }
 
-  Future<void> getMarketMonsters() async {
-    List<dynamic> response = await query("getMarketMonsters", [], 'market');
-    data.marketMonstersForAuction = response[0];
-    data.marketMonstersForDonor = response[1];
+  Future<void> getMarketMonsters(int limit) async {
+    data.marketMonstersForAuction = [];
+    data.marketMonstersForDonor = [];
+    data.myMarketMonstersForAuction = [];
+    data.myMarketMonstersForDonor = [];
+    await getAuctions(limit);
+    await getExtractAuctions(limit);
+  }
+
+  Future<void> getAuctions(int limit) async {
+    List<dynamic> response = await query("getAuctions", [], 'market');
+    //gets # of entries in each
+    print(response);
+    int n = limit - 10;
+    while (n < limit && n < int.parse(response[0].toString())) {
+      List<dynamic> res = await query("auctions", [BigInt.from(n)], 'market');
+      print(res);
+      if (data.myPublicAddress.toString().toLowerCase() ==
+          res[1].toString().toLowerCase()) {
+        data.myMarketMonstersForAuction.add(Auction(
+            seller: res[1].toString(),
+            startPrice: double.parse(res[2].toString()),
+            endPrice: double.parse(res[3].toString()),
+            startTime: double.parse(res[4].toString()),
+            duration: double.parse((res[5] - res[4]).toString()),
+            isMine: true,
+            monster: Monster(
+                name: res[0][0],
+                id: res[0][2],
+                grade: double.parse(res[0][8].toString()),
+                stats: makeStats(res[0][1]),
+                dna: convert(res[0][10]),
+                wins: double.parse(res[0][6].toString()),
+                losses: double.parse(res[0][7].toString()),
+                readyTime: double.parse(res[0][5].toString()),
+                remaining: double.parse(res[0][9].toString()),
+                img: Image.asset("lib/assets/fox.png"))));
+      } else {
+        data.marketMonstersForAuction.add(Auction(
+            seller: res[1].toString(),
+            startPrice: double.parse(res[2].toString()),
+            endPrice: double.parse(res[3].toString()),
+            startTime: double.parse(res[4].toString()),
+            duration: double.parse((res[5] - res[4]).toString()),
+            isMine: false,
+            monster: Monster(
+                name: res[0][0],
+                id: res[0][2],
+                grade: double.parse(res[0][8].toString()),
+                stats: makeStats(res[0][1]),
+                dna: convert(res[0][10]),
+                wins: double.parse(res[0][6].toString()),
+                losses: double.parse(res[0][7].toString()),
+                readyTime: double.parse(res[0][5].toString()),
+                remaining: double.parse(res[0][9].toString()),
+                img: Image.asset("lib/assets/fox.png"))));
+      }
+      n += 1;
+    }
+  }
+
+  Future<void> getExtractAuctions(int limit) async {
+    List<dynamic> response = await query("getAuctions", [], 'market');
+    //gets # of entries in each
+    int n = limit - 10;
+
+    while (n < limit && n < int.parse(response[1].toString())) {
+      List<dynamic> res = await query("Auctions", [n], 'market');
+      if (data.myPublicAddress.toString().toLowerCase() ==
+          res[1].toString().toLowerCase() {
+        data.myMarketMonstersForDonor.add(Auction(
+            seller: res[1].toString(),
+            startPrice: double.parse(res[2].toString()),
+            endPrice: double.parse(res[3].toString()),
+            startTime: double.parse(res[4].toString()),
+            duration: double.parse((res[5] - res[4]).toString()),
+            isMine: false,
+            monster: Monster(
+                name: res[0][0],
+                id: res[0][2],
+                grade: double.parse(res[0][8].toString()),
+                stats: makeStats(res[0][1]),
+                dna: convert(res[0][10]),
+                wins: double.parse(res[0][6].toString()),
+                losses: double.parse(res[0][7].toString()),
+                readyTime: double.parse(res[0][5].toString()),
+                remaining: double.parse(res[0][9].toString()),
+                img: Image.asset("lib/assets/fox.png"))));
+      } else {
+        data.marketMonstersForDonor.add(Auction(
+            seller: res[1].toString(),
+            startPrice: double.parse(res[2].toString()),
+            endPrice: double.parse(res[3].toString()),
+            startTime: double.parse(res[4].toString()),
+            duration: double.parse((res[5] - res[4]).toString()),
+            isMine: false,
+            monster: Monster(
+                name: res[0][0],
+                id: res[0][2],
+                grade: double.parse(res[0][8].toString()),
+                stats: makeStats(res[0][1]),
+                dna: convert(res[0][10]),
+                wins: double.parse(res[0][6].toString()),
+                losses: double.parse(res[0][7].toString()),
+                readyTime: double.parse(res[0][5].toString()),
+                remaining: double.parse(res[0][9].toString()),
+                img: Image.asset("lib/assets/fox.png"))));
+      }
+      n += 1;
+    }
   }
 
   Future<List<dynamic>> getInventory(targetAddress) async {

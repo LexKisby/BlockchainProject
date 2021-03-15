@@ -247,7 +247,15 @@ class AuctionDetails extends StatelessWidget {
                                       Spacer(),
                                       Row(children: [
                                         Spacer(),
-                                        Text("##/###",
+                                        Text(
+                                            data.monster.wins
+                                                    .round()
+                                                    .toString() +
+                                                '/' +
+                                                (data.monster.wins +
+                                                        data.monster.losses)
+                                                    .round()
+                                                    .toString(),
                                             style: style(12.toDouble()))
                                       ])
                                     ],
@@ -265,7 +273,8 @@ class AuctionDetails extends StatelessWidget {
                                       Spacer(),
                                       Row(children: [
                                         Spacer(),
-                                        Text("##", style: style(12.toDouble()))
+                                        Text(data.monster.remaining.toString(),
+                                            style: style(12.toDouble()))
                                       ]),
                                     ],
                                   ),

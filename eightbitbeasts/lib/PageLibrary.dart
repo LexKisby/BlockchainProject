@@ -1257,7 +1257,7 @@ const contractAddresses = {
 ]'''
   ],
   'market': [
-    '0xB69c947c742cCB2172345571E94D7EF31c02fD2E',
+    '0x7E6b3cB6d99d60ae0127C571A67604946F7E8f53',
     '''[
 	{
 		"inputs": [
@@ -1838,6 +1838,24 @@ const contractAddresses = {
 				"internalType": "uint32",
 				"name": "expiry",
 				"type": "uint32"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getAuctions",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",
