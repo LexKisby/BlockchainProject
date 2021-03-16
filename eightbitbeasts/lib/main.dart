@@ -35,8 +35,14 @@ class MyApp extends StatelessWidget {
         accentColor: const Color(0xffee5622),
         canvasColor: const Color(0xff121212),
         backgroundColor: const Color(0xff362234),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+                shape: PixelBorder.shape(
+          pixelSize: 5,
+          borderRadius: BorderRadius.circular(10),
+        ))),
         buttonTheme: ButtonThemeData(
-            shape: PixelBorder(
+            shape: PixelBorder.shape(
           pixelSize: 5,
           borderRadius: BorderRadius.circular(10),
         )),

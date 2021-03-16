@@ -81,9 +81,8 @@ class MyMarketContent extends ConsumerWidget {
             height: 40,
             child: Card(
                 color: Theme.of(context).primaryColor,
-                shape: PixelBorder(
-                  style: BorderStyle.solid,
-                  borderColor: Theme.of(context).backgroundColor,
+                shape: PixelBorder.solid(
+                  color: Theme.of(context).backgroundColor,
                   pixelSize: 1,
                   borderRadius: BorderRadius.circular(6),
                 ),
@@ -106,9 +105,8 @@ class MyMarketContent extends ConsumerWidget {
             height: 40,
             child: Card(
                 color: Theme.of(context).primaryColor,
-                shape: PixelBorder(
-                  style: BorderStyle.solid,
-                  borderColor: Theme.of(context).backgroundColor,
+                shape: PixelBorder.solid(
+                  color: Theme.of(context).backgroundColor,
                   pixelSize: 1,
                   borderRadius: BorderRadius.circular(6),
                 ),
@@ -205,9 +203,8 @@ class MarketRow extends StatelessWidget {
               tag: data.monster.id.toString() + "card",
               child: Card(
                 color: Theme.of(context).primaryColor,
-                shape: PixelBorder(
-                  style: BorderStyle.solid,
-                  borderColor: Theme.of(context).backgroundColor,
+                shape: PixelBorder.solid(
+                  color: Theme.of(context).backgroundColor,
                   pixelSize: 1,
                   borderRadius: BorderRadius.circular(6),
                 ),

@@ -15,9 +15,8 @@ class Ruby extends ConsumerWidget {
         height: 25,
         width: 120,
         child: Card(
-            shape: PixelBorder(
-                style: BorderStyle.solid,
-                borderColor: Colors.black,
+            shape: PixelBorder.solid(
+                color: Colors.black,
                 pixelSize: 1,
                 borderRadius: BorderRadius.circular(4)),
             color: Theme.of(context).backgroundColor,
@@ -50,9 +49,8 @@ class Essence extends ConsumerWidget {
         height: 25,
         width: 120,
         child: Card(
-            shape: PixelBorder(
-                style: BorderStyle.solid,
-                borderColor: Colors.black,
+            shape: PixelBorder.solid(
+                color: Colors.black,
                 pixelSize: 1,
                 borderRadius: BorderRadius.circular(4)),
             color: Theme.of(context).backgroundColor,

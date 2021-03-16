@@ -134,9 +134,8 @@ class _MonsterFlipCardState extends State<MonsterFlipCard> {
               color: Theme.of(context).primaryColor,
               shadowColor: typeColor,
               elevation: elevation,
-              shape: PixelBorder(
-                  style: BorderStyle.solid,
-                  borderColor: typeColor,
+              shape: PixelBorder.solid(
+                  color: typeColor,
                   pixelSize: 3,
                   borderRadius: BorderRadius.circular(15)),
               clipBehavior: Clip.antiAlias,
@@ -194,10 +193,9 @@ class _MonsterFlipCardState extends State<MonsterFlipCard> {
               color: Theme.of(context).primaryColor,
               elevation: elevation,
               shadowColor: typeColor,
-              shape: PixelBorder(
+              shape: PixelBorder.solid(
                   pixelSize: 3,
-                  borderColor: typeColor,
-                  style: BorderStyle.solid,
+                  color: typeColor,
                   borderRadius: BorderRadius.circular(15)),
               clipBehavior: Clip.antiAlias,
               child: Column(mainAxisSize: MainAxisSize.min, children: [
@@ -366,9 +364,8 @@ class MonsterPicSmall extends StatelessWidget {
   build(BuildContext context) {
     return Card(
       color: Theme.of(context).primaryColor,
-      shape: PixelBorder(
-        style: BorderStyle.solid,
-        borderColor: getGradeColor(data.grade),
+      shape: PixelBorder.solid(
+        color: getGradeColor(data.grade),
         pixelSize: 1,
         borderRadius: BorderRadius.circular(6),
       ),

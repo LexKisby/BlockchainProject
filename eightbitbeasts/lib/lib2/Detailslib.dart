@@ -83,9 +83,8 @@ class AuctionDetails extends StatelessWidget {
                       child: Hero(
                         tag: data.monster.id.toString() + "card",
                         child: Card(
-                            shape: PixelBorder(
-                              style: BorderStyle.solid,
-                              borderColor: Theme.of(context).backgroundColor,
+                            shape: PixelBorder.solid(
+                              color: Theme.of(context).backgroundColor,
                               pixelSize: 3,
                               borderRadius: BorderRadius.circular(12),
                             ),
