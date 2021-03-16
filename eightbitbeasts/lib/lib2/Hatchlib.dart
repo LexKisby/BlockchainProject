@@ -16,8 +16,9 @@ class LabContent extends ConsumerWidget {
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    RaisedButton(
-                      color: Theme.of(context).backgroundColor,
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          primary: Theme.of(context).backgroundColor),
                       onPressed: () {
                         //TODO
                         print("fusion");

@@ -139,7 +139,7 @@ class MyMarketContent extends ConsumerWidget {
 class MarketRow extends StatelessWidget {
   final Auction data;
 
-  MarketRow({this.data});
+  MarketRow({@required this.data});
 
   format(Duration d) => d.toString().split('.').first.padLeft(8, "0");
 

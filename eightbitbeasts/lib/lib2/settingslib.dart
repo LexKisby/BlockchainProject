@@ -184,6 +184,8 @@ class SettingsWalletCard extends ConsumerWidget {
   @override
   build(BuildContext context, ScopedReader watch) {
     final data = watch(myEthDataProvider);
+    String myAdd = data.data.myPublicAddress;
+    myAdd ??= 'None given';
     return Container(
         padding: EdgeInsets.all(4),
         child: Card(
@@ -200,8 +202,7 @@ class SettingsWalletCard extends ConsumerWidget {
                           fontSize: 10,
                           color: Theme.of(context).textTheme.bodyText1.color))),
               ListTile(
-                  title: Text(
-                      "Current Address: \n\n" + data.data.myPublicAddress,
+                  title: Text("Current Address: \n\n" + myAdd,
                       style: TextStyle(
                           fontSize: 10,
                           color: Theme.of(context).textTheme.bodyText1.color))),
@@ -250,15 +251,16 @@ class WalletForm extends ConsumerWidget {
                 }),
               ),
               Spacer(),
-              RaisedButton(
+              ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState.validate()) {
                     // If the form is valid, display a Snackbar.
-                    Scaffold.of(context).showSnackBar(
+                    ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('Processing Data')));
                   }
                 },
-                color: Theme.of(context).accentColor,
+                style: ElevatedButton.styleFrom(
+                    primary: Theme.of(context).accentColor),
                 child: Icon(Icons.keyboard_arrow_right_sharp),
               )
             ],

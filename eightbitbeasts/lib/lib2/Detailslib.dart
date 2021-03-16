@@ -2,7 +2,7 @@ part of page_classes;
 
 class AuctionDetails extends StatelessWidget {
   AuctionDetails({
-    this.data,
+    @required this.data,
   });
 
   final Auction data;

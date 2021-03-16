@@ -72,7 +72,7 @@ class Essence extends ConsumerWidget {
 
 class RubyIcon extends StatelessWidget {
   RubyIcon({
-    this.height,
+    @required this.height,
   });
 
   final double height;
@@ -86,7 +86,7 @@ class RubyIcon extends StatelessWidget {
 }
 
 class EssenceIcon extends StatelessWidget {
-  EssenceIcon({this.height});
+  EssenceIcon({@required this.height});
   final double height;
 
   build(BuildContext context) {

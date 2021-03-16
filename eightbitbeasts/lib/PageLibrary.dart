@@ -31,7 +31,7 @@ part "utils/style.dart";
 part "notifiers.dart";
 
 const myAddress = "0x6c7382C47830C20B1A2746dDd5Bb48f2EaB08795";
-const myPrivateKey =
+const privateKey =
     '09fa63a415d391bcc3bfbd9025eb88e0da80d9924e1e7ed00b665261d14061a5';
 
 const List<String> contract_addresses = [

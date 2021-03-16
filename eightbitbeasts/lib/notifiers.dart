@@ -33,13 +33,12 @@ class MyWalletChangeNotifier extends ChangeNotifier {
 }
 
 class EthChangeNotifier extends ChangeNotifier {
-  EthData data;
+  EthData data = EthData();
   Client httpClient;
   Web3Client ethClient;
-  bool initiated;
+  bool initiated = false;
 
   void init() async {
-    initiated ??= false;
     if (initiated) {
       return;
     }
@@ -49,24 +48,9 @@ class EthChangeNotifier extends ChangeNotifier {
     ethClient = new Web3Client(
         "https://rinkeby.infura.io/v3/c0ba200103214c0b9b002e5591ab09f7",
         httpClient);
-    data.hasMonsterList = false;
-    data.hasCurrency = false;
-    data.rubies = 0;
-    data.essence = 0;
-    data.monsterList = [];
-    data.marketMonstersForAuction = [];
-    data.marketMonstersForDonor = [];
-    data.myMarketMonstersForAuction = [];
-    data.myMarketMonstersForDonor = [];
-    data.monsterList = [];
-    data.myMonsterExtracts = [];
-    data.myPublicAddress = myAddress;
-    data.myPrivateKey = myPrivateKey;
-    data.incubating = [];
 
-    await getCurrency(data.myPublicAddress);
+    await inventoryRefresh();
     data.hasCurrency = true;
-
     notifyListeners();
     return;
   }
@@ -87,6 +71,10 @@ class EthChangeNotifier extends ChangeNotifier {
           grade: double.parse(inv[0][i][8].toString()),
           stats: makeStats(inv[0][i][1]),
           dna: convert(inv[0][i][10]),
+          wins: double.parse(inv[0][i][6].toString()),
+          losses: double.parse(inv[0][i][7].toString()),
+          readyTime: double.parse(inv[0][i][5].toString()),
+          remaining: double.parse(inv[0][i][9].toString()),
           img: Image.asset("lib/assets/fox.png")));
     }
     notifyListeners();

@@ -4,7 +4,7 @@ class MonsterFlipCard extends StatefulWidget {
   final Monster monster;
   final Image img;
 
-  const MonsterFlipCard({@required this.monster, this.img});
+  const MonsterFlipCard({@required this.monster, @required this.img});
 
   @override
   State createState() => _MonsterFlipCardState();
@@ -289,10 +289,10 @@ class _MonsterFlipCardState extends State<MonsterFlipCard> {
 
 class Stat extends StatelessWidget {
   Stat({
-    this.text,
-    this.icon,
-    this.fontsize,
-    this.iconsize,
+    @required this.text,
+    @required this.icon,
+    @required this.fontsize,
+    @required this.iconsize,
   });
   final String text;
   final IconData icon;
@@ -324,7 +324,7 @@ class Stat extends StatelessWidget {
 class MonsterPicSmall extends StatelessWidget {
   final Monster data;
 
-  MonsterPicSmall({this.data});
+  MonsterPicSmall({@required this.data});
 
   Color getGradeColor(grade) {
     switch (grade) {
