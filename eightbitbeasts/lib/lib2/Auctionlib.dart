@@ -55,7 +55,7 @@ class MyMarketContent extends ConsumerWidget {
                     RaisedButton(
                       color: Theme.of(context).backgroundColor,
                       onPressed: () {
-                        //TODO
+                        info.openSelector(context);
                         print("add auction");
                       },
                       child: Text("add auction",
@@ -66,7 +66,7 @@ class MyMarketContent extends ConsumerWidget {
                     RaisedButton(
                       color: Theme.of(context).backgroundColor,
                       onPressed: () {
-                        //TODO
+                        info.openSelector(context);
                         print("add extract");
                       },
                       child: Text("add extract",

@@ -21,17 +21,6 @@ class UpdateWidget extends ConsumerWidget {
   }
 }
 
-class MyWalletChangeNotifier extends ChangeNotifier {
-  MyWalletChangeNotifier([this.address = 0]);
-
-  int address;
-
-  void increment() {
-    address++;
-    notifyListeners();
-  }
-}
-
 class EthChangeNotifier extends ChangeNotifier {
   EthData data = EthData();
   Client httpClient;
@@ -50,6 +39,7 @@ class EthChangeNotifier extends ChangeNotifier {
         httpClient);
 
     await inventoryRefresh();
+    await getMarketMonsters(10);
     data.hasCurrency = true;
     notifyListeners();
     return;
@@ -61,9 +51,14 @@ class EthChangeNotifier extends ChangeNotifier {
   Future<void> inventoryRefresh() async {
     List<dynamic> inv = await getInventory(data.myPublicAddress);
     await getCurrency(data.myPublicAddress);
-    print(inv);
+    sortInventory(inv);
+    notifyListeners();
+  }
+
+  void sortInventory(List<dynamic> inv) {
     int l = inv[0].length;
     data.monsterList = [];
+    data.incubating = [];
     for (int i = 0; i < l; i++) {
       data.monsterList.add(Monster(
           name: inv[0][i][0],
@@ -76,8 +71,24 @@ class EthChangeNotifier extends ChangeNotifier {
           readyTime: double.parse(inv[0][i][5].toString()),
           remaining: double.parse(inv[0][i][9].toString()),
           img: Image.asset("lib/assets/fox.png")));
+
+      print(double.parse(inv[0][i][5].toString()) -
+          DateTime.now().millisecondsSinceEpoch / 1000);
+      if (double.parse(inv[0][i][5].toString()) >
+          DateTime.now().millisecondsSinceEpoch / 1000) {
+        data.incubating.add(Monster(
+            name: inv[0][i][0],
+            id: inv[0][i][2],
+            grade: double.parse(inv[0][i][8].toString()),
+            stats: makeStats(inv[0][i][1]),
+            dna: convert(inv[0][i][10]),
+            wins: double.parse(inv[0][i][6].toString()),
+            losses: double.parse(inv[0][i][7].toString()),
+            readyTime: double.parse(inv[0][i][5].toString()),
+            remaining: double.parse(inv[0][i][9].toString()),
+            img: Image.asset("lib/assets/fox.png")));
+      }
     }
-    notifyListeners();
   }
 
   String convert(List<dynamic> n) {
@@ -100,7 +111,7 @@ class EthChangeNotifier extends ChangeNotifier {
     data.myPrivateKey = value;
     var byteString = hexToBytes(value);
     var publicKey = privateKeyBytesToPublic(byteString);
-    data.myPublicAddress = bytesToHex(publicKeyToAddress(publicKey));
+    data.myPublicAddress = '0x' + bytesToHex(publicKeyToAddress(publicKey));
     notifyListeners();
     update();
   }
@@ -122,27 +133,43 @@ class EthChangeNotifier extends ChangeNotifier {
   }
 
   Future<void> labRefresh() async {
-    //await getLabInfo();
+    List<dynamic> inv = await getInventory(data.myPublicAddress);
+    sortInventory(inv);
+    print(DateTime.now().millisecondsSinceEpoch / 1000);
+    print(data.incubating);
+
+    //List<dynamic> res = await getExtracts();
+    //sortExtracts(res);
+    await getCurrency(data.myPublicAddress);
     notifyListeners();
+  }
+
+  void sortExtracts(res) async {
+    print('extracts:  ' + res.toString());
+    int l = res.length;
+    if (l == 0) {
+      return;
+    }
+    data.myMonsterExtracts = [];
+    for (int j = 0; j < l; j++) {
+      if (res[0][j][2] < DateTime.now().millisecondsSinceEpoch / 1000) {
+        continue;
+      }
+      Monster beast = await getBeast(res[0][j][1]);
+      data.myMonsterExtracts.add(beast);
+    }
   }
 
 //#################################################
 // refresh everything
 //#################################################
   void update() async {
-    data.rubies = 0;
-    data.essence = 0;
-    data.marketMonstersForAuction = [];
-    data.marketMonstersForDonor = [];
-    data.myMarketMonstersForAuction = [];
-    data.myMarketMonstersForDonor = [];
-    data.monsterList = [];
-    data.monsterImageList = [];
-    data.myMonsterExtracts = [];
-    data.incubating = [];
-    //await getCurrency(data.myPublicAddress);
-    //await getMyMonsters();
-    //await getMarketMonsters();
+    await getCurrency(data.myPublicAddress);
+    List<dynamic> inv = await getInventory(data.myPublicAddress);
+    sortInventory(inv);
+    await getMarketMonsters(10);
+    //List<dynamic> res = await getExtracts();
+    //sortExtracts(res);
     //await getBattleInfo();
     //await getLeaderBoards();
     notifyListeners();
@@ -221,6 +248,7 @@ class EthChangeNotifier extends ChangeNotifier {
     while (n < limit && n < int.parse(response[0].toString())) {
       List<dynamic> res = await query("auctions", [BigInt.from(n)], 'market');
       print(res);
+      print(data.myPublicAddress.toString().toLowerCase());
       if (data.myPublicAddress.toString().toLowerCase() ==
           res[1].toString().toLowerCase()) {
         data.myMarketMonstersForAuction.add(Auction(
@@ -271,46 +299,29 @@ class EthChangeNotifier extends ChangeNotifier {
     int n = limit - 10;
 
     while (n < limit && n < int.parse(response[1].toString())) {
-      List<dynamic> res = await query("Auctions", [n], 'market');
+      List<dynamic> res =
+          await query("extractAuctions", [BigInt.from(n)], 'market');
       if (data.myPublicAddress.toString().toLowerCase() ==
           res[1].toString().toLowerCase()) {
+        Monster beast = await getBeast(res[0][1]);
         data.myMarketMonstersForDonor.add(Auction(
             seller: res[1].toString(),
             startPrice: double.parse(res[2].toString()),
-            endPrice: double.parse(res[3].toString()),
-            startTime: double.parse(res[4].toString()),
-            duration: double.parse((res[5] - res[4]).toString()),
-            isMine: false,
-            monster: Monster(
-                name: res[0][0],
-                id: res[0][2],
-                grade: double.parse(res[0][8].toString()),
-                stats: makeStats(res[0][1]),
-                dna: convert(res[0][10]),
-                wins: double.parse(res[0][6].toString()),
-                losses: double.parse(res[0][7].toString()),
-                readyTime: double.parse(res[0][5].toString()),
-                remaining: double.parse(res[0][9].toString()),
-                img: Image.asset("lib/assets/fox.png"))));
+            endPrice: double.parse(res[2].toString()),
+            startTime: 0,
+            duration: double.parse(res[3].toString()),
+            isMine: true,
+            monster: beast));
       } else {
-        data.marketMonstersForDonor.add(Auction(
+        Monster beast = await getBeast(res[0][1]);
+        data.myMarketMonstersForDonor.add(Auction(
             seller: res[1].toString(),
             startPrice: double.parse(res[2].toString()),
-            endPrice: double.parse(res[3].toString()),
-            startTime: double.parse(res[4].toString()),
-            duration: double.parse((res[5] - res[4]).toString()),
+            endPrice: double.parse(res[2].toString()),
+            startTime: 0,
+            duration: double.parse(res[3].toString()),
             isMine: false,
-            monster: Monster(
-                name: res[0][0],
-                id: res[0][2],
-                grade: double.parse(res[0][8].toString()),
-                stats: makeStats(res[0][1]),
-                dna: convert(res[0][10]),
-                wins: double.parse(res[0][6].toString()),
-                losses: double.parse(res[0][7].toString()),
-                readyTime: double.parse(res[0][5].toString()),
-                remaining: double.parse(res[0][9].toString()),
-                img: Image.asset("lib/assets/fox.png"))));
+            monster: beast));
       }
       n += 1;
     }
@@ -323,5 +334,95 @@ class EthChangeNotifier extends ChangeNotifier {
     return response;
   }
 
+  Future<List<dynamic>> getExtracts() async {
+    List<dynamic> response = await query("getExtracts", [], 'market');
+    return response;
+  }
+
+  Future<Monster> getBeast(BigInt id) async {
+    List<dynamic> res = await query("getBeast", [id], 'mother');
+    Monster beast = Monster(
+        name: res[0][0].toString(),
+        id: res[0][2],
+        grade: double.parse(res[0][8].toString()),
+        stats: makeStats(res[0][1]),
+        dna: convert(res[0][10]),
+        wins: double.parse(res[0][6].toString()),
+        losses: double.parse(res[0][7].toString()),
+        readyTime: double.parse(res[0][5].toString()),
+        remaining: double.parse(res[0][9].toString()),
+        img: Image.asset("lib/assets/fox.png"));
+    return beast;
+  }
+
 //Other functions to get stuffs like market monsters, and inventory.
+  void openSelector(BuildContext context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (context) => Container(
+            color: Theme.of(context).accentColor,
+            child: Column(
+              children: [
+                ListTile(title: Text("ready beasts")),
+                GridView.builder(
+                  shrinkWrap: true,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    childAspectRatio: 1,
+                    crossAxisCount: 4,
+                  ),
+                  physics: ClampingScrollPhysics(),
+                  itemBuilder: (context, position) {
+                    return Container(
+                      height: 50,
+                      width: 50,
+                      child: MonsterPicSmall(
+                        data: data.monsterList[position],
+                      ),
+                    );
+                  },
+                  itemCount: data.monsterList.length,
+                ),
+                ElevatedButton(
+                    onPressed: () async {
+                      String x = await prepTransaction(context, 0);
+                      if (x != null) {
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(SnackBar(content: Text(x)));
+                        Navigator.pop(context);
+                      }
+                    },
+                    child: Text("continue"))
+              ],
+            )));
+  }
+
+  Future<String> prepTransaction(BuildContext context, type) async {
+    switch (await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            title: Text("transaction details"),
+            children: [
+              SimpleDialogOption(
+                  onPressed: () {
+                    Navigator.pop(context, 0);
+                  },
+                  child: Text("this")),
+              SimpleDialogOption(
+                  onPressed: () {
+                    Navigator.pop(context, 1);
+                  },
+                  child: Text("that"))
+            ],
+          );
+        })) {
+      case 0:
+        return 'this';
+        break;
+      case 1:
+        return 'that';
+
+        break;
+    }
+  }
 }

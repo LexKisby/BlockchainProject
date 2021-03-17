@@ -11,11 +11,6 @@ void main() {
 }
 
 /*  All providers are initialised in main */
-//myWalletProvider will provide the wallet details for transactions, tho currently
-// will just store an address
-final myWalletProvider = ChangeNotifierProvider<MyWalletChangeNotifier>((ref) {
-  return MyWalletChangeNotifier();
-});
 
 final myEthDataProvider = ChangeNotifierProvider<EthChangeNotifier>((ref) {
   return EthChangeNotifier();

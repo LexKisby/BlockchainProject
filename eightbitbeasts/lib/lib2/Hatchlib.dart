@@ -20,7 +20,7 @@ class LabContent extends ConsumerWidget {
                       style: ElevatedButton.styleFrom(
                           primary: Theme.of(context).backgroundColor),
                       onPressed: () {
-                        //TODO
+                        info.openSelector(context);
                         print("fusion");
                       },
                       child: Text("fusion",
@@ -31,7 +31,7 @@ class LabContent extends ConsumerWidget {
                     RaisedButton(
                       color: Theme.of(context).backgroundColor,
                       onPressed: () {
-                        //TODO
+                        info.openSelector(context);
                         print("enhance");
                       },
                       child: Text("enhance",
@@ -93,19 +93,7 @@ class IncubatorContent extends ConsumerWidget {
             child: Center(
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    RaisedButton(
-                      color: Theme.of(context).backgroundColor,
-                      onPressed: () {
-                        //TODO
-                        print("accelerate");
-                      },
-                      child: Text("accelerate",
-                          style: TextStyle(
-                              color:
-                                  Theme.of(context).textTheme.bodyText1.color)),
-                    ),
-                  ]),
+                  children: []),
             ),
           ),
           Container(
@@ -134,22 +122,7 @@ class IncubatorContent extends ConsumerWidget {
                   width: 50,
                   child: MonsterPicSmall(data: info.data.incubating[position]));
             },
-            itemCount: info.data.myMonsterExtracts.length,
-          ),
-          Container(
-            height: 40,
-            child: Card(
-                color: Theme.of(context).primaryColor,
-                shape: PixelBorder.solid(
-                  color: Theme.of(context).backgroundColor,
-                  pixelSize: 1,
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Center(
-                    child: Text("recovering beasts",
-                        style: TextStyle(
-                            color:
-                                Theme.of(context).textTheme.bodyText1.color)))),
+            itemCount: info.data.incubating.length,
           ),
         ],
       ),
