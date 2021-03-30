@@ -19,3 +19,17 @@ function changeName(uint256 _beastId, string calldata _newName)
         beasts[_beastId].name = _newName;
         emit NameChange(_beastId, _newName);
     }
+
+
+species notes
+
+0   slime      => blob
+1   ooze       => blob with legs
+2   amphibean  => froggo
+3   crustacean => crabby
+4   cat        => lion/panther/sabre tooth
+5   woolly     => King Kong
+6   Roc        => big bird
+7   Insect     => Spider, etc
+8   Reptile    => croc / salamander
+9   Dragon     => dragon (oriental if pure)

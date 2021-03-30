@@ -26,6 +26,10 @@ class EthChangeNotifier extends ChangeNotifier {
   Client httpClient;
   Web3Client ethClient;
   bool initiated = false;
+  double gwei = 1;
+  double gas = 50000;
+  double extra = 20000;
+  List<bool> selected = [];
 
   void init() async {
     if (initiated) {
@@ -59,6 +63,8 @@ class EthChangeNotifier extends ChangeNotifier {
     int l = inv[0].length;
     data.monsterList = [];
     data.incubating = [];
+    data.ready = [];
+    selected = [];
     for (int i = 0; i < l; i++) {
       data.monsterList.add(Monster(
           name: inv[0][i][0],
@@ -72,11 +78,25 @@ class EthChangeNotifier extends ChangeNotifier {
           remaining: double.parse(inv[0][i][9].toString()),
           img: Image.asset("lib/assets/fox.png")));
 
+      selected.add(false);
       print(double.parse(inv[0][i][5].toString()) -
           DateTime.now().millisecondsSinceEpoch / 1000);
       if (double.parse(inv[0][i][5].toString()) >
           DateTime.now().millisecondsSinceEpoch / 1000) {
+        print(inv[0][i][0]);
         data.incubating.add(Monster(
+            name: inv[0][i][0],
+            id: inv[0][i][2],
+            grade: double.parse(inv[0][i][8].toString()),
+            stats: makeStats(inv[0][i][1]),
+            dna: convert(inv[0][i][10]),
+            wins: double.parse(inv[0][i][6].toString()),
+            losses: double.parse(inv[0][i][7].toString()),
+            readyTime: double.parse(inv[0][i][5].toString()),
+            remaining: double.parse(inv[0][i][9].toString()),
+            img: Image.asset("lib/assets/bee.png")));
+      } else {
+        data.ready.add(Monster(
             name: inv[0][i][0],
             id: inv[0][i][2],
             grade: double.parse(inv[0][i][8].toString()),
@@ -247,8 +267,8 @@ class EthChangeNotifier extends ChangeNotifier {
     int n = limit - 10;
     while (n < limit && n < int.parse(response[0].toString())) {
       List<dynamic> res = await query("auctions", [BigInt.from(n)], 'market');
-      print(res);
-      print(data.myPublicAddress.toString().toLowerCase());
+      //print(res);
+      //print(data.myPublicAddress.toString().toLowerCase());
       if (data.myPublicAddress.toString().toLowerCase() ==
           res[1].toString().toLowerCase()) {
         data.myMarketMonstersForAuction.add(Auction(
@@ -303,6 +323,7 @@ class EthChangeNotifier extends ChangeNotifier {
           await query("extractAuctions", [BigInt.from(n)], 'market');
       if (data.myPublicAddress.toString().toLowerCase() ==
           res[1].toString().toLowerCase()) {
+        print(data.myPublicAddress.toString().toLowerCase());
         Monster beast = await getBeast(res[0][1]);
         data.myMarketMonstersForDonor.add(Auction(
             seller: res[1].toString(),
@@ -314,7 +335,7 @@ class EthChangeNotifier extends ChangeNotifier {
             monster: beast));
       } else {
         Monster beast = await getBeast(res[0][1]);
-        data.myMarketMonstersForDonor.add(Auction(
+        data.marketMonstersForDonor.add(Auction(
             seller: res[1].toString(),
             startPrice: double.parse(res[2].toString()),
             endPrice: double.parse(res[2].toString()),
@@ -372,15 +393,9 @@ class EthChangeNotifier extends ChangeNotifier {
                   ),
                   physics: ClampingScrollPhysics(),
                   itemBuilder: (context, position) {
-                    return Container(
-                      height: 50,
-                      width: 50,
-                      child: MonsterPicSmall(
-                        data: data.monsterList[position],
-                      ),
-                    );
+                    return Selector(context: context, position: position);
                   },
-                  itemCount: data.monsterList.length,
+                  itemCount: data.ready.length,
                 ),
                 ElevatedButton(
                     onPressed: () async {
@@ -396,7 +411,16 @@ class EthChangeNotifier extends ChangeNotifier {
             )));
   }
 
-  Future<String> prepTransaction(BuildContext context, type) async {
+  bool isSelected(position) {
+    return selected[position];
+  }
+
+  void changeSelected(position) {
+    selected[position] = selected[position] ? false : true;
+    notifyListeners();
+  }
+
+  Future<String> prepTransaction2(BuildContext context, type) async {
     switch (await showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -424,5 +448,114 @@ class EthChangeNotifier extends ChangeNotifier {
 
         break;
     }
+  }
+
+  Future<String> prepTransaction(BuildContext context, type) async {
+    switch (await Navigator.push(
+        context,
+        MaterialPageRoute<int>(
+          builder: (BuildContext context) => FullScreenDialog(type: type),
+          fullscreenDialog: true,
+        ))) {
+      case 0:
+        return 'Transaction Cancelled';
+        break;
+      case 1:
+        return 'Transaction Submitted';
+        break;
+    }
+  }
+}
+
+class FullScreenDialog extends ConsumerWidget {
+  FullScreenDialog({@required this.type});
+
+  final type;
+
+  Widget dialogContent(int type) {
+    return Card(
+        child: Container(
+      child: Text('yo'),
+    ));
+  }
+
+  @override
+  build(BuildContext context, ScopedReader watch) {
+    final data = watch(myEthDataProvider);
+    return Scaffold(
+        appBar: AppBar(
+          title: Text('Transaction'),
+        ),
+        body: Center(
+          child: Column(
+            children: [
+              dialogContent(type),
+              TextFormField(
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    border: const OutlineInputBorder(),
+                    labelText: 'Gas',
+                    helperText:
+                        'Excess gas is refunded. Recommend minimum 50,000',
+                  )),
+              Spacer(),
+              Row(
+                children: [
+                  Spacer(),
+                  ElevatedButton(
+                      child: Text("cancel"),
+                      onPressed: () {
+                        Navigator.pop(context, 0);
+                      }),
+                  Container(width: 5),
+                  ElevatedButton(
+                      child: Text("Submit"),
+                      onPressed: () {
+                        Navigator.pop(context, 1);
+                        //data.transact(type);
+                      }),
+                ],
+              ),
+              Container(height: 50),
+            ],
+          ),
+        ));
+  }
+}
+
+class Selector extends ConsumerWidget {
+  Selector({@required this.context, @required this.position});
+  final context;
+  final position;
+
+  @override
+  build(BuildContext context, ScopedReader watch) {
+    final info = watch(myEthDataProvider);
+
+    return InkWell(
+      splashColor: Colors.white,
+      onTap: () {
+        info.changeSelected(position);
+      },
+      child: Container(
+        color: info.isSelected(position)
+            ? Colors.red.withOpacity(0.8)
+            : Colors.transparent,
+        height: 50,
+        width: 50,
+        child: Stack(
+          children: [
+            Container(
+              color: info.isSelected(position)
+                  ? Color(0xfffef0d1)
+                  : Colors.transparent,
+            ),
+            MonsterPicSmall(
+              data: info.data.ready[position],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

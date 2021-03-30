@@ -119,6 +119,19 @@ class _MonsterFlipCardState extends State<MonsterFlipCard> {
     return 0;
   }
 
+  String splitDna(dna) {
+    String str1 = '';
+    String str2 = '';
+    for (int i = 0; i < 22; i++) {
+      if (i % 2 == 0) {
+        str1 += dna[i];
+      } else {
+        str2 += dna[i];
+      }
+    }
+    return (str1 + '\n' + str2);
+  }
+
   @override
   Widget build(BuildContext context) {
     IconData grade = getGradeIcon(widget.monster.grade);
@@ -205,25 +218,31 @@ class _MonsterFlipCardState extends State<MonsterFlipCard> {
                       child: Icon(grade,
                           size: 23,
                           color: Theme.of(context).textTheme.bodyText1.color)),
-                  Transform(
-                      transform: Matrix4.translationValues(-1, 3, 0),
-                      child: Text(widget.monster.name,
-                          style: TextStyle(
-                              fontSize: 18,
-                              color: Theme.of(context)
-                                  .textTheme
-                                  .bodyText1
-                                  .color))),
+                  Flexible(
+                      child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(widget.monster.name,
+                        style: TextStyle(
+                            fontSize: 20,
+                            color:
+                                Theme.of(context).textTheme.bodyText1.color)),
+                  )),
+                  Container(width: 13)
                 ]),
                 SizedBox(
                   height: itemHeight * 2.8,
-                  width: itemWidth * 2,
+                  width: itemWidth * 1.4,
                   child: Center(
-                      child: Transform(
-                          transform: Matrix4.translationValues(0, 30, 0),
-                          child: Divider(
-                            color: Colors.white,
-                          ))),
+                    child: Flexible(
+                        child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(splitDna(widget.monster.dna),
+                          style: TextStyle(
+                              fontSize: 20,
+                              color:
+                                  Theme.of(context).textTheme.bodyText1.color)),
+                    )),
+                  ),
                 ),
                 Transform(
                     transform: Matrix4.translationValues(12, 0, 0),
