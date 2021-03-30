@@ -233,16 +233,14 @@ class _MonsterFlipCardState extends State<MonsterFlipCard> {
                   height: itemHeight * 2.8,
                   width: itemWidth * 1.4,
                   child: Center(
-                    child: Flexible(
-                        child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Text(splitDna(widget.monster.dna),
-                          style: TextStyle(
-                              fontSize: 20,
-                              color:
-                                  Theme.of(context).textTheme.bodyText1.color)),
-                    )),
-                  ),
+                      child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(splitDna(widget.monster.dna),
+                        style: TextStyle(
+                            fontSize: 20,
+                            color:
+                                Theme.of(context).textTheme.bodyText1.color)),
+                  )),
                 ),
                 Transform(
                     transform: Matrix4.translationValues(12, 0, 0),

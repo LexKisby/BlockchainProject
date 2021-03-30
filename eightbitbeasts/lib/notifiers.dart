@@ -29,7 +29,9 @@ class EthChangeNotifier extends ChangeNotifier {
   double gwei = 1;
   double gas = 50000;
   double extra = 20000;
+  double total = 50000;
   List<bool> selected = [];
+  List<int> selectedMonsters = [];
 
   void init() async {
     if (initiated) {
@@ -399,6 +401,7 @@ class EthChangeNotifier extends ChangeNotifier {
                 ),
                 ElevatedButton(
                     onPressed: () async {
+                      //check for valid selection TODO
                       String x = await prepTransaction(context, 0);
                       if (x != null) {
                         ScaffoldMessenger.of(context)
@@ -417,10 +420,14 @@ class EthChangeNotifier extends ChangeNotifier {
 
   void changeSelected(position) {
     selected[position] = selected[position] ? false : true;
+    selected[position]
+        ? selectedMonsters.add(position)
+        : selectedMonsters.remove(position);
     notifyListeners();
   }
 
-  Future<String> prepTransaction2(BuildContext context, type) async {
+  Future<String> prepTransaction2(
+      BuildContext context, type, List<Monster> monsters) async {
     switch (await showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -465,6 +472,18 @@ class EthChangeNotifier extends ChangeNotifier {
         break;
     }
   }
+
+  void changeGas(n) {
+    gas = n;
+    total = gwei * gas;
+    notifyListeners();
+  }
+
+  void changePrice(n) {
+    gwei = n;
+    total = gwei * gas;
+    notifyListeners();
+  }
 }
 
 class FullScreenDialog extends ConsumerWidget {
@@ -472,54 +491,146 @@ class FullScreenDialog extends ConsumerWidget {
 
   final type;
 
-  Widget dialogContent(int type) {
+  Widget dialogContent(int type, beasts, selection) {
     return Card(
-        child: Container(
-      child: Text('yo'),
+        child: Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        children: [
+          Text('details'),
+          Container(height: 10),
+          Row(
+            children: [
+              Expanded(child: asset(type, beasts, selection)),
+              Divider(),
+              Expanded(child: text(type)),
+            ],
+          )
+        ],
+      ),
     ));
+  }
+
+  Widget asset(type, beasts, selection) {
+    if (type < 4) {
+      return Container(
+          width: 50,
+          height: 130,
+          child: MonsterPicSmall(data: beasts[selection[0]]));
+    }
+  }
+
+  Widget text(type) {
+    switch (type) {
+      case 0:
+        return Text("retrieve beast in order to use again",
+            style: TextStyle(fontSize: 10));
+        break;
+      case 1:
+        return Text(
+            "buy this beast from auction. \n WARNING: this beast may be sold before the transaction is completed. Used Gas will not be refunded");
+        break;
+    }
   }
 
   @override
   build(BuildContext context, ScopedReader watch) {
     final data = watch(myEthDataProvider);
+    final beasts = data.data.ready;
+    final selection = data.selectedMonsters;
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Transaction'),
-        ),
-        body: Center(
-          child: Column(
-            children: [
-              dialogContent(type),
-              TextFormField(
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    border: const OutlineInputBorder(),
-                    labelText: 'Gas',
-                    helperText:
-                        'Excess gas is refunded. Recommend minimum 50,000',
-                  )),
-              Spacer(),
-              Row(
+      backgroundColor: Color(0xfffef0d1),
+      appBar: AppBar(
+        title: Text('Transaction'),
+      ),
+      body: Center(
+        child: Column(
+          children: [
+            dialogContent(type, beasts, selection),
+            Card(
+              child: Padding(
+                padding: EdgeInsets.all(10),
+                child: Column(
+                  children: [
+                    SizedBox(
+                      child: TextFormField(
+                          initialValue: data.gas.toString(),
+                          onFieldSubmitted: (value) {
+                            data.changeGas(double.parse(value));
+                            print("changing stuff");
+                          },
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            border: const OutlineInputBorder(),
+                            labelText: 'Gas',
+                            helperText: 'Excess gas is refunded.',
+                          )),
+                    ),
+                    Container(height: 30),
+                    SizedBox(
+                      child: TextFormField(
+                          onFieldSubmitted: (value) {
+                            data.changePrice(double.parse(value));
+                          },
+                          initialValue: data.gwei.toString(),
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            border: const OutlineInputBorder(),
+                            labelText: 'Price',
+                            suffix: Text('GWEI'),
+                          )),
+                    )
+                  ],
+                ),
+              ),
+            ),
+            Container(height: 10),
+            Card(
+                child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: Column(
                 children: [
-                  Spacer(),
-                  ElevatedButton(
-                      child: Text("cancel"),
-                      onPressed: () {
-                        Navigator.pop(context, 0);
-                      }),
-                  Container(width: 5),
-                  ElevatedButton(
-                      child: Text("Submit"),
-                      onPressed: () {
-                        Navigator.pop(context, 1);
-                        //data.transact(type);
-                      }),
+                  Stack(children: [
+                    TextFormField(
+                        enabled: false,
+                        initialValue: ' ',
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          border: const OutlineInputBorder(),
+                          labelText: 'Total Cost',
+                          suffix: Text('Eth'),
+                        )),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(15, 20, 0, 0),
+                      child: Text((data.total / 1000000000).toString()),
+                    ),
+                  ]),
                 ],
               ),
-              Container(height: 50),
-            ],
-          ),
-        ));
+            )),
+            Spacer(),
+            Row(
+              children: [
+                Spacer(),
+                ElevatedButton(
+                    child: Text("cancel"),
+                    onPressed: () {
+                      Navigator.pop(context, 0);
+                    }),
+                Container(width: 5),
+                ElevatedButton(
+                    child: Text("Submit"),
+                    onPressed: () {
+                      Navigator.pop(context, 1);
+                      //data.transact(type);
+                    }),
+              ],
+            ),
+            Container(height: 50),
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -538,9 +649,6 @@ class Selector extends ConsumerWidget {
         info.changeSelected(position);
       },
       child: Container(
-        color: info.isSelected(position)
-            ? Colors.red.withOpacity(0.8)
-            : Colors.transparent,
         height: 50,
         width: 50,
         child: Stack(
