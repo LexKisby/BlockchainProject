@@ -33,3 +33,17 @@ species notes
 7   Insect     => Spider, etc
 8   Reptile    => croc / salamander
 9   Dragon     => dragon (oriental if pure)
+
+
+dna:
+1: species
+2: body
+3: head
+4: tail 
+5: limbs 
+6: wings 
+7: mouth 
+8: eyes 
+9: primary Colour 
+10: secondary Colour 
+11: extra feature

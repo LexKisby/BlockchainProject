@@ -11,12 +11,12 @@ class InitWidget extends ConsumerWidget {
 class UpdateWidget extends ConsumerWidget {
   build(BuildContext context, ScopedReader watch) {
     final update = watch(myEthDataProvider);
-    return RaisedButton(
+    return ElevatedButton(
       onPressed: () {
         update.update();
       },
       child: Icon(Icons.refresh_sharp),
-      color: Theme.of(context).accentColor,
+      //color: Theme.of(context).accentColor,
     );
   }
 }
@@ -26,12 +26,14 @@ class EthChangeNotifier extends ChangeNotifier {
   Client httpClient;
   Web3Client ethClient;
   bool initiated = false;
-  double gwei = 1;
-  double gas = 50000;
+  double gasPriceInWei = 1000000000;
+  double gas = 1000000;
   double extra = 20000;
-  double total = 50000;
+  double total = 1000000000;
   List<bool> selected = [];
   List<int> selectedMonsters = [];
+  double etherBalance = 0;
+  List<String> transactionList = [];
 
   void init() async {
     if (initiated) {
@@ -232,12 +234,41 @@ class EthChangeNotifier extends ChangeNotifier {
     EthPrivateKey credentials = EthPrivateKey.fromHex(data.myPrivateKey);
     print("privateKeyLoaded");
     Transaction transaction = Transaction.callContract(
-        contract: contract, function: ethFunction, parameters: args);
+        contract: contract,
+        function: ethFunction,
+        parameters: args,
+        maxGas: gas.toInt(),
+        gasPrice: EtherAmount.fromUnitAndValue(
+            EtherUnit.wei, BigInt.from(gasPriceInWei)));
     print("transaction Loaded");
     final response = await ethClient.sendTransaction(credentials, transaction,
         fetchChainIdFromNetworkId: true);
     print('recieved submit response');
     return response;
+  }
+
+  void getEtherBalance() async {
+    EthereumAddress address = EthereumAddress.fromHex(myAddress);
+    EtherAmount amount = await ethClient.getBalance(address);
+    print(amount.getInWei);
+    etherBalance = double.parse(amount.getInWei.toString());
+    notifyListeners();
+  }
+
+  void getGasPrice() async {
+    EtherAmount amount = await ethClient.getGasPrice();
+    gasPriceInWei = double.parse(amount.getInWei.toString());
+    notifyListeners();
+    print(gasPriceInWei);
+  }
+
+  void createTransaction(type) async {
+    switch (type) {
+      case 0:
+        //Retrieval of beast
+        String res = await submit('retrieve', [], 'market');
+        transactionList.add(res);
+    }
   }
 
 //##############################################################################################
@@ -402,6 +433,8 @@ class EthChangeNotifier extends ChangeNotifier {
                 ElevatedButton(
                     onPressed: () async {
                       //check for valid selection TODO
+                      getEtherBalance();
+                      getGasPrice();
                       String x = await prepTransaction(context, 0);
                       if (x != null) {
                         ScaffoldMessenger.of(context)
@@ -452,9 +485,9 @@ class EthChangeNotifier extends ChangeNotifier {
         break;
       case 1:
         return 'that';
-
         break;
     }
+    return 'cancelled';
   }
 
   Future<String> prepTransaction(BuildContext context, type) async {
@@ -471,17 +504,18 @@ class EthChangeNotifier extends ChangeNotifier {
         return 'Transaction Submitted';
         break;
     }
+    return '';
   }
 
   void changeGas(n) {
     gas = n;
-    total = gwei * gas;
+    total = gasPriceInWei * gas;
     notifyListeners();
   }
 
   void changePrice(n) {
-    gwei = n;
-    total = gwei * gas;
+    gasPriceInWei = n * 1000000000;
+    total = gasPriceInWei * gas;
     notifyListeners();
   }
 }
@@ -518,6 +552,7 @@ class FullScreenDialog extends ConsumerWidget {
           height: 130,
           child: MonsterPicSmall(data: beasts[selection[0]]));
     }
+    return Text("unknown details");
   }
 
   Widget text(type) {
@@ -530,7 +565,11 @@ class FullScreenDialog extends ConsumerWidget {
         return Text(
             "buy this beast from auction. \n WARNING: this beast may be sold before the transaction is completed. Used Gas will not be refunded");
         break;
+      case 2:
+        return Text('Auction this beast');
     }
+    return Text(
+        "Do not proceed with this transaction unless you are sure of the result");
   }
 
   @override
@@ -539,6 +578,7 @@ class FullScreenDialog extends ConsumerWidget {
     final beasts = data.data.ready;
     final selection = data.selectedMonsters;
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Color(0xfffef0d1),
       appBar: AppBar(
         title: Text('Transaction'),
@@ -552,9 +592,13 @@ class FullScreenDialog extends ConsumerWidget {
                 padding: EdgeInsets.all(10),
                 child: Column(
                   children: [
+                    Text(
+                        'disclaimer: transactions are not deterministic, we recommend 1,000,000 gas to ensure success of the transaction.',
+                        style: TextStyle(fontSize: 8)),
+                    Container(height: 12),
                     SizedBox(
                       child: TextFormField(
-                          initialValue: data.gas.toString(),
+                          initialValue: data.gas.toInt().toString(),
                           onFieldSubmitted: (value) {
                             data.changeGas(double.parse(value));
                             print("changing stuff");
@@ -572,7 +616,8 @@ class FullScreenDialog extends ConsumerWidget {
                           onFieldSubmitted: (value) {
                             data.changePrice(double.parse(value));
                           },
-                          initialValue: data.gwei.toString(),
+                          initialValue:
+                              (data.gasPriceInWei / 1000000000).toString(),
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
                             border: const OutlineInputBorder(),
@@ -602,7 +647,34 @@ class FullScreenDialog extends ConsumerWidget {
                         )),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(15, 20, 0, 0),
-                      child: Text((data.total / 1000000000).toString()),
+                      child:
+                          Text((data.total / 1000000000000000000).toString()),
+                    ),
+                  ]),
+                ],
+              ),
+            )),
+            Container(height: 10),
+            Card(
+                child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                children: [
+                  Stack(children: [
+                    TextFormField(
+                        enabled: false,
+                        initialValue: ' ',
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          border: const OutlineInputBorder(),
+                          labelText: 'your remaining balance',
+                          suffix: Text('Eth'),
+                        )),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(15, 20, 0, 0),
+                      child: Text(((data.etherBalance - data.total) /
+                              1000000000000000000)
+                          .toString()),
                     ),
                   ]),
                 ],
@@ -626,7 +698,6 @@ class FullScreenDialog extends ConsumerWidget {
                     }),
               ],
             ),
-            Container(height: 50),
           ],
         ),
       ),
