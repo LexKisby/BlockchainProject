@@ -8,7 +8,8 @@ class AuctionContent extends ConsumerWidget {
     return RefreshIndicator(
       child: ListView.builder(
         itemBuilder: (context, position) {
-          return MarketRow(data: info.data.marketMonstersForAuction[position]);
+          return MarketRow(
+              data: info.data.marketMonstersForAuction[position], type: 0);
         },
         itemCount: info.data.marketMonstersForAuction.length,
       ),
@@ -27,7 +28,8 @@ class DonorContent extends ConsumerWidget {
     return RefreshIndicator(
       child: ListView.builder(
         itemBuilder: (context, position) {
-          return MarketRow(data: info.data.marketMonstersForDonor[position]);
+          return MarketRow(
+              data: info.data.marketMonstersForDonor[position], type: 1);
         },
         itemCount: info.data.marketMonstersForDonor.length,
       ),
@@ -55,7 +57,7 @@ class MyMarketContent extends ConsumerWidget {
                     RaisedButton(
                       color: Theme.of(context).backgroundColor,
                       onPressed: () {
-                        info.openSelector(context);
+                        info.openSelector(context, 4);
                         print("add auction");
                       },
                       child: Text("add auction",
@@ -66,7 +68,7 @@ class MyMarketContent extends ConsumerWidget {
                     RaisedButton(
                       color: Theme.of(context).backgroundColor,
                       onPressed: () {
-                        info.openSelector(context);
+                        info.openSelector(context, 5);
                         print("add extract");
                       },
                       child: Text("add extract",
@@ -97,7 +99,8 @@ class MyMarketContent extends ConsumerWidget {
             physics: ClampingScrollPhysics(),
             itemBuilder: (context, position) {
               return MarketRow(
-                  data: info.data.myMarketMonstersForAuction[position]);
+                  data: info.data.myMarketMonstersForAuction[position],
+                  type: 0);
             },
             itemCount: info.data.myMarketMonstersForAuction.length,
           ),
@@ -121,7 +124,7 @@ class MyMarketContent extends ConsumerWidget {
             physics: ClampingScrollPhysics(),
             itemBuilder: (context, position) {
               return MarketRow(
-                  data: info.data.myMarketMonstersForDonor[position]);
+                  data: info.data.myMarketMonstersForDonor[position], type: 1);
             },
             itemCount: info.data.myMarketMonstersForDonor.length,
           )
@@ -136,8 +139,9 @@ class MyMarketContent extends ConsumerWidget {
 
 class MarketRow extends StatelessWidget {
   final Auction data;
+  final int type;
 
-  MarketRow({@required this.data});
+  MarketRow({@required this.data, @required this.type});
 
   format(Duration d) => d.toString().split('.').first.padLeft(8, "0");
 
@@ -218,7 +222,7 @@ class MarketRow extends StatelessWidget {
                         pageBuilder: (context, animation, secondaryAnimation) =>
                             Material(
                                 type: MaterialType.transparency,
-                                child: AuctionDetails(data: data)),
+                                child: AuctionDetails(data: data, type: type)),
                       ));
                     },
                     dense: true,

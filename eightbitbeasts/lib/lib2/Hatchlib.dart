@@ -20,7 +20,7 @@ class LabContent extends ConsumerWidget {
                       style: ElevatedButton.styleFrom(
                           primary: Theme.of(context).backgroundColor),
                       onPressed: () {
-                        info.openSelector(context);
+                        info.openSelector(context, 6);
                         print("fusion");
                       },
                       child: Text("fusion",
@@ -31,7 +31,7 @@ class LabContent extends ConsumerWidget {
                     RaisedButton(
                       color: Theme.of(context).backgroundColor,
                       onPressed: () {
-                        info.openSelector(context);
+                        info.openSelector(context, 7);
                         print("enhance");
                       },
                       child: Text("enhance",

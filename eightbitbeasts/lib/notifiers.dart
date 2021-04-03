@@ -29,10 +29,14 @@ class EthChangeNotifier extends ChangeNotifier {
   double gasPriceInWei = 1000000000;
   double gas = 1000000;
   double extra = 20000;
-  double total = 1000000000;
-  List<bool> selected = [];
-  List<int> selectedMonsters = [];
+  double total = 1000000000000000;
+  List<bool> selectedBoolMask = [];
+
   double etherBalance = 0;
+
+  List<dynamic> arguments = [];
+  List<dynamic> selectedMonsters = [];
+
   List<String> transactionList = [];
 
   void init() async {
@@ -68,7 +72,7 @@ class EthChangeNotifier extends ChangeNotifier {
     data.monsterList = [];
     data.incubating = [];
     data.ready = [];
-    selected = [];
+    selectedBoolMask = [];
     for (int i = 0; i < l; i++) {
       data.monsterList.add(Monster(
           name: inv[0][i][0],
@@ -82,7 +86,7 @@ class EthChangeNotifier extends ChangeNotifier {
           remaining: double.parse(inv[0][i][9].toString()),
           img: Image.asset("lib/assets/fox.png")));
 
-      selected.add(false);
+      selectedBoolMask.add(false);
       print(double.parse(inv[0][i][5].toString()) -
           DateTime.now().millisecondsSinceEpoch / 1000);
       if (double.parse(inv[0][i][5].toString()) >
@@ -255,9 +259,10 @@ class EthChangeNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  void getGasPrice() async {
+  Future<void> getGasPrice() async {
     EtherAmount amount = await ethClient.getGasPrice();
     gasPriceInWei = double.parse(amount.getInWei.toString());
+    total = gasPriceInWei * gas;
     notifyListeners();
     print(gasPriceInWei);
   }
@@ -266,7 +271,7 @@ class EthChangeNotifier extends ChangeNotifier {
     switch (type) {
       case 0:
         //Retrieval of beast
-        String res = await submit('retrieve', [], 'market');
+        String res = await submit('retrieve', selectedMonsters, 'market');
         transactionList.add(res);
     }
   }
@@ -409,8 +414,12 @@ class EthChangeNotifier extends ChangeNotifier {
     return beast;
   }
 
+  int requiredMonsters(type) {
+    return 1;
+  }
+
 //Other functions to get stuffs like market monsters, and inventory.
-  void openSelector(BuildContext context) {
+  void openSelector(BuildContext context, type) {
     showModalBottomSheet(
         context: context,
         builder: (context) => Container(
@@ -432,10 +441,23 @@ class EthChangeNotifier extends ChangeNotifier {
                 ),
                 ElevatedButton(
                     onPressed: () async {
-                      //check for valid selection TODO
+                      if (selectedMonsters.length == 0) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('None selected')));
+                        Navigator.pop(context);
+                        return;
+                      }
+                      if (selectedMonsters.length > requiredMonsters(type)) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text('Please select [' +
+                                requiredMonsters(type).toString() +
+                                '] beasts')));
+                        Navigator.pop(context);
+                        return;
+                      }
                       getEtherBalance();
                       getGasPrice();
-                      String x = await prepTransaction(context, 0);
+                      String x = await prepTransaction(context, type);
                       if (x != null) {
                         ScaffoldMessenger.of(context)
                             .showSnackBar(SnackBar(content: Text(x)));
@@ -448,46 +470,15 @@ class EthChangeNotifier extends ChangeNotifier {
   }
 
   bool isSelected(position) {
-    return selected[position];
+    return selectedBoolMask[position];
   }
 
   void changeSelected(position) {
-    selected[position] = selected[position] ? false : true;
-    selected[position]
-        ? selectedMonsters.add(position)
-        : selectedMonsters.remove(position);
+    selectedBoolMask[position] = selectedBoolMask[position] ? false : true;
+    selectedBoolMask[position]
+        ? selectedMonsters.add(data.ready[position])
+        : selectedMonsters.remove(data.ready[position]);
     notifyListeners();
-  }
-
-  Future<String> prepTransaction2(
-      BuildContext context, type, List<Monster> monsters) async {
-    switch (await showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return SimpleDialog(
-            title: Text("transaction details"),
-            children: [
-              SimpleDialogOption(
-                  onPressed: () {
-                    Navigator.pop(context, 0);
-                  },
-                  child: Text("this")),
-              SimpleDialogOption(
-                  onPressed: () {
-                    Navigator.pop(context, 1);
-                  },
-                  child: Text("that"))
-            ],
-          );
-        })) {
-      case 0:
-        return 'this';
-        break;
-      case 1:
-        return 'that';
-        break;
-    }
-    return 'cancelled';
   }
 
   Future<String> prepTransaction(BuildContext context, type) async {
@@ -504,7 +495,7 @@ class EthChangeNotifier extends ChangeNotifier {
         return 'Transaction Submitted';
         break;
     }
-    return '';
+    return 'Transaction Cancelled';
   }
 
   void changeGas(n) {
@@ -525,7 +516,7 @@ class FullScreenDialog extends ConsumerWidget {
 
   final type;
 
-  Widget dialogContent(int type, beasts, selection) {
+  Widget dialogContent(int type, beasts) {
     return Card(
         child: Padding(
       padding: const EdgeInsets.all(8.0),
@@ -535,7 +526,7 @@ class FullScreenDialog extends ConsumerWidget {
           Container(height: 10),
           Row(
             children: [
-              Expanded(child: asset(type, beasts, selection)),
+              Expanded(child: asset(type, beasts)),
               Divider(),
               Expanded(child: text(type)),
             ],
@@ -545,38 +536,62 @@ class FullScreenDialog extends ConsumerWidget {
     ));
   }
 
-  Widget asset(type, beasts, selection) {
-    if (type < 4) {
-      return Container(
-          width: 50,
-          height: 130,
-          child: MonsterPicSmall(data: beasts[selection[0]]));
+  Widget asset(type, beasts) {
+    if (type == 6) {
+      return Text("unknown details");
     }
-    return Text("unknown details");
+    return Container(
+        width: 50, height: 130, child: MonsterPicSmall(data: beasts[0]));
   }
 
   Widget text(type) {
     switch (type) {
       case 0:
-        return Text("retrieve beast in order to use again",
+        return Text("retrieve beast from an auction in order to use again",
             style: TextStyle(fontSize: 10));
         break;
       case 1:
         return Text(
-            "buy this beast from auction. \n WARNING: this beast may be sold before the transaction is completed. Used Gas will not be refunded");
+            "retrieve beast from an extraction auction in order to use again",
+            style: TextStyle(fontSize: 10));
         break;
       case 2:
-        return Text('Auction this beast');
+        return Text(
+            "buy this beast from auction. \n\nWARNING: this beast may be sold before the transaction is completed. Used Gas will not be refunded",
+            style: TextStyle(fontSize: 10));
+        break;
+      case 3:
+        return Text(
+            'Acquire an extract of this beast. \n\nWARNING: this extract may be sold before the transaction is completed. Used Gas will not be refunded \n WARNING: extracts expire after 24hrs',
+            style: TextStyle(fontSize: 10));
+        break;
+      case 4:
+        return Text('Auction this beast', style: TextStyle(fontSize: 10));
+        break;
+      case 5:
+        return Text('Auction an extract of this beast',
+            style: TextStyle(fontSize: 10));
+        break;
+      case 6:
+        return Text(
+            'Fuse two beasts together. \n\nWARNING: the order of the beasts will affect the fusing behaviour',
+            style: TextStyle(fontSize: 10));
+        break;
+      case 7:
+        return Text(
+            'Level Up this beast. \n\nWARNING: this requires a certain level of experience',
+            style: TextStyle(fontSize: 10));
+        break;
     }
     return Text(
-        "Do not proceed with this transaction unless you are sure of the result");
+        "Do not proceed with this transaction unless you are sure of the result",
+        style: TextStyle(fontSize: 10));
   }
 
   @override
   build(BuildContext context, ScopedReader watch) {
     final data = watch(myEthDataProvider);
-    final beasts = data.data.ready;
-    final selection = data.selectedMonsters;
+    final beasts = data.selectedMonsters;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Color(0xfffef0d1),
@@ -586,7 +601,7 @@ class FullScreenDialog extends ConsumerWidget {
       body: Center(
         child: Column(
           children: [
-            dialogContent(type, beasts, selection),
+            dialogContent(type, beasts),
             Card(
               child: Padding(
                 padding: EdgeInsets.all(10),

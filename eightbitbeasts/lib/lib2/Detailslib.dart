@@ -1,11 +1,10 @@
 part of page_classes;
 
 class AuctionDetails extends StatelessWidget {
-  AuctionDetails({
-    @required this.data,
-  });
+  AuctionDetails({@required this.data, @required this.type});
 
   final Auction data;
+  final int type;
 
   void buy() {
     print("buy buy buy");
@@ -281,7 +280,7 @@ class AuctionDetails extends StatelessWidget {
                               ],
                             ),
                           ),
-                          MarketButtons(data: data),
+                          MarketButtons(data: data, type: type),
                         ],
                       ),
                     ),
@@ -297,8 +296,9 @@ class AuctionDetails extends StatelessWidget {
 }
 
 class MarketButtons extends ConsumerWidget {
-  MarketButtons({this.data});
+  MarketButtons({this.data, this.type});
   final data;
+  final type;
 
   TextStyle style(fontsize) {
     return TextStyle(
@@ -308,13 +308,20 @@ class MarketButtons extends ConsumerWidget {
     );
   }
 
-  void retrieve() {
-//TODO
+  void retrieve(context, info) {
+    info.selectedMonsters = [];
+    print('is this ok');
+    info.selectedMonsters.add(data.monster);
+    print('is the problem here');
+    info.prepTransaction(context, type);
     print("retrieve monster");
   }
 
-  void buy() {
-    //TODO
+  void buy(context, info) {
+    info.selectedMonsters = [];
+
+    info.selectedMonsters.add(data.monster);
+    info.prepTransaction(context, type + 1);
     print("buying monster");
   }
 
@@ -349,10 +356,10 @@ class MarketButtons extends ConsumerWidget {
           disabledColor: Colors.grey,
           color: Theme.of(context).accentColor,
           onPressed: isMine()
-              ? () => retrieve()
+              ? () => retrieve(context, info)
               : expired()
                   ? null
-                  : () => buy(),
+                  : () => buy(context, info),
           child: Text(isMine() ? "retrieve" : "buy", style: style(15.0)),
         ),
       ],
