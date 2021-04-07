@@ -36,6 +36,7 @@ class EthChangeNotifier extends ChangeNotifier {
 
   List<dynamic> arguments = [];
   List<dynamic> selectedMonsters = [];
+  List<dynamic> selectedAuctions = [];
 
   List<String> transactionList = [];
 
@@ -267,12 +268,110 @@ class EthChangeNotifier extends ChangeNotifier {
     print(gasPriceInWei);
   }
 
-  void createTransaction(type) async {
+  Future<void> createTransaction(type) async {
+    print(type);
     switch (type) {
       case 0:
-        //Retrieval of beast
-        String res = await submit('retrieve', selectedMonsters, 'market');
+        //Retrieval of beast from auction
+        //make arguments [beastId, auction No, _type]
+        BigInt beastId = selectedMonsters[0].id;
+        BigInt auctionId = BigInt.from(selectedAuctions[0].id);
+        print([beastId, auctionId]);
+        arguments = [beastId, auctionId, BigInt.from(1)];
+        String res = await submit('retrieve', arguments, 'market');
         transactionList.add(res);
+        //clean selected Monsters
+        selectedMonsters = [];
+        selectedBoolMask = List<bool>.filled(data.ready.length, false);
+        selectedAuctions = [];
+        return;
+        break;
+      case 1:
+        //make arguments [beastId, auction No, _type]
+        BigInt beastId = selectedMonsters[0].id;
+        BigInt auctionId = BigInt.from(selectedAuctions[0].id);
+        print([beastId, auctionId]);
+        arguments = [beastId, auctionId, BigInt.from(2)];
+        String res = await submit('retrieve', arguments, 'market');
+        transactionList.add(res);
+
+        selectedMonsters = [];
+        selectedBoolMask = List<bool>.filled(data.ready.length, false);
+
+        selectedAuctions = [];
+        return;
+        break;
+      case 2:
+        //make arguments [beastId, auctionNo]
+        BigInt beastId = selectedMonsters[0].id;
+        BigInt auctionId = BigInt.from(selectedAuctions[0].id);
+        print([beastId, auctionId]);
+        arguments = [beastId, auctionId];
+        String res = await submit('buyBeastFromAuction', arguments, 'market');
+        transactionList.add(res);
+
+        selectedMonsters = [];
+        selectedBoolMask = List<bool>.filled(data.ready.length, false);
+
+        selectedAuctions = [];
+        return;
+        break;
+      case 3:
+        //mke Arguments [beastId, auctionNo]
+        BigInt beastId = selectedMonsters[0].id;
+        BigInt auctionId = BigInt.from(selectedAuctions[0]);
+        arguments = [beastId, auctionId];
+        print([beastId, auctionId]);
+        String res = await submit('buyExtractFromAuction', arguments, 'market');
+        transactionList.add(res);
+
+        selectedMonsters = [];
+        selectedBoolMask = List<bool>.filled(data.ready.length, false);
+
+        selectedAuctions = [];
+        return;
+        break;
+      case 4:
+        //make arguments [beastId, startPrice, endPrice, endTime]
+        //rest handled by input form field
+        BigInt beastId = selectedMonsters[0].id;
+        arguments[0] = beastId;
+        print(arguments);
+        String res = await submit('auctionBeast', arguments, 'market');
+        transactionList.add(res);
+        //
+        selectedMonsters = [];
+        selectedBoolMask = List<bool>.filled(data.ready.length, false);
+
+        return;
+        break;
+      case 5:
+        //make arguments [beastId, price, endTime]
+        BigInt beastId = selectedMonsters[0].id;
+        arguments[0] = beastId;
+        print(arguments);
+        //String res = await submit('auctionBeastExtract', arguments, 'market');
+        //transactionList.add(res);
+
+        selectedMonsters = [];
+        selectedBoolMask = List<bool>.filled(data.ready.length, false);
+
+        return;
+        break;
+      case 6:
+        print('beasts fused');
+        selectedMonsters = [];
+        selectedBoolMask = List<bool>.filled(data.ready.length, false);
+
+        return;
+        break;
+      case 7:
+        print('beast enhanced');
+        selectedMonsters = [];
+        selectedBoolMask = List<bool>.filled(data.ready.length, false);
+
+        return;
+        break;
     }
   }
 
@@ -305,11 +404,16 @@ class EthChangeNotifier extends ChangeNotifier {
     int n = limit - 10;
     while (n < limit && n < int.parse(response[0].toString())) {
       List<dynamic> res = await query("auctions", [BigInt.from(n)], 'market');
-      //print(res);
+      print(res);
       //print(data.myPublicAddress.toString().toLowerCase());
+      if (res[6]) {
+        n += 1;
+        continue;
+      }
       if (data.myPublicAddress.toString().toLowerCase() ==
           res[1].toString().toLowerCase()) {
         data.myMarketMonstersForAuction.add(Auction(
+            id: n,
             seller: res[1].toString(),
             startPrice: double.parse(res[2].toString()),
             endPrice: double.parse(res[3].toString()),
@@ -329,6 +433,7 @@ class EthChangeNotifier extends ChangeNotifier {
                 img: Image.asset("lib/assets/fox.png"))));
       } else {
         data.marketMonstersForAuction.add(Auction(
+            id: n,
             seller: res[1].toString(),
             startPrice: double.parse(res[2].toString()),
             endPrice: double.parse(res[3].toString()),
@@ -364,6 +469,7 @@ class EthChangeNotifier extends ChangeNotifier {
         print(data.myPublicAddress.toString().toLowerCase());
         Monster beast = await getBeast(res[0][1]);
         data.myMarketMonstersForDonor.add(Auction(
+            id: n,
             seller: res[1].toString(),
             startPrice: double.parse(res[2].toString()),
             endPrice: double.parse(res[2].toString()),
@@ -374,6 +480,7 @@ class EthChangeNotifier extends ChangeNotifier {
       } else {
         Monster beast = await getBeast(res[0][1]);
         data.marketMonstersForDonor.add(Auction(
+            id: n,
             seller: res[1].toString(),
             startPrice: double.parse(res[2].toString()),
             endPrice: double.parse(res[2].toString()),
@@ -418,6 +525,12 @@ class EthChangeNotifier extends ChangeNotifier {
     return 1;
   }
 
+  void clearSelected() {
+    selectedMonsters = [];
+    selectedBoolMask = List<bool>.filled(data.ready.length, false);
+    notifyListeners();
+  }
+
 //Other functions to get stuffs like market monsters, and inventory.
   void openSelector(BuildContext context, type) {
     showModalBottomSheet(
@@ -426,7 +539,14 @@ class EthChangeNotifier extends ChangeNotifier {
             color: Theme.of(context).accentColor,
             child: Column(
               children: [
-                ListTile(title: Text("ready beasts")),
+                ListTile(
+                    title: Text("ready beasts"),
+                    subtitle: SelectorSubtitle(type: type),
+                    trailing: ElevatedButton(
+                        onPressed: () {
+                          clearSelected();
+                        },
+                        child: Text('clear'))),
                 GridView.builder(
                   shrinkWrap: true,
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -489,12 +609,15 @@ class EthChangeNotifier extends ChangeNotifier {
           fullscreenDialog: true,
         ))) {
       case 0:
+        selectedAuctions = [];
         return 'Transaction Cancelled';
+
         break;
       case 1:
         return 'Transaction Submitted';
         break;
     }
+    selectedAuctions = [];
     return 'Transaction Cancelled';
   }
 
@@ -508,6 +631,23 @@ class EthChangeNotifier extends ChangeNotifier {
     gasPriceInWei = n * 1000000000;
     total = gasPriceInWei * gas;
     notifyListeners();
+  }
+}
+
+class SelectorSubtitle extends ConsumerWidget {
+  SelectorSubtitle({@required this.type});
+
+  final type;
+
+  @override
+  build(BuildContext context, ScopedReader watch) {
+    final info = watch(myEthDataProvider);
+    return Text(
+        'selected:  ' +
+            info.selectedMonsters.length.toString() +
+            ' / ' +
+            info.requiredMonsters(type).toString(),
+        style: TextStyle(fontSize: 12));
   }
 }
 
@@ -541,7 +681,17 @@ class FullScreenDialog extends ConsumerWidget {
       return Text("unknown details");
     }
     return Container(
-        width: 50, height: 130, child: MonsterPicSmall(data: beasts[0]));
+        width: 50,
+        height: 130,
+        child: Row(
+          children: [
+            RotatedBox(
+              child: Text(beasts[0].name),
+              quarterTurns: 3,
+            ),
+            MonsterPicSmall(data: beasts[0]),
+          ],
+        ));
   }
 
   Widget text(type) {
@@ -566,7 +716,9 @@ class FullScreenDialog extends ConsumerWidget {
             style: TextStyle(fontSize: 10));
         break;
       case 4:
-        return Text('Auction this beast', style: TextStyle(fontSize: 10));
+        return Text(
+            'Auction this beast\n\nPrice linearly decrements from start price to end price, over the period specified by the duration',
+            style: TextStyle(fontSize: 10));
         break;
       case 5:
         return Text('Auction an extract of this beast',
@@ -588,9 +740,120 @@ class FullScreenDialog extends ConsumerWidget {
         style: TextStyle(fontSize: 10));
   }
 
+  Widget extraParameters(type, data) {
+    if (type == 4) {
+      data.arguments = [
+        false,
+        BigInt.from(100),
+        BigInt.from(50),
+        BigInt.from(DateTime.now().millisecondsSinceEpoch / 1000 + 3600)
+      ];
+      return Card(
+          child: Padding(
+              padding: EdgeInsets.all(10),
+              child: Column(
+                children: [
+                  Container(
+                      child: TextFormField(
+                          initialValue: '100',
+                          onFieldSubmitted: (value) {
+                            data.arguments[1] = BigInt.parse(value);
+                            print(data.arguments[1]);
+                          },
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                              border: const OutlineInputBorder(),
+                              labelText: 'start price',
+                              suffix: Container(
+                                height: 20,
+                                child: Image.asset("lib/assets/essence.png"),
+                              )))),
+                  Container(height: 20),
+                  Container(
+                      child: TextFormField(
+                          initialValue: '50',
+                          onFieldSubmitted: (value) {
+                            data.arguments[2] = BigInt.parse(value);
+                            print(data.arguments[2]);
+                          },
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                              border: const OutlineInputBorder(),
+                              labelText: 'end price',
+                              suffix: Container(
+                                height: 20,
+                                child: Image.asset("lib/assets/essence.png"),
+                              )))),
+                  Container(height: 20),
+                  Container(
+                      child: TextFormField(
+                          initialValue: '3600',
+                          onFieldSubmitted: (value) {
+                            data.arguments[3] = BigInt.from(int.parse(value) +
+                                DateTime.now().millisecondsSinceEpoch / 1000);
+                            print(data.arguments[3]);
+                          },
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                              border: const OutlineInputBorder(),
+                              labelText: 'duration',
+                              helperText: 'in seconds',
+                              suffix: Container(
+                                height: 20,
+                                child: Text('s'),
+                              )))),
+                  //ElevatedButton(child: Text('apply'), onPressed: () {})
+                ],
+              )));
+    }
+    if (type == 5) {
+      return Card(
+          child: Padding(
+              padding: EdgeInsets.all(10),
+              child: Column(
+                children: [
+                  Container(
+                      child: TextFormField(
+                          initialValue: '100',
+                          onFieldSubmitted: (value) {
+                            data.arguments[1] = value;
+                          },
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                              border: const OutlineInputBorder(),
+                              labelText: 'price',
+                              suffix: Container(
+                                height: 20,
+                                child: Image.asset("lib/assets/essence.png"),
+                              )))),
+                  Container(height: 20),
+                  Container(
+                      child: TextFormField(
+                          initialValue: '3600',
+                          onFieldSubmitted: (value) {
+                            data.arguments[3] = BigInt.from(int.parse(value) +
+                                DateTime.now().millisecondsSinceEpoch / 1000);
+                            print(data.arguments[3]);
+                          },
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                              border: const OutlineInputBorder(),
+                              labelText: 'duration',
+                              helperText: 'in seconds',
+                              suffix: Container(
+                                height: 20,
+                                child: Text('s'),
+                              )))),
+                ],
+              )));
+    }
+    return Container();
+  }
+
   @override
   build(BuildContext context, ScopedReader watch) {
     final data = watch(myEthDataProvider);
+
     final beasts = data.selectedMonsters;
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -599,9 +862,10 @@ class FullScreenDialog extends ConsumerWidget {
         title: Text('Transaction'),
       ),
       body: Center(
-        child: Column(
+        child: ListView(
           children: [
             dialogContent(type, beasts),
+            extraParameters(type, data),
             Card(
               child: Padding(
                 padding: EdgeInsets.all(10),
@@ -611,12 +875,11 @@ class FullScreenDialog extends ConsumerWidget {
                         'disclaimer: transactions are not deterministic, we recommend 1,000,000 gas to ensure success of the transaction.',
                         style: TextStyle(fontSize: 8)),
                     Container(height: 12),
-                    SizedBox(
+                    Container(
                       child: TextFormField(
                           initialValue: data.gas.toInt().toString(),
                           onFieldSubmitted: (value) {
                             data.changeGas(double.parse(value));
-                            print("changing stuff");
                           },
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
@@ -626,7 +889,7 @@ class FullScreenDialog extends ConsumerWidget {
                           )),
                     ),
                     Container(height: 30),
-                    SizedBox(
+                    Container(
                       child: TextFormField(
                           onFieldSubmitted: (value) {
                             data.changePrice(double.parse(value));
@@ -703,13 +966,35 @@ class FullScreenDialog extends ConsumerWidget {
                     child: Text("cancel"),
                     onPressed: () {
                       Navigator.pop(context, 0);
+                      data.selectedAuctions = [];
+                      data.selectedMonsters = [];
                     }),
                 Container(width: 5),
                 ElevatedButton(
                     child: Text("Submit"),
-                    onPressed: () {
-                      Navigator.pop(context, 1);
-                      //data.transact(type);
+                    onPressed: () async {
+                      if (await showDialog(
+                        context: context,
+                        builder: (BuildContext context) => AlertDialog(
+                          title: Text('This action is irreversible!'),
+                          actions: <Widget>[
+                            TextButton(
+                              child: Text('Approve'),
+                              onPressed: () {
+                                Navigator.of(context).pop(true);
+                              },
+                            ),
+                            TextButton(
+                                child: Text('cancel'),
+                                onPressed: () {
+                                  Navigator.of(context).pop(false);
+                                })
+                          ],
+                        ),
+                      )) {
+                        await data.createTransaction(type);
+                        Navigator.pop(context, 1);
+                      }
                     }),
               ],
             ),

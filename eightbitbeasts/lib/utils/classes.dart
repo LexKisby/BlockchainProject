@@ -33,10 +33,13 @@ class Auction {
   double startPrice;
   double endPrice;
   String seller;
+  int id;
 
   bool isMine;
+  bool retrieved;
 
   Auction({
+    @required this.id,
     @required this.monster,
     @required this.startTime,
     @required this.duration,

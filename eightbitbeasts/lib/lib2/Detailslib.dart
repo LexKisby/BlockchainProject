@@ -310,11 +310,14 @@ class MarketButtons extends ConsumerWidget {
 
   void retrieve(context, info) {
     info.selectedMonsters = [];
-    print('is this ok');
+    info.selectedAuctions = [];
+    //print('is this ok');
+    print(data);
     info.selectedMonsters.add(data.monster);
-    print('is the problem here');
+    info.selectedAuctions.add(data);
+    //print('is the problem here');
     info.prepTransaction(context, type);
-    print("retrieve monster");
+    //print("retrieve monster");
   }
 
   void buy(context, info) {

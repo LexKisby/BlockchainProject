@@ -8,6 +8,8 @@ LeaderBoard Contract =
 account 2: ca994b1a7a17b25ce90a9da11e92d30bb3ff5bb6de050b8f88af9b924e0c94e7
 account 1: 09fa63a415d391bcc3bfbd9025eb88e0da80d9924e1e7ed00b665261d14061a5
 
+my public address : 0x6c7382c47830c20b1a2746ddd5bb48f2eab08795
+
 emergency copy paste
 
 function changeName(uint256 _beastId, string calldata _newName)

@@ -169,7 +169,7 @@ class SettingsContentState extends State<SettingsContent> {
                 child: Container(
                   height: 120,
                   child: Center(
-                    child: Text("potentially some other stuffs"),
+                    child: Transactions(),
                   ),
                 ),
               ),
@@ -177,6 +177,14 @@ class SettingsContentState extends State<SettingsContent> {
           )),
       SettingsWalletCard(),
     ]));
+  }
+}
+
+class Transactions extends ConsumerWidget {
+  @override
+  build(BuildContext context, ScopedReader watch) {
+    final info = watch(myEthDataProvider);
+    return Text(info.transactionList.toString());
   }
 }
 
