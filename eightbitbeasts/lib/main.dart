@@ -199,7 +199,7 @@ class CapturePage extends StatelessWidget {
               ],
               bottom: TabBar(
                 tabs: [
-                  Tab(text: "capture"),
+                  Tab(text: "PvE"),
                   Tab(text: "PvP"),
                   Tab(text: "ranking"),
                 ],
