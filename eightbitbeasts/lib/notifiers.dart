@@ -350,26 +350,39 @@ class EthChangeNotifier extends ChangeNotifier {
         BigInt beastId = selectedMonsters[0].id;
         arguments[0] = beastId;
         print(arguments);
-        //String res = await submit('auctionBeastExtract', arguments, 'market');
-        //transactionList.add(res);
+        String res = await submit('auctionBeastExtract', arguments, 'market');
+        transactionList.add(res);
 
         selectedMonsters = [];
         selectedBoolMask = List<bool>.filled(data.ready.length, false);
-
         return;
         break;
       case 6:
-        print('beasts fused');
+        //make arguments [primaryId, secondaryId, name]
+        BigInt primaryId = selectedMonsters[0].id;
+        BigInt secondaryId = selectedMonsters[1].id;
+        arguments[0] = primaryId;
+        arguments[1] = secondaryId;
+        print(arguments);
+        print(selectedMonsters[0].remaining);
+        print(selectedMonsters[1].remaining);
+        String res = await submit('BeastFusionSwitch', arguments, 'fusion');
+        transactionList.add(res);
+
         selectedMonsters = [];
         selectedBoolMask = List<bool>.filled(data.ready.length, false);
-
         return;
         break;
       case 7:
-        print('beast enhanced');
+        //make arguments [beastId]
+        BigInt beastId = selectedMonsters[0].id;
+        arguments = [beastId];
+        print(arguments);
+        String res = await submit('levelUp', arguments, 'mother');
+        transactionList.add(res);
+
         selectedMonsters = [];
         selectedBoolMask = List<bool>.filled(data.ready.length, false);
-
         return;
         break;
     }
@@ -522,6 +535,9 @@ class EthChangeNotifier extends ChangeNotifier {
   }
 
   int requiredMonsters(type) {
+    if (type == 6) {
+      return 2;
+    }
     return 1;
   }
 
@@ -567,7 +583,7 @@ class EthChangeNotifier extends ChangeNotifier {
                         Navigator.pop(context);
                         return;
                       }
-                      if (selectedMonsters.length > requiredMonsters(type)) {
+                      if (selectedMonsters.length != requiredMonsters(type)) {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                             content: Text('Please select [' +
                                 requiredMonsters(type).toString() +
@@ -678,7 +694,44 @@ class FullScreenDialog extends ConsumerWidget {
 
   Widget asset(type, beasts) {
     if (type == 6) {
-      return Text("unknown details");
+      return Container(
+          height: 130,
+          child: Row(
+            children: [
+              RotatedBox(
+                child: Text(beasts[0].name),
+                quarterTurns: 3,
+              ),
+              Container(
+                  width: 76,
+                  child: Column(
+                    children: [
+                      Container(height: 10),
+                      Text('1'),
+                      Container(height: 5),
+                      MonsterPicSmall(data: beasts[0]),
+                      Text('r: ' + beasts[0].remaining.toString(),
+                          style: TextStyle(fontSize: 8)),
+                    ],
+                  )),
+              RotatedBox(
+                child: Text(beasts[1].name),
+                quarterTurns: 3,
+              ),
+              Container(
+                  width: 76,
+                  child: Column(
+                    children: [
+                      Container(height: 10),
+                      Text('2'),
+                      Container(height: 5),
+                      MonsterPicSmall(data: beasts[1]),
+                      Text('r: ' + beasts[1].remaining.toString(),
+                          style: TextStyle(fontSize: 8)),
+                    ],
+                  )),
+            ],
+          ));
     }
     return Container(
         width: 50,
@@ -726,7 +779,7 @@ class FullScreenDialog extends ConsumerWidget {
         break;
       case 6:
         return Text(
-            'Fuse two beasts together. \n\nWARNING: the order of the beasts will affect the fusing behaviour',
+            'Fuse two beasts together. \n\nWARNING: the order of the beasts will affect the fusing behaviour\n\nWARNING: ensure that the beasts have extractions remaining, else the transaction will fail.',
             style: TextStyle(fontSize: 10));
         break;
       case 7:
@@ -807,6 +860,11 @@ class FullScreenDialog extends ConsumerWidget {
               )));
     }
     if (type == 5) {
+      data.arguments = [
+        false,
+        BigInt.from(100),
+        BigInt.from(DateTime.now().millisecondsSinceEpoch / 1000 + 3600)
+      ];
       return Card(
           child: Padding(
               padding: EdgeInsets.all(10),
@@ -816,7 +874,8 @@ class FullScreenDialog extends ConsumerWidget {
                       child: TextFormField(
                           initialValue: '100',
                           onFieldSubmitted: (value) {
-                            data.arguments[1] = value;
+                            data.arguments[1] = BigInt.parse(value);
+                            print(data.arguments[1]);
                           },
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
@@ -831,9 +890,9 @@ class FullScreenDialog extends ConsumerWidget {
                       child: TextFormField(
                           initialValue: '3600',
                           onFieldSubmitted: (value) {
-                            data.arguments[3] = BigInt.from(int.parse(value) +
+                            data.arguments[2] = BigInt.from(int.parse(value) +
                                 DateTime.now().millisecondsSinceEpoch / 1000);
-                            print(data.arguments[3]);
+                            print(data.arguments[2]);
                           },
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
@@ -846,6 +905,23 @@ class FullScreenDialog extends ConsumerWidget {
                               )))),
                 ],
               )));
+    }
+    if (type == 6) {
+      data.arguments = [false, false, 'qwerty'];
+      return Card(
+          child: Padding(
+              padding: EdgeInsets.all(10),
+              child: Container(
+                  child: TextFormField(
+                      initialValue: 'qwerty',
+                      onFieldSubmitted: (value) {
+                        data.arguments[2] = value;
+                        print(data.arguments[2]);
+                      },
+                      decoration: InputDecoration(
+                        border: const OutlineInputBorder(),
+                        labelText: 'name',
+                      )))));
     }
     return Container();
   }

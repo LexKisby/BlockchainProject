@@ -153,7 +153,32 @@ class _MonsterFlipCardState extends State<MonsterFlipCard> {
                   borderRadius: BorderRadius.circular(15)),
               clipBehavior: Clip.antiAlias,
               child: Column(mainAxisSize: MainAxisSize.min, children: [
-                widget.img,
+                Stack(
+                  children: [
+                    //Container(height: 160, color: Colors.blue),
+
+                    widget.img,
+
+                    Container(
+                      height: 170,
+                      child: Align(
+                        alignment: FractionalOffset(0.1, 0.1),
+                        child: Text('#' + widget.monster.id.toString(),
+                            style: TextStyle(fontSize: 8, color: Colors.white)),
+                      ),
+                    ),
+                    Container(
+                      height: 170,
+                      child: Align(
+                        alignment: FractionalOffset(0.9, 0.1),
+                        child: Text(
+                            'r:' + widget.monster.remaining.toInt().toString(),
+                            style: TextStyle(
+                                fontSize: 8, color: Colors.redAccent)),
+                      ),
+                    ),
+                  ],
+                ),
                 Transform(
                     transform: Matrix4.translationValues(-3, -15, 0.0),
                     child: Container(
@@ -380,13 +405,30 @@ class MonsterPicSmall extends StatelessWidget {
   @override
   build(BuildContext context) {
     return Card(
-      color: Theme.of(context).primaryColor,
-      shape: PixelBorder.solid(
-        color: getGradeColor(data.grade),
-        pixelSize: 1,
-        borderRadius: BorderRadius.circular(6),
-      ),
-      child: data.img,
-    );
+        color: Theme.of(context).primaryColor,
+        shape: PixelBorder.solid(
+          color: getGradeColor(data.grade),
+          pixelSize: 1,
+          borderRadius: BorderRadius.circular(6),
+        ),
+        child: Stack(children: [
+          data.img,
+          Container(
+            height: 50,
+            child: Align(
+              alignment: FractionalOffset(0.1, 0.2),
+              child: Text('#' + data.id.toString(),
+                  style: TextStyle(fontSize: 6, color: Colors.white)),
+            ),
+          ),
+          Container(
+            height: 50,
+            child: Align(
+              alignment: FractionalOffset(0.9, 0.2),
+              child: Text('r:' + data.remaining.toInt().toString(),
+                  style: TextStyle(fontSize: 6, color: Colors.redAccent)),
+            ),
+          ),
+        ]));
   }
 }
