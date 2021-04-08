@@ -49,3 +49,10 @@ dna:
 9: primary Colour 
 10: secondary Colour 
 11: extra feature
+
+fusion methods:
+normal: ab + cd => ac
+double slime: 0a + 0b => ab    ()
+slime secondary: ab + 0d => 0a (imure slime)
+slimePrimary: 0a + cd => 00   (pure slime)
+
