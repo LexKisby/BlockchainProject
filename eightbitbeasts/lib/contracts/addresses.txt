@@ -22,6 +22,10 @@ function changeName(uint256 _beastId, string calldata _newName)
         emit NameChange(_beastId, _newName);
     }
 
+    currency: 
+    0: essence
+    1: rubies
+
 
 species notes
 
@@ -35,6 +39,29 @@ species notes
 7   Insect     => Spider, etc
 8   Reptile    => croc / salamander
 9   Dragon     => dragon (oriental if pure)
+
+attributes:
+            hp
+attack speed - evasion
+primary damage - secondary damage
+resistance - accuracy
+constitution - intelligence
+
+desc: 
+hp => total health points
+attack speed => attack speed value for primary and secondary attack, species dependant
+evasion => ability to avoid attacks 
+primary damage => damage dealt on primary hit 
+secondary damage => damage dealt on secondary hit 
+resistance => min damage required to deal damage
+accuracy => against evasion for hit liklihood
+constitution => modifier to scale damage taken
+intelligence => modifier for multiple factors
+
+strength:
+damage output + damage defense
+damage output = attackspeed * (primary damage + secondary damage) * accuracy
+damage defense = resistance + evasion * constitution + hp
 
 
 dna:
