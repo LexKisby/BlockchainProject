@@ -1610,7 +1610,7 @@ contract Dungeon is Owner {
 
     function _rewardBand(uint256 _s, uint256 _d)
         internal
-        view
+        pure
         returns (
             uint256 minR,
             uint256 rangeR,

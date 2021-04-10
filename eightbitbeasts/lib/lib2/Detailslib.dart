@@ -6,10 +6,6 @@ class AuctionDetails extends StatelessWidget {
   final Auction data;
   final int type;
 
-  void buy() {
-    print("buy buy buy");
-  }
-
   TextStyle style(fontsize) {
     return TextStyle(
       fontFamily: 'PressStart2P',
@@ -308,24 +304,27 @@ class MarketButtons extends ConsumerWidget {
     );
   }
 
-  void retrieve(context, info) {
+  Future<String> retrieve(context, info) async {
     info.selectedMonsters = [];
     info.selectedAuctions = [];
     //print('is this ok');
-    print(data);
+    //print(data);
     info.selectedMonsters.add(data.monster);
     info.selectedAuctions.add(data);
     //print('is the problem here');
-    info.prepTransaction(context, type);
+    await info.getEtherBalance();
+    return await info.prepTransaction(context, type);
     //print("retrieve monster");
   }
 
-  void buy(context, info) {
+  Future<String> buy(context, info) async {
     info.selectedMonsters = [];
 
     info.selectedMonsters.add(data.monster);
-    info.prepTransaction(context, type + 1);
-    print("buying monster");
+    info.selectedAuctions.add(data);
+    await info.getEtherBalance();
+    return await info.prepTransaction(context, type + 1);
+    //print("buying monster");
   }
 
   bool isMine() {
@@ -358,11 +357,17 @@ class MarketButtons extends ConsumerWidget {
         RaisedButton(
           disabledColor: Colors.grey,
           color: Theme.of(context).accentColor,
-          onPressed: isMine()
-              ? () => retrieve(context, info)
-              : expired()
-                  ? null
-                  : () => buy(context, info),
+          onPressed: () async {
+            String res;
+            if (isMine()) {
+              res = await retrieve(context, info);
+            } else {
+              res = await buy(context, info);
+            }
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(res)));
+            Navigator.pop(context);
+          },
           child: Text(isMine() ? "retrieve" : "buy", style: style(15.0)),
         ),
       ],

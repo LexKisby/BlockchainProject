@@ -22,6 +22,20 @@ function changeName(uint256 _beastId, string calldata _newName)
         emit NameChange(_beastId, _newName);
     }
 
+
+nPressed: isMine()
+              ? () => retrieve(context, info)
+              : expired()
+                  ? null
+                  : () => buy(context, info),
+
+
+
+
+
+
+
+
     currency: 
     0: essence
     1: rubies

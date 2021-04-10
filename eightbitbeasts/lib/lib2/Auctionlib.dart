@@ -58,7 +58,7 @@ class MyMarketContent extends ConsumerWidget {
                       color: Theme.of(context).backgroundColor,
                       onPressed: () {
                         info.openSelector(context, 4);
-                        print("add auction");
+                        //print("add auction");
                       },
                       child: Text("add auction",
                           style: TextStyle(
@@ -69,7 +69,7 @@ class MyMarketContent extends ConsumerWidget {
                       color: Theme.of(context).backgroundColor,
                       onPressed: () {
                         info.openSelector(context, 5);
-                        print("add extract");
+                        //print("add extract");
                       },
                       child: Text("add extract",
                           style: TextStyle(
@@ -216,7 +216,7 @@ class MarketRow extends StatelessWidget {
                   transform: Matrix4.translationValues(0, -4, 0),
                   child: ListTile(
                     onTap: () {
-                      print("tapped " + data.seller);
+                      //print("tapped " + data.seller);
                       Navigator.of(context).push(PageRouteBuilder(
                         opaque: false,
                         pageBuilder: (context, animation, secondaryAnimation) =>

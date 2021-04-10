@@ -39,6 +39,7 @@ class EthChangeNotifier extends ChangeNotifier {
   List<dynamic> selectedAuctions = [];
 
   List<String> transactionList = [];
+  List<bool> transactionSuccess = [];
 
   void init() async {
     if (initiated) {
@@ -74,10 +75,13 @@ class EthChangeNotifier extends ChangeNotifier {
     data.incubating = [];
     data.ready = [];
     selectedBoolMask = [];
+    //print(inv);
     for (int i = 0; i < l; i++) {
       data.monsterList.add(Monster(
           name: inv[0][i][0],
           id: inv[0][i][2],
+          lvl: inv[0][i][3],
+          xp: inv[0][i][4],
           grade: double.parse(inv[0][i][8].toString()),
           stats: makeStats(inv[0][i][1]),
           dna: convert(inv[0][i][10]),
@@ -85,17 +89,19 @@ class EthChangeNotifier extends ChangeNotifier {
           losses: double.parse(inv[0][i][7].toString()),
           readyTime: double.parse(inv[0][i][5].toString()),
           remaining: double.parse(inv[0][i][9].toString()),
-          img: Image.asset("lib/assets/fox.png")));
+          img: getImageFromDna(inv[0][i][10].toString())));
 
       selectedBoolMask.add(false);
-      print(double.parse(inv[0][i][5].toString()) -
-          DateTime.now().millisecondsSinceEpoch / 1000);
+      //print(double.parse(inv[0][i][5].toString()) -
+      //  DateTime.now().millisecondsSinceEpoch / 1000);
       if (double.parse(inv[0][i][5].toString()) >
           DateTime.now().millisecondsSinceEpoch / 1000) {
-        print(inv[0][i][0]);
+        //print(inv[0][i][0]);
         data.incubating.add(Monster(
             name: inv[0][i][0],
             id: inv[0][i][2],
+            lvl: inv[0][i][3],
+            xp: inv[0][i][4],
             grade: double.parse(inv[0][i][8].toString()),
             stats: makeStats(inv[0][i][1]),
             dna: convert(inv[0][i][10]),
@@ -103,11 +109,13 @@ class EthChangeNotifier extends ChangeNotifier {
             losses: double.parse(inv[0][i][7].toString()),
             readyTime: double.parse(inv[0][i][5].toString()),
             remaining: double.parse(inv[0][i][9].toString()),
-            img: Image.asset("lib/assets/bee.png")));
+            img: getImageFromDna(inv[0][i][10].toString())));
       } else {
         data.ready.add(Monster(
             name: inv[0][i][0],
             id: inv[0][i][2],
+            lvl: inv[0][i][3],
+            xp: inv[0][i][4],
             grade: double.parse(inv[0][i][8].toString()),
             stats: makeStats(inv[0][i][1]),
             dna: convert(inv[0][i][10]),
@@ -115,7 +123,7 @@ class EthChangeNotifier extends ChangeNotifier {
             losses: double.parse(inv[0][i][7].toString()),
             readyTime: double.parse(inv[0][i][5].toString()),
             remaining: double.parse(inv[0][i][9].toString()),
-            img: Image.asset("lib/assets/fox.png")));
+            img: getImageFromDna(inv[0][i][10].toString())));
       }
     }
   }
@@ -145,6 +153,32 @@ class EthChangeNotifier extends ChangeNotifier {
     update();
   }
 
+  Future<void> updateTransactions() async {
+    transactionSuccess = [];
+    for (int i = 0; i < transactionList.length; i++) {
+      TransactionInformation info =
+          await ethClient.getTransactionByHash(transactionList[i]);
+      print(info);
+      if (info.transactionIndex == null) {
+        transactionSuccess.add(null);
+        continue;
+      }
+      TransactionReceipt receipt =
+          await ethClient.getTransactionReceipt(transactionList[i]);
+      print(receipt);
+      if (receipt.status == true) {
+        transactionSuccess.add(true);
+      } else {
+        if (receipt.status == false) {
+          transactionSuccess.add(false);
+        } else {
+          transactionSuccess.add(null);
+        }
+      }
+    }
+    notifyListeners();
+  }
+
   Future<void> marketRefresh() async {
     await getMarketMonsters(10);
     await getCurrency(data.myPublicAddress);
@@ -156,18 +190,14 @@ class EthChangeNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> leaderBoardsRefresh() async {
-    //await getLeaderBoards();
-    notifyListeners();
-  }
-
   Future<void> labRefresh() async {
     List<dynamic> inv = await getInventory(data.myPublicAddress);
     sortInventory(inv);
-    print(DateTime.now().millisecondsSinceEpoch / 1000);
-    print(data.incubating);
+    //print(DateTime.now().millisecondsSinceEpoch / 1000);
+    //print(data.incubating);
 
     //List<dynamic> res = await getExtracts();
+    //print(res);
     //sortExtracts(res);
     await getCurrency(data.myPublicAddress);
     notifyListeners();
@@ -199,12 +229,20 @@ class EthChangeNotifier extends ChangeNotifier {
     await getMarketMonsters(10);
     //List<dynamic> res = await getExtracts();
     //sortExtracts(res);
-    //await getBattleInfo();
-    //await getLeaderBoards();
     notifyListeners();
     return;
   }
 
+  //#################################################
+  //getpics
+  //#################################################
+  //
+  Image getImageFromDna(String dna) {
+    String species = dna[1];
+
+    String path = 'lib/assets/' + species + '.png';
+    return Image.asset(path);
+  }
 //#########################################################################################
   //Functions to load contract and query/submit to the blockchain
 //#########################################################################################
@@ -226,7 +264,7 @@ class EthChangeNotifier extends ChangeNotifier {
     final ethFunction = contract.function(functionName);
     final response = await ethClient.call(
         contract: contract, function: ethFunction, params: args);
-    print('response recieved');
+    //print('response recieved');
     return response;
   }
 
@@ -235,9 +273,9 @@ class EthChangeNotifier extends ChangeNotifier {
       String functionName, List<dynamic> args, String type) async {
     final contract = await loadContract(type);
     final ethFunction = contract.function(functionName);
-    print('loaded function from contract');
+    //print('loaded function from contract');
     EthPrivateKey credentials = EthPrivateKey.fromHex(data.myPrivateKey);
-    print("privateKeyLoaded");
+    //print("privateKeyLoaded");
     Transaction transaction = Transaction.callContract(
         contract: contract,
         function: ethFunction,
@@ -252,7 +290,7 @@ class EthChangeNotifier extends ChangeNotifier {
     return response;
   }
 
-  void getEtherBalance() async {
+  Future<void> getEtherBalance() async {
     EthereumAddress address = EthereumAddress.fromHex(myAddress);
     EtherAmount amount = await ethClient.getBalance(address);
     print(amount.getInWei);
@@ -265,11 +303,11 @@ class EthChangeNotifier extends ChangeNotifier {
     gasPriceInWei = double.parse(amount.getInWei.toString());
     total = gasPriceInWei * gas;
     notifyListeners();
-    print(gasPriceInWei);
+    //print(gasPriceInWei);
   }
 
   Future<void> createTransaction(type) async {
-    print(type);
+    //print(type);
     switch (type) {
       case 0:
         //Retrieval of beast from auction
@@ -280,6 +318,7 @@ class EthChangeNotifier extends ChangeNotifier {
         arguments = [beastId, auctionId, BigInt.from(1)];
         String res = await submit('retrieve', arguments, 'market');
         transactionList.add(res);
+        transactionSuccess.add(null);
         //clean selected Monsters
         selectedMonsters = [];
         selectedBoolMask = List<bool>.filled(data.ready.length, false);
@@ -290,10 +329,12 @@ class EthChangeNotifier extends ChangeNotifier {
         //make arguments [beastId, auction No, _type]
         BigInt beastId = selectedMonsters[0].id;
         BigInt auctionId = BigInt.from(selectedAuctions[0].id);
-        print([beastId, auctionId]);
+
         arguments = [beastId, auctionId, BigInt.from(2)];
+        print(arguments);
         String res = await submit('retrieve', arguments, 'market');
         transactionList.add(res);
+        transactionSuccess.add(null);
 
         selectedMonsters = [];
         selectedBoolMask = List<bool>.filled(data.ready.length, false);
@@ -309,6 +350,7 @@ class EthChangeNotifier extends ChangeNotifier {
         arguments = [beastId, auctionId];
         String res = await submit('buyBeastFromAuction', arguments, 'market');
         transactionList.add(res);
+        transactionSuccess.add(null);
 
         selectedMonsters = [];
         selectedBoolMask = List<bool>.filled(data.ready.length, false);
@@ -324,6 +366,7 @@ class EthChangeNotifier extends ChangeNotifier {
         print([beastId, auctionId]);
         String res = await submit('buyExtractFromAuction', arguments, 'market');
         transactionList.add(res);
+        transactionSuccess.add(null);
 
         selectedMonsters = [];
         selectedBoolMask = List<bool>.filled(data.ready.length, false);
@@ -339,6 +382,7 @@ class EthChangeNotifier extends ChangeNotifier {
         print(arguments);
         String res = await submit('auctionBeast', arguments, 'market');
         transactionList.add(res);
+        transactionSuccess.add(null);
         //
         selectedMonsters = [];
         selectedBoolMask = List<bool>.filled(data.ready.length, false);
@@ -352,6 +396,7 @@ class EthChangeNotifier extends ChangeNotifier {
         print(arguments);
         String res = await submit('auctionBeastExtract', arguments, 'market');
         transactionList.add(res);
+        transactionSuccess.add(null);
 
         selectedMonsters = [];
         selectedBoolMask = List<bool>.filled(data.ready.length, false);
@@ -364,10 +409,11 @@ class EthChangeNotifier extends ChangeNotifier {
         arguments[0] = primaryId;
         arguments[1] = secondaryId;
         print(arguments);
-        print(selectedMonsters[0].remaining);
-        print(selectedMonsters[1].remaining);
+        //print(selectedMonsters[0].remaining);
+        //print(selectedMonsters[1].remaining);
         String res = await submit('BeastFusionSwitch', arguments, 'fusion');
         transactionList.add(res);
+        transactionSuccess.add(null);
 
         selectedMonsters = [];
         selectedBoolMask = List<bool>.filled(data.ready.length, false);
@@ -380,6 +426,7 @@ class EthChangeNotifier extends ChangeNotifier {
         print(arguments);
         String res = await submit('levelUp', arguments, 'mother');
         transactionList.add(res);
+        transactionSuccess.add(null);
 
         selectedMonsters = [];
         selectedBoolMask = List<bool>.filled(data.ready.length, false);
@@ -413,7 +460,7 @@ class EthChangeNotifier extends ChangeNotifier {
   Future<void> getAuctions(int limit) async {
     List<dynamic> response = await query("getAuctions", [], 'market');
     //gets # of entries in each
-    print(response);
+    //print(response);
     int n = limit - 10;
     while (n < limit && n < int.parse(response[0].toString())) {
       List<dynamic> res = await query("auctions", [BigInt.from(n)], 'market');
@@ -436,6 +483,8 @@ class EthChangeNotifier extends ChangeNotifier {
             monster: Monster(
                 name: res[0][0],
                 id: res[0][2],
+                lvl: res[0][3],
+                xp: res[0][4],
                 grade: double.parse(res[0][8].toString()),
                 stats: makeStats(res[0][1]),
                 dna: convert(res[0][10]),
@@ -443,7 +492,7 @@ class EthChangeNotifier extends ChangeNotifier {
                 losses: double.parse(res[0][7].toString()),
                 readyTime: double.parse(res[0][5].toString()),
                 remaining: double.parse(res[0][9].toString()),
-                img: Image.asset("lib/assets/fox.png"))));
+                img: getImageFromDna(res[0][10].toString()))));
       } else {
         data.marketMonstersForAuction.add(Auction(
             id: n,
@@ -456,6 +505,8 @@ class EthChangeNotifier extends ChangeNotifier {
             monster: Monster(
                 name: res[0][0],
                 id: res[0][2],
+                lvl: res[0][3],
+                xp: res[0][4],
                 grade: double.parse(res[0][8].toString()),
                 stats: makeStats(res[0][1]),
                 dna: convert(res[0][10]),
@@ -463,7 +514,7 @@ class EthChangeNotifier extends ChangeNotifier {
                 losses: double.parse(res[0][7].toString()),
                 readyTime: double.parse(res[0][5].toString()),
                 remaining: double.parse(res[0][9].toString()),
-                img: Image.asset("lib/assets/fox.png"))));
+                img: getImageFromDna(res[0][10].toString()))));
       }
       n += 1;
     }
@@ -477,9 +528,15 @@ class EthChangeNotifier extends ChangeNotifier {
     while (n < limit && n < int.parse(response[1].toString())) {
       List<dynamic> res =
           await query("extractAuctions", [BigInt.from(n)], 'market');
+      print(res);
+      if (res[4]) {
+        n += 1;
+        continue;
+      }
+
       if (data.myPublicAddress.toString().toLowerCase() ==
           res[1].toString().toLowerCase()) {
-        print(data.myPublicAddress.toString().toLowerCase());
+        //print(data.myPublicAddress.toString().toLowerCase());
         Monster beast = await getBeast(res[0][1]);
         data.myMarketMonstersForDonor.add(Auction(
             id: n,
@@ -523,6 +580,8 @@ class EthChangeNotifier extends ChangeNotifier {
     Monster beast = Monster(
         name: res[0][0].toString(),
         id: res[0][2],
+        lvl: res[0][3],
+        xp: res[0][4],
         grade: double.parse(res[0][8].toString()),
         stats: makeStats(res[0][1]),
         dna: convert(res[0][10]),
@@ -530,7 +589,7 @@ class EthChangeNotifier extends ChangeNotifier {
         losses: double.parse(res[0][7].toString()),
         readyTime: double.parse(res[0][5].toString()),
         remaining: double.parse(res[0][9].toString()),
-        img: Image.asset("lib/assets/fox.png"));
+        img: getImageFromDna(res[0][10].toString()));
     return beast;
   }
 
@@ -591,7 +650,7 @@ class EthChangeNotifier extends ChangeNotifier {
                         Navigator.pop(context);
                         return;
                       }
-                      getEtherBalance();
+                      await getEtherBalance();
                       getGasPrice();
                       String x = await prepTransaction(context, type);
                       if (x != null) {
@@ -811,7 +870,7 @@ class FullScreenDialog extends ConsumerWidget {
                           initialValue: '100',
                           onFieldSubmitted: (value) {
                             data.arguments[1] = BigInt.parse(value);
-                            print(data.arguments[1]);
+                            //print(data.arguments[1]);
                           },
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
@@ -827,7 +886,7 @@ class FullScreenDialog extends ConsumerWidget {
                           initialValue: '50',
                           onFieldSubmitted: (value) {
                             data.arguments[2] = BigInt.parse(value);
-                            print(data.arguments[2]);
+                            //print(data.arguments[2]);
                           },
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
@@ -844,7 +903,7 @@ class FullScreenDialog extends ConsumerWidget {
                           onFieldSubmitted: (value) {
                             data.arguments[3] = BigInt.from(int.parse(value) +
                                 DateTime.now().millisecondsSinceEpoch / 1000);
-                            print(data.arguments[3]);
+                            //print(data.arguments[3]);
                           },
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
@@ -875,7 +934,7 @@ class FullScreenDialog extends ConsumerWidget {
                           initialValue: '100',
                           onFieldSubmitted: (value) {
                             data.arguments[1] = BigInt.parse(value);
-                            print(data.arguments[1]);
+                            //print(data.arguments[1]);
                           },
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
@@ -892,7 +951,7 @@ class FullScreenDialog extends ConsumerWidget {
                           onFieldSubmitted: (value) {
                             data.arguments[2] = BigInt.from(int.parse(value) +
                                 DateTime.now().millisecondsSinceEpoch / 1000);
-                            print(data.arguments[2]);
+                            //print(data.arguments[2]);
                           },
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
@@ -916,7 +975,7 @@ class FullScreenDialog extends ConsumerWidget {
                       initialValue: 'qwerty',
                       onFieldSubmitted: (value) {
                         data.arguments[2] = value;
-                        print(data.arguments[2]);
+                        //print(data.arguments[2]);
                       },
                       decoration: InputDecoration(
                         border: const OutlineInputBorder(),

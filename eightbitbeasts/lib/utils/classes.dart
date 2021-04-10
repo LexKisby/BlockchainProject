@@ -4,6 +4,8 @@ class Monster {
   Monster({
     @required this.name,
     @required this.id,
+    @required this.lvl,
+    @required this.xp,
     @required this.grade,
     @required this.stats,
     @required this.dna,
@@ -16,6 +18,8 @@ class Monster {
 
   String name;
   BigInt id;
+  BigInt lvl;
+  BigInt xp;
   double grade;
   String stats;
   String dna;

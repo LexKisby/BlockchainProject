@@ -165,9 +165,10 @@ class SettingsContentState extends State<SettingsContent> {
                           _showTimePicker();
                         })),
               ])*/
+              Center(child: TransactionButton()),
               Center(
                 child: Container(
-                  height: 120,
+                  height: 220,
                   child: Center(
                     child: Transactions(),
                   ),
@@ -180,11 +181,52 @@ class SettingsContentState extends State<SettingsContent> {
   }
 }
 
+class TransactionButton extends ConsumerWidget {
+  @override
+  build(BuildContext context, ScopedReader watch) {
+    final info = watch(myEthDataProvider);
+    return ElevatedButton(
+        onPressed: () {
+          info.updateTransactions();
+        },
+        child: Text('Refresh Transactions'));
+  }
+}
+
 class Transactions extends ConsumerWidget {
   @override
   build(BuildContext context, ScopedReader watch) {
     final info = watch(myEthDataProvider);
-    return Text(info.transactionList.toString());
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: ClampingScrollPhysics(),
+      itemBuilder: (context, position) {
+        return ListTile(
+            title: Text(info.transactionList[position].toString(),
+                style: TextStyle(fontSize: 10, color: Colors.white)),
+            trailing: SuccessIcon(type: info.transactionSuccess[position]));
+      },
+      itemCount: info.transactionList.length,
+    );
+  }
+}
+
+class SuccessIcon extends StatelessWidget {
+  SuccessIcon({this.type});
+  final type;
+
+  Icon icon(t) {
+    if (t == null) {
+      return Icon(Icons.play_circle_outline_outlined, color: Colors.white);
+    }
+    if (t) {
+      return Icon(Icons.check_circle_outline, color: Colors.greenAccent);
+    }
+    return Icon(Icons.highlight_off_outlined, color: Colors.red);
+  }
+
+  build(BuildContext context) {
+    return icon(type);
   }
 }
 

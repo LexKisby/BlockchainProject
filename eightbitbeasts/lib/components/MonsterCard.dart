@@ -164,17 +164,51 @@ class _MonsterFlipCardState extends State<MonsterFlipCard> {
                       child: Align(
                         alignment: FractionalOffset(0.1, 0.1),
                         child: Text('#' + widget.monster.id.toString(),
+                            style:
+                                TextStyle(fontSize: 13, color: Colors.white)),
+                      ),
+                    ),
+                    Container(
+                      height: 170,
+                      child: Align(
+                        alignment: FractionalOffset(0.3, 0.1),
+                        child: Text('Lv.' + widget.monster.lvl.toString(),
+                            style: TextStyle(
+                                fontSize: 13, color: Colors.yellowAccent)),
+                      ),
+                    ),
+                    Container(
+                      height: 170,
+                      child: Align(
+                        alignment: FractionalOffset(0.7, 0.1),
+                        child: Text('W' + widget.monster.wins.toString(),
+                            style: TextStyle(fontSize: 8, color: Colors.green)),
+                      ),
+                    ),
+                    Container(
+                      height: 170,
+                      child: Align(
+                        alignment: FractionalOffset(0.8, 0.1),
+                        child: Text('L' + widget.monster.losses.toString(),
+                            style: TextStyle(fontSize: 8, color: Colors.red)),
+                      ),
+                    ),
+                    Container(
+                      height: 170,
+                      child: Align(
+                        alignment: FractionalOffset(0.85, 0.2),
+                        child: Text('xp: ' + widget.monster.xp.toString(),
                             style: TextStyle(fontSize: 8, color: Colors.white)),
                       ),
                     ),
                     Container(
                       height: 170,
                       child: Align(
-                        alignment: FractionalOffset(0.9, 0.1),
+                        alignment: FractionalOffset(0.95, 0.1),
                         child: Text(
                             'r:' + widget.monster.remaining.toInt().toString(),
                             style: TextStyle(
-                                fontSize: 8, color: Colors.redAccent)),
+                                fontSize: 8, color: Colors.purpleAccent)),
                       ),
                     ),
                   ],
