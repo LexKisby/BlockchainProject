@@ -206,7 +206,7 @@ class Transactions extends ConsumerWidget {
                 style: TextStyle(fontSize: 10, color: Colors.white)),
             trailing: SuccessIcon(type: info.transactionSuccess[position]));
       },
-      itemCount: info.transactionList.length,
+      itemCount: info.transactionSuccess.length,
     );
   }
 }

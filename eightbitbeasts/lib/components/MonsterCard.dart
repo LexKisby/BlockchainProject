@@ -304,7 +304,7 @@ class _MonsterFlipCardState extends State<MonsterFlipCard> {
                 Transform(
                     transform: Matrix4.translationValues(12, 0, 0),
                     child: Stat(
-                        icon: Icons.hd_sharp,
+                        icon: Icons.favorite,
                         iconsize: 24,
                         text: widget.monster.stats.substring(0, 3),
                         fontsize: 17)),
@@ -315,42 +315,42 @@ class _MonsterFlipCardState extends State<MonsterFlipCard> {
                   shrinkWrap: true,
                   children: [
                     Stat(
-                        icon: Icons.open_with_sharp,
+                        icon: Icons.flash_on,
                         iconsize: 15,
                         text: widget.monster.stats.substring(3, 6),
                         fontsize: 12),
                     Stat(
-                        icon: Icons.format_align_justify,
+                        icon: Icons.open_with_sharp,
                         iconsize: 15,
                         text: widget.monster.stats.substring(6, 9),
                         fontsize: 12),
                     Stat(
-                        icon: Icons.wallet_giftcard,
+                        icon: Icons.label_important,
                         iconsize: 15,
                         text: widget.monster.stats.substring(9, 12),
                         fontsize: 12),
                     Stat(
-                        icon: Icons.pages_outlined,
+                        icon: Icons.label_important_outline,
                         iconsize: 15,
                         text: widget.monster.stats.substring(12, 15),
                         fontsize: 12),
                     Stat(
-                        icon: Icons.data_usage_sharp,
+                        icon: Icons.looks_sharp,
                         iconsize: 15,
                         text: widget.monster.stats.substring(15, 18),
                         fontsize: 12),
                     Stat(
-                        icon: Icons.amp_stories_sharp,
+                        icon: Icons.radio_button_checked_outlined,
                         iconsize: 15,
                         text: widget.monster.stats.substring(18, 21),
                         fontsize: 12),
                     Stat(
-                        icon: Icons.mail_outline,
+                        icon: Icons.switch_right,
                         iconsize: 15,
                         text: widget.monster.stats.substring(21, 24),
                         fontsize: 12),
                     Stat(
-                        icon: Icons.radio_button_checked_outlined,
+                        icon: Icons.emoji_objects,
                         iconsize: 15,
                         text: widget.monster.stats.substring(24, 27),
                         fontsize: 12),

@@ -1421,7 +1421,7 @@ contract Market is Owner {
                 extractAuctions[_auctionNo].retrieved == false,
                 "The beast you are trying to retrieve has already been extracted or retrieved"
             );
-            extractAuctions[_auctionNo].retrieved == true;
+            extractAuctions[_auctionNo].retrieved = true;
             MotherContract.setReadyTime(_beastId, uint32(block.timestamp));
             emit RetrievedBeast(_beastId, msg.sender);
         }
@@ -1510,6 +1510,7 @@ contract Market is Owner {
     function _findIndex(uint256 _type) internal view returns (uint256) {
         if (_type == 1) {
             //search auctions
+            if (auctions.length == 0) return 0;
             uint256 counter = 0;
             uint256 max = auctions.length - 1;
             while (true) {
@@ -1525,6 +1526,7 @@ contract Market is Owner {
         }
         if (_type == 2) {
             //search extract auctions
+            if (extractAuctions.length == 0) return 0;
             uint256 counter = 0;
             uint256 max = extractAuctions.length - 1;
             while (true) {
@@ -1558,6 +1560,10 @@ contract Market is Owner {
 
     function removeExtract(uint256 _beastId) external isTrusted() {
         extractToTamer[_beastId].owner = address(0);
+    }
+
+    function getAuctions() external view returns (uint256, uint256) {
+        return (auctions.length, extractAuctions.length);
     }
 }
 

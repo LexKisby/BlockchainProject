@@ -235,7 +235,7 @@ class HatchingPage extends StatelessWidget {
               bottom: TabBar(
                 tabs: [
                   Tab(text: "lab"),
-                  Tab(text: "incubator"),
+                  Tab(text: "occupied"),
                 ],
               )),
           body: TabBarView(

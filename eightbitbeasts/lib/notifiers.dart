@@ -154,25 +154,26 @@ class EthChangeNotifier extends ChangeNotifier {
   }
 
   Future<void> updateTransactions() async {
-    transactionSuccess = [];
+    //transactionSuccess = [];
     for (int i = 0; i < transactionList.length; i++) {
+      if (transactionSuccess[i] != null) continue;
       TransactionInformation info =
           await ethClient.getTransactionByHash(transactionList[i]);
       print(info);
       if (info.transactionIndex == null) {
-        transactionSuccess.add(null);
+        //transactionSuccess.add(null);
         continue;
       }
       TransactionReceipt receipt =
           await ethClient.getTransactionReceipt(transactionList[i]);
       print(receipt);
       if (receipt.status == true) {
-        transactionSuccess.add(true);
+        transactionSuccess[i] = (true);
       } else {
         if (receipt.status == false) {
-          transactionSuccess.add(false);
+          transactionSuccess[i] = false;
         } else {
-          transactionSuccess.add(null);
+          //transactionSuccess.add(null);
         }
       }
     }
@@ -196,8 +197,8 @@ class EthChangeNotifier extends ChangeNotifier {
     //print(DateTime.now().millisecondsSinceEpoch / 1000);
     //print(data.incubating);
 
-    //List<dynamic> res = await getExtracts();
-    //print(res);
+    List<dynamic> res = await getExtracts();
+    print(res);
     //sortExtracts(res);
     await getCurrency(data.myPublicAddress);
     notifyListeners();
@@ -460,11 +461,11 @@ class EthChangeNotifier extends ChangeNotifier {
   Future<void> getAuctions(int limit) async {
     List<dynamic> response = await query("getAuctions", [], 'market');
     //gets # of entries in each
-    //print(response);
+    print(response);
     int n = limit - 10;
     while (n < limit && n < int.parse(response[0].toString())) {
       List<dynamic> res = await query("auctions", [BigInt.from(n)], 'market');
-      print(res);
+
       //print(data.myPublicAddress.toString().toLowerCase());
       if (res[6]) {
         n += 1;

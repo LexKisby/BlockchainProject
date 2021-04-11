@@ -1258,72 +1258,8 @@ const contractAddresses = {
 ]'''
   ],
   'market': [
-    '0x7E6b3cB6d99d60ae0127C571A67604946F7E8f53',
+    '0x2B22DcE6E198Cffb11881f746845f70ebD43D846',
     '''[
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_address",
-				"type": "address"
-			}
-		],
-		"name": "addTrusted",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_beastId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_startPrice",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_endPrice",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint32",
-				"name": "_endTime",
-				"type": "uint32"
-			}
-		],
-		"name": "auctionBeast",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_beastId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_price",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint32",
-				"name": "_endTime",
-				"type": "uint32"
-			}
-		],
-		"name": "auctionBeastExtract",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
 	{
 		"anonymous": false,
 		"inputs": [
@@ -1425,6 +1361,121 @@ const contractAddresses = {
 		"type": "event"
 	},
 	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "oldOwner",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "OwnerSet",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "beastId",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "tamer",
+				"type": "address"
+			}
+		],
+		"name": "RetrievedBeast",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "tamer",
+				"type": "address"
+			}
+		],
+		"name": "RubiesExchangedForEssence",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_address",
+				"type": "address"
+			}
+		],
+		"name": "addTrusted",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_beastId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_startPrice",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_endPrice",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint32",
+				"name": "_endTime",
+				"type": "uint32"
+			}
+		],
+		"name": "auctionBeast",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_beastId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_price",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint32",
+				"name": "_endTime",
+				"type": "uint32"
+			}
+		],
+		"name": "auctionBeastExtract",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"inputs": [
 			{
 				"internalType": "uint256",
@@ -1481,25 +1532,6 @@ const contractAddresses = {
 		"type": "function"
 	},
 	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "oldOwner",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "newOwner",
-				"type": "address"
-			}
-		],
-		"name": "OwnerSet",
-		"type": "event"
-	},
-	{
 		"inputs": [
 			{
 				"internalType": "uint256",
@@ -1547,38 +1579,6 @@ const contractAddresses = {
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "beastId",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "tamer",
-				"type": "address"
-			}
-		],
-		"name": "RetrievedBeast",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "tamer",
-				"type": "address"
-			}
-		],
-		"name": "RubiesExchangedForEssence",
-		"type": "event"
 	},
 	{
 		"inputs": [

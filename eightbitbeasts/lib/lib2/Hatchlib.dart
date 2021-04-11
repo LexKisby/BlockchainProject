@@ -89,12 +89,25 @@ class IncubatorContent extends ConsumerWidget {
       child: ListView(
         children: [
           Container(
-            height: 50,
-            child: Center(
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: []),
-            ),
+            height: 80,
+            child: Card(
+                color: Theme.of(context).primaryColor,
+                shape: PixelBorder.solid(
+                  color: Theme.of(context).backgroundColor,
+                  pixelSize: 1,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.all(10),
+                  child: Center(
+                    child: Text(
+                        'The place for beasts that are incubating, recovering or otherwise unavailable for other tasks at the moment',
+                        style: TextStyle(
+                            fontSize: 10,
+                            color:
+                                Theme.of(context).textTheme.bodyText1.color)),
+                  ),
+                )),
           ),
           Container(
             height: 40,
@@ -106,7 +119,7 @@ class IncubatorContent extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Center(
-                    child: Text("incubating",
+                    child: Text("occupied",
                         style: TextStyle(
                             color:
                                 Theme.of(context).textTheme.bodyText1.color)))),
