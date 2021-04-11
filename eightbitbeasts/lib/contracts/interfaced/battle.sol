@@ -9,7 +9,8 @@ contract Battle is Owner {
         address challenger,
         uint256 challengerBeastId,
         address challenged,
-        uint256 challengedBeastId
+        uint256 challengedBeastId,
+        address victor
     );
 
     struct RecChallenge {
@@ -53,11 +54,49 @@ contract Battle is Owner {
         revert("exited always true while loop");
     }
 
+    function _mod(uint256 a, uint256 b) internal pure returns (uint256) {
+        if (a == 0) return 100;
+        int256 y = 50 - (100 * (int256(a) - int256(b))) / int256(a);
+        if (y < 0) return 0;
+        if (y > 100) return 100;
+        return uint256(y);
+    }
+
     function _duel(
         MotherSetter.Beast memory _ally,
         MotherSetter.Beast memory _opp
     ) internal pure returns (bool) {
-        return true;
+        uint256 allyHP = uint256(_ally.stats.hp);
+        uint256 oppHP = uint256(_opp.stats.hp);
+        //uint256 allyLvl = uint256(_ally.level);
+        //uint256 oppLvl = uint256(_opp.level);
+        uint256 allyAttack =
+            (_ally.stats.primaryDamage *
+                _mod(_opp.stats.evasion, _ally.stats.attackSpeed) +
+                (_ally.stats.secondaryDamage *
+                    _mod(_opp.stats.resistance, _ally.stats.accuracy)) /
+                2) *
+                (50 + _mod(_opp.stats.evasion, _ally.stats.accuracy)) *
+                (25 + _mod(_opp.stats.intelligence, _ally.stats.intelligence));
+        uint256 oppRebound =
+            allyAttack *
+                _mod(_opp.stats.constitution, _ally.stats.constitution);
+
+        uint256 oppAttack =
+            (_opp.stats.primaryDamage *
+                _mod(_ally.stats.evasion, _opp.stats.attackSpeed) +
+                (_opp.stats.secondaryDamage *
+                    _mod(_ally.stats.resistance, _opp.stats.accuracy)) /
+                2) *
+                (50 + _mod(_ally.stats.evasion, _opp.stats.accuracy)) *
+                (25 + _mod(_ally.stats.intelligence, _opp.stats.intelligence));
+        uint256 allyRebound =
+            oppAttack * _mod(_ally.stats.constitution, _opp.stats.constitution);
+
+        uint256 Ca = (allyHP * 100**5) / (100 * oppAttack + allyRebound);
+        uint256 Cb = (oppHP * 100**5) / (100 * allyAttack + oppRebound);
+        if (Ca > Cb) return true;
+        else return false;
     }
 
     //external functions:
@@ -124,20 +163,36 @@ contract Battle is Owner {
 
         uint32 allyXp;
         uint32 oppXp;
+        address victor;
 
         if (result) {
             //win for ally
             allyXp = 50 * opp.level;
             oppXp = 10 * ally.level;
+            MotherContract.battleWin(ally.id);
+            MotherContract.battleLoss(opp.id);
             //rest loser
             MotherContract.triggerRecoveryPeriod(opp.id, 1);
+            victor = msg.sender;
         } else {
             //win for opp
             allyXp = 10 * opp.level;
             oppXp = 50 * ally.level;
+            MotherContract.battleWin(opp.id);
+            MotherContract.battleLoss(ally.id);
+
             MotherContract.triggerRecoveryPeriod(ally.id, 1);
+            victor = tamerRecievedChallenges[msg.sender][_index].challenger;
         }
         MotherContract.addXp(ally.id, allyXp);
         MotherContract.addXp(opp.id, oppXp);
+
+        emit Duel(
+            tamerRecievedChallenges[msg.sender][_index].challenger,
+            opp.id,
+            msg.sender,
+            ally.id,
+            victor
+        );
     }
 }
