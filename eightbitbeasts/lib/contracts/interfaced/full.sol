@@ -1543,19 +1543,27 @@ contract Market is Owner {
         revert("Wrong type passed to _findIndex");
     }
 
-    function getExtracts() external view returns (uint256[] memory) {
+    function getExtracts(address _tamer)
+        external
+        view
+        returns (uint256[] memory)
+    {
         uint256 len = MotherContract.howManyBeasts();
-        uint256[] memory extractsOwnedBySender;
+        uint256[] memory extractsOwnedBySender = new uint256[](len);
         uint256 count = 0;
         uint256 index = 0;
         while (count < len) {
-            if (extractToTamer[count].owner == msg.sender) {
+            if (extractToTamer[count].owner == _tamer) {
                 extractsOwnedBySender[index] = count;
                 index++;
             }
             count++;
         }
-        return extractsOwnedBySender;
+        uint256[] memory shorter = new uint256[](index);
+        for (uint256 i; i < index; i++) {
+            shorter[i] = extractsOwnedBySender[i];
+        }
+        return shorter;
     }
 
     function removeExtract(uint256 _beastId) external isTrusted() {
@@ -1595,26 +1603,22 @@ contract Dungeon is Owner {
 
     //internal functions
     function _calculateStrength(
-        MotherCore.Beast memory _b1,
-        MotherCore.Beast memory _b2
+        MotherSetter.Stats memory _b1,
+        MotherSetter.Stats memory _b2
     ) internal pure returns (uint256) {
-        uint256 s1 =
-            _b1.stats.attackSpeed *
-                (_b1.stats.primaryDamage + _b1.stats.secondaryDamage) *
-                _b1.stats.accuracy +
-                _b1.stats.resistance +
-                _b1.stats.evasion *
-                _b1.stats.constitution +
-                _b1.stats.hp;
-        uint256 s2 =
-            _b2.stats.attackSpeed *
-                (_b2.stats.primaryDamage + _b2.stats.secondaryDamage) *
-                _b2.stats.accuracy +
-                _b2.stats.resistance +
-                _b2.stats.evasion *
-                _b2.stats.constitution +
-                _b2.stats.hp;
-        return s1 + s2;
+        uint64 s1 =
+            uint64(_b1.attackSpeed) *
+                uint64(_b1.primaryDamage + _b1.secondaryDamage) *
+                uint64(_b1.accuracy + _b1.resistance) +
+                uint64(_b1.evasion) *
+                uint64(_b1.constitution + _b1.hp);
+        uint64 s2 =
+            uint64(_b2.attackSpeed) *
+                uint64(_b2.primaryDamage + _b2.secondaryDamage) *
+                uint64(_b2.accuracy + _b2.resistance) +
+                uint64(_b2.evasion) *
+                uint64(_b2.constitution + _b2.hp);
+        return uint256(s1 + s2);
     }
 
     function _rewardBand(uint256 _s, uint256 _d)
@@ -1741,7 +1745,7 @@ contract Dungeon is Owner {
         require(beast2.readyTime <= block.timestamp, "Beast 2 is not ready");
 
         //assess strength
-        uint256 s = _calculateStrength(beast1, beast2);
+        uint256 s = _calculateStrength(beast1.stats, beast2.stats);
 
         //get reward
         uint256 r;

@@ -54,6 +54,7 @@ class EthChangeNotifier extends ChangeNotifier {
 
     await inventoryRefresh();
     await getMarketMonsters(10);
+    await labRefresh();
     data.hasCurrency = true;
     notifyListeners();
     return;
@@ -197,9 +198,8 @@ class EthChangeNotifier extends ChangeNotifier {
     //print(DateTime.now().millisecondsSinceEpoch / 1000);
     //print(data.incubating);
 
-    List<dynamic> res = await getExtracts();
-    print(res);
-    //sortExtracts(res);
+    List<dynamic> res = await getExtracts(data.myPublicAddress);
+    sortExtracts(res);
     await getCurrency(data.myPublicAddress);
     notifyListeners();
   }
@@ -228,8 +228,8 @@ class EthChangeNotifier extends ChangeNotifier {
     List<dynamic> inv = await getInventory(data.myPublicAddress);
     sortInventory(inv);
     await getMarketMonsters(10);
-    //List<dynamic> res = await getExtracts();
-    //sortExtracts(res);
+    List<dynamic> res = await getExtracts(data.myPublicAddress);
+    sortExtracts(res);
     notifyListeners();
     return;
   }
@@ -571,9 +571,11 @@ class EthChangeNotifier extends ChangeNotifier {
     return response;
   }
 
-  Future<List<dynamic>> getExtracts() async {
-    List<dynamic> response = await query("getExtracts", [], 'market');
-    return response;
+  Future<List<dynamic>> getExtracts(targetAddress) async {
+    EthereumAddress address = EthereumAddress.fromHex(targetAddress);
+
+    List<dynamic> response = await query("getExtracts", [address], 'market');
+    return response[0];
   }
 
   Future<Monster> getBeast(BigInt id) async {
