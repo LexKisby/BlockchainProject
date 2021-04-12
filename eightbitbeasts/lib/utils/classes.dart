@@ -54,6 +54,13 @@ class Auction {
   });
 }
 
+class Challenge {
+  Challenge({this.monster, this.index, this.address});
+  Monster monster;
+  BigInt index;
+  String address;
+}
+
 class EthData {
   List<Monster> monsterList = []; //Monsters in my inventory
   List<Image> monsterImageList = []; //Images for the monsters in my inventory
@@ -71,6 +78,8 @@ class EthData {
   List<Monster> incubating = []; //Monsters just born
   List<Monster> recovering = []; //Monsters that are not in the ready state
   List<Monster> ready = []; // Monsters that are in the ready state
+  List<Challenge> sentChallenge = [];
+  List<Challenge> recChallenge = [];
 
   String myPublicAddress = myAddress;
   String myPrivateKey = privateKey;

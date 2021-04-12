@@ -56,6 +56,7 @@ class EthChangeNotifier extends ChangeNotifier {
     await inventoryRefresh();
     await getMarketMonsters(10);
     await labRefresh();
+    await battleRefresh();
     data.hasCurrency = true;
     notifyListeners();
     return;
@@ -157,26 +158,33 @@ class EthChangeNotifier extends ChangeNotifier {
 
   Future<void> updateTransactions() async {
     //transactionSuccess = [];
+    if (transactionList.length != transactionSuccess.length) {
+      transactionSuccess = List<bool>.filled(transactionList.length, null);
+    }
     for (int i = 0; i < transactionList.length; i++) {
       if (transactionSuccess[i] != null) continue;
-      TransactionInformation info =
-          await ethClient.getTransactionByHash(transactionList[i]);
-      print(info);
-      if (info.transactionIndex == null) {
-        //transactionSuccess.add(null);
-        continue;
-      }
-      TransactionReceipt receipt =
-          await ethClient.getTransactionReceipt(transactionList[i]);
-      print(receipt);
-      if (receipt.status == true) {
-        transactionSuccess[i] = (true);
-      } else {
-        if (receipt.status == false) {
-          transactionSuccess[i] = false;
-        } else {
+      try {
+        TransactionInformation info =
+            await ethClient.getTransactionByHash(transactionList[i]);
+        print(info);
+        if (info.transactionIndex == null) {
           //transactionSuccess.add(null);
+          continue;
         }
+        TransactionReceipt receipt =
+            await ethClient.getTransactionReceipt(transactionList[i]);
+        print(receipt);
+        if (receipt.status == true) {
+          transactionSuccess[i] = (true);
+        } else {
+          if (receipt.status == false) {
+            transactionSuccess[i] = false;
+          } else {
+            //transactionSuccess.add(null);
+          }
+        }
+      } catch (e) {
+        print(e);
       }
     }
     notifyListeners();
@@ -189,7 +197,8 @@ class EthChangeNotifier extends ChangeNotifier {
   }
 
   Future<void> battleRefresh() async {
-    //await getBattleInfo();
+    List<dynamic> res = await getBattleInfo(data.myPublicAddress);
+    sortChallenges(res);
     notifyListeners();
   }
 
@@ -437,11 +446,40 @@ class EthChangeNotifier extends ChangeNotifier {
       case 8:
         //make arguments
         BigInt b1 = selectedMonsters[0].id;
-        BigInt b2 = selectedMonsters[1].uid;
+        BigInt b2 = selectedMonsters[1].id;
         arguments[0] = b1;
         arguments[1] = b2;
         print(arguments);
         String res = await submit('enterDungeon', arguments, 'dungeon');
+        transactionList.add(res);
+        transactionSuccess.add(null);
+
+        selectedMonsters = [];
+        selectedBoolMask = [];
+        return;
+        break;
+      case 9:
+        //make arguments
+        EthereumAddress address = EthereumAddress.fromHex(arguments[0]);
+        BigInt beastId = selectedMonsters[0].id;
+        arguments = [address, beastId];
+        print(arguments);
+        String res = await submit('makeChallenge', arguments, 'battle');
+        transactionList.add(res);
+        transactionSuccess.add(null);
+
+        selectedMonsters = [];
+        selectedBoolMask = [];
+        return;
+        break;
+      case 10:
+        //make arguments
+        BigInt index = arguments[0];
+        BigInt beastId = selectedMonsters[0].id;
+        arguments = [index, beastId];
+
+        print(arguments);
+        String res = await submit('acceptChallenge', arguments, 'battle');
         transactionList.add(res);
         transactionSuccess.add(null);
 
@@ -577,6 +615,37 @@ class EthChangeNotifier extends ChangeNotifier {
             monster: beast));
       }
       n += 1;
+    }
+  }
+
+  Future<List<dynamic>> getBattleInfo(targetAddress) async {
+    EthereumAddress address = EthereumAddress.fromHex(targetAddress);
+    List<dynamic> response = await query('getChallenges', [address], 'battle');
+    List<dynamic> response2 =
+        await query('tamerSentChallenge', [address], 'battle');
+    data.sentChallenge = [
+      Challenge(
+          monster: await getBeast(response2[1]),
+          index: response2[2],
+          address: response2[0].toString())
+    ];
+
+    return response[0];
+  }
+
+  void sortChallenges(res) async {
+    int l = res.length;
+    data.recChallenge = [];
+    for (int i = 0; i < l; i++) {
+      if (res[i][3]) {
+        continue;
+      }
+      Monster beast = await getBeast(res[i][1]);
+      data.recChallenge.add(Challenge(
+        address: res[i][0].toString(),
+        monster: beast,
+        index: res[i][2],
+      ));
     }
   }
 
@@ -1026,6 +1095,24 @@ class FullScreenDialog extends ConsumerWidget {
               child: Center(
                   child: Text(
                       'Dungeon Lvl: ' + data.dungeonSelected.toString()))));
+    }
+    if (type == 9) {
+      data.arguments = ['0x0000000000000000000000000000000000000000'];
+      return Card(
+          child: Padding(
+              padding: EdgeInsets.all(10),
+              child: Container(
+                  child: TextFormField(
+                      initialValue:
+                          '0x0000000000000000000000000000000000000000',
+                      onFieldSubmitted: (value) {
+                        data.arguments[0] = value.toString();
+                        //print(data.arguments[2]);
+                      },
+                      decoration: InputDecoration(
+                        border: const OutlineInputBorder(),
+                        labelText: 'name',
+                      )))));
     }
     return Container();
   }
