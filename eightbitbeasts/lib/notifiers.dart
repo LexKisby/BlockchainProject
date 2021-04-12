@@ -37,6 +37,7 @@ class EthChangeNotifier extends ChangeNotifier {
   List<dynamic> arguments = [];
   List<dynamic> selectedMonsters = [];
   List<dynamic> selectedAuctions = [];
+  int dungeonSelected = 1;
 
   List<String> transactionList = [];
   List<bool> transactionSuccess = [];
@@ -433,6 +434,21 @@ class EthChangeNotifier extends ChangeNotifier {
         selectedBoolMask = List<bool>.filled(data.ready.length, false);
         return;
         break;
+      case 8:
+        //make arguments
+        BigInt b1 = selectedMonsters[0].id;
+        BigInt b2 = selectedMonsters[1].uid;
+        arguments[0] = b1;
+        arguments[1] = b2;
+        print(arguments);
+        String res = await submit('enterDungeon', arguments, 'dungeon');
+        transactionList.add(res);
+        transactionSuccess.add(null);
+
+        selectedMonsters = [];
+        selectedBoolMask = [];
+        return;
+        break;
     }
   }
 
@@ -600,6 +616,7 @@ class EthChangeNotifier extends ChangeNotifier {
     if (type == 6) {
       return 2;
     }
+    if (type == 8) return 2;
     return 1;
   }
 
@@ -680,10 +697,13 @@ class EthChangeNotifier extends ChangeNotifier {
   }
 
   Future<String> prepTransaction(BuildContext context, type) async {
+    final s = MediaQuery.of(context).size;
+    final size = s.width / 5;
     switch (await Navigator.push(
         context,
         MaterialPageRoute<int>(
-          builder: (BuildContext context) => FullScreenDialog(type: type),
+          builder: (BuildContext context) =>
+              FullScreenDialog(type: type, size: size),
           fullscreenDialog: true,
         ))) {
       case 0:
@@ -730,8 +750,8 @@ class SelectorSubtitle extends ConsumerWidget {
 }
 
 class FullScreenDialog extends ConsumerWidget {
-  FullScreenDialog({@required this.type});
-
+  FullScreenDialog({@required this.type, this.size});
+  final size;
   final type;
 
   Widget dialogContent(int type, beasts) {
@@ -744,7 +764,7 @@ class FullScreenDialog extends ConsumerWidget {
           Container(height: 10),
           Row(
             children: [
-              Expanded(child: asset(type, beasts)),
+              Expanded(child: asset(type, beasts, size)),
               Divider(),
               Expanded(child: text(type)),
             ],
@@ -754,10 +774,10 @@ class FullScreenDialog extends ConsumerWidget {
     ));
   }
 
-  Widget asset(type, beasts) {
-    if (type == 6) {
+  Widget asset(type, beasts, size) {
+    if (type == 6 || type == 8) {
       return Container(
-          height: 130,
+          height: 1.5 * size,
           child: Row(
             children: [
               RotatedBox(
@@ -765,7 +785,7 @@ class FullScreenDialog extends ConsumerWidget {
                 quarterTurns: 3,
               ),
               Container(
-                  width: 76,
+                  width: size,
                   child: Column(
                     children: [
                       Container(height: 10),
@@ -781,7 +801,7 @@ class FullScreenDialog extends ConsumerWidget {
                 quarterTurns: 3,
               ),
               Container(
-                  width: 76,
+                  width: size,
                   child: Column(
                     children: [
                       Container(height: 10),
@@ -849,6 +869,19 @@ class FullScreenDialog extends ConsumerWidget {
             'Level Up this beast. \n\nWARNING: this requires a certain level of experience',
             style: TextStyle(fontSize: 10));
         break;
+
+      case 8:
+        return Text('Explore the Dungeon', style: TextStyle(fontSize: 10));
+        break;
+      case 9:
+        return Text(
+            'Challenge another tamer to a duel. Until you challenge someone else, this invitation will not expire',
+            style: TextStyle(fontSize: 10));
+        break;
+      case 10:
+        return Text(
+            'Accept an invitation to duel from another player.\n\nWARNING: this duel will fail if the opponent beast is not ready. Check the status below',
+            style: TextStyle(fontSize: 10));
     }
     return Text(
         "Do not proceed with this transaction unless you are sure of the result",
@@ -984,6 +1017,15 @@ class FullScreenDialog extends ConsumerWidget {
                         border: const OutlineInputBorder(),
                         labelText: 'name',
                       )))));
+    }
+    if (type == 8) {
+      data.arguments = [false, false, BigInt.from(data.dungeonSelected)];
+      return Card(
+          child: Padding(
+              padding: EdgeInsets.all(10),
+              child: Center(
+                  child: Text(
+                      'Dungeon Lvl: ' + data.dungeonSelected.toString()))));
     }
     return Container();
   }

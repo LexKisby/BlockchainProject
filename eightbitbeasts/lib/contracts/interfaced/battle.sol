@@ -40,6 +40,7 @@ contract Battle is Owner {
     //internal functions
     function _findIndex(address _address) internal view returns (uint256) {
         //search auctions
+        if (tamerRecievedChallenges[_address].length == 0) return 0;
         uint256 counter = 0;
         uint256 max = tamerRecievedChallenges[_address].length - 1;
         while (true) {
@@ -63,35 +64,34 @@ contract Battle is Owner {
     }
 
     function _duel(
-        MotherSetter.Beast memory _ally,
-        MotherSetter.Beast memory _opp
+        MotherSetter.Stats memory _ally,
+        MotherSetter.Stats memory _opp
     ) internal pure returns (bool) {
-        uint256 allyHP = uint256(_ally.stats.hp);
-        uint256 oppHP = uint256(_opp.stats.hp);
+        uint256 allyHP = uint256(_ally.hp);
+        uint256 oppHP = uint256(_opp.hp);
         //uint256 allyLvl = uint256(_ally.level);
         //uint256 oppLvl = uint256(_opp.level);
         uint256 allyAttack =
-            (_ally.stats.primaryDamage *
-                _mod(_opp.stats.evasion, _ally.stats.attackSpeed) +
-                (_ally.stats.secondaryDamage *
-                    _mod(_opp.stats.resistance, _ally.stats.accuracy)) /
+            (uint256(_ally.primaryDamage) *
+                _mod(_opp.evasion, _ally.attackSpeed) +
+                (uint256(_ally.secondaryDamage) *
+                    _mod(_opp.resistance, _ally.accuracy)) /
                 2) *
-                (50 + _mod(_opp.stats.evasion, _ally.stats.accuracy)) *
-                (25 + _mod(_opp.stats.intelligence, _ally.stats.intelligence));
+                (50 + _mod(_opp.evasion, _ally.accuracy)) *
+                (25 + _mod(_opp.intelligence, _ally.intelligence));
         uint256 oppRebound =
-            allyAttack *
-                _mod(_opp.stats.constitution, _ally.stats.constitution);
+            allyAttack * _mod(_opp.constitution, _ally.constitution);
 
         uint256 oppAttack =
-            (_opp.stats.primaryDamage *
-                _mod(_ally.stats.evasion, _opp.stats.attackSpeed) +
-                (_opp.stats.secondaryDamage *
-                    _mod(_ally.stats.resistance, _opp.stats.accuracy)) /
+            (uint256(_opp.primaryDamage) *
+                _mod(_ally.evasion, _opp.attackSpeed) +
+                (uint256(_opp.secondaryDamage) *
+                    _mod(_ally.resistance, _opp.accuracy)) /
                 2) *
-                (50 + _mod(_ally.stats.evasion, _opp.stats.accuracy)) *
-                (25 + _mod(_ally.stats.intelligence, _opp.stats.intelligence));
+                (50 + _mod(_ally.evasion, _opp.accuracy)) *
+                (25 + _mod(_ally.intelligence, _opp.intelligence));
         uint256 allyRebound =
-            oppAttack * _mod(_ally.stats.constitution, _opp.stats.constitution);
+            oppAttack * _mod(_ally.constitution, _opp.constitution);
 
         uint256 Ca = (allyHP * 100**5) / (100 * oppAttack + allyRebound);
         uint256 Cb = (oppHP * 100**5) / (100 * allyAttack + oppRebound);
@@ -159,7 +159,7 @@ contract Battle is Owner {
         require(ally.readyTime < block.timestamp, "Your beast is not ready");
         require(opp.readyTime < block.timestamp, "Opponent beast is not ready");
 
-        bool result = _duel(ally, opp);
+        bool result = _duel(ally.stats, opp.stats);
 
         uint32 allyXp;
         uint32 oppXp;

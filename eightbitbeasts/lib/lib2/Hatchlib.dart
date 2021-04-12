@@ -79,6 +79,23 @@ class LabContent extends ConsumerWidget {
 }
 
 class IncubatorContent extends ConsumerWidget {
+  format(Duration d) => d.toString().split('.').first.padLeft(8, "0");
+
+  Widget time(data, position, context) {
+    String sign = "-";
+    double now = DateTime.now().millisecondsSinceEpoch.toDouble() / 1000;
+    double readyTime = data.incubating[position].readyTime;
+    double time = readyTime - now;
+    if (time < 0) {
+      return Text("ready", style: TextStyle(fontSize: 12));
+    }
+    final dur = Duration(seconds: time.toInt());
+
+    return Text(sign + format(dur) + "s",
+        style: TextStyle(
+            fontSize: 10, color: Theme.of(context).textTheme.bodyText1.color));
+  }
+
   @override
   build(BuildContext context, ScopedReader watch) {
     final info = watch(myEthDataProvider);
@@ -127,13 +144,18 @@ class IncubatorContent extends ConsumerWidget {
           GridView.builder(
             shrinkWrap: true,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 4, childAspectRatio: 1),
+                crossAxisCount: 4, childAspectRatio: 0.9),
             physics: ClampingScrollPhysics(),
             itemBuilder: (context, position) {
               return Container(
                   height: 50,
                   width: 50,
-                  child: MonsterPicSmall(data: info.data.incubating[position]));
+                  child: Column(
+                    children: [
+                      MonsterPicSmall(data: info.data.incubating[position]),
+                      time(info.data, position, context)
+                    ],
+                  ));
             },
             itemCount: info.data.incubating.length,
           ),

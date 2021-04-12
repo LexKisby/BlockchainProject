@@ -2314,7 +2314,7 @@ const contractAddresses = {
 ]'''
   ],
   'battle': [
-    '0x949196aC18D57cd27F3A1fC1A3aCbDF414f563fD',
+    '0x0f8bEEbA79355e5b358dAC45BC135049a919FA03',
     '''[
 	{
 		"anonymous": false,
