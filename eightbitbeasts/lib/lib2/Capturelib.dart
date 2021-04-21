@@ -117,7 +117,10 @@ class DungeonBox extends ConsumerWidget {
     return ' do you dare enter the Dungeon?\n\ntreasure awaits those who seek it';
   }
 
-  Image image(pos) {}
+  Image image(pos) {
+    return Image.asset('lib/assets/d' + pos.toString() + '.png');
+    //return Image.asset('fox.png');
+  }
 
   build(BuildContext context, ScopedReader watch) {
     final info = watch(myEthDataProvider);
@@ -143,7 +146,7 @@ class DungeonBox extends ConsumerWidget {
                     Container(
                       height: l,
                       width: l,
-                      color: Colors.red,
+                      child: image(pos),
                     ),
                     Spacer(),
                     Column(children: [
