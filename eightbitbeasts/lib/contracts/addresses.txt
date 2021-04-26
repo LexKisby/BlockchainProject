@@ -1,15 +1,16 @@
 Mother Contract = 0x22c94BA007a721Ea20af612A1F03fB8F97a0dDd1
 Generator Contract = 0x9cd7E61B6668ef2D2820d35276eC0b6E6ceA3f10
 Fusion Contract = 0x4Fa904D83315C8D111D7253eb56c425e78846831
-Market Contract = 0xd81267Bf980077fdaD6f11eaf20711062Dd4C633
+Market Contract = 0x8aB2d44e544e44bc0B2B1E7Bd56F3A4f152F3F80
 Dungeon Contract = 0x55CEad2FCBD0E17B65D2D53714E13560C6fBF737
 Battle Contract = 0x0f8bEEbA79355e5b358dAC45BC135049a919FA03
-LeaderBoard Contract = 
+
 
 backup market 0x7E6b3cB6d99d60ae0127C571A67604946F7E8f53;
 
 account 2: ca994b1a7a17b25ce90a9da11e92d30bb3ff5bb6de050b8f88af9b924e0c94e7
 account 1: 09fa63a415d391bcc3bfbd9025eb88e0da80d9924e1e7ed00b665261d14061a5
+acc3: 6cb10bdd1e59c217968c94f62c0263a99327516c87eba0ac12feeddda5ec062e
 
 my public address : 0x6c7382c47830c20b1a2746ddd5bb48f2eab08795
 
@@ -99,4 +100,23 @@ normal: ab + cd => ac
 double slime: 0a + 0b => ab    ()
 slime secondary: ab + 0d => 0a (imure slime)
 slimePrimary: 0a + cd => 00   (pure slime)
+
+
+
+
+costs::
+
+retrieveex: 0.000051775
+retrieveau: 0.000047934
+accept challenge: 	0.000168753
+make challenge: 0.000206093
+levelup: 0.000063462
+dungeon: 0.000167092
+fusion: 0.000461797
+auction: 0.000168414
+extract: 0.000095724
+buy extract: 0.000139112
+buy auction: 0.000084671
+
+
 

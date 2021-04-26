@@ -184,7 +184,7 @@ class CapturePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-        length: 3,
+        length: 2,
         child: Scaffold(
           appBar: AppBar(
               title: Text("Battle"),
@@ -201,14 +201,14 @@ class CapturePage extends StatelessWidget {
                 tabs: [
                   Tab(text: "PvE"),
                   Tab(text: "PvP"),
-                  Tab(text: "ranking"),
+                  //Tab(text: "ranking"),
                 ],
               )),
           body: TabBarView(
             children: [
               CaptureContent(),
               PvPContent(),
-              LeaderBoards(),
+              //LeaderBoards(),
             ],
           ),
         ));

@@ -31,6 +31,7 @@ class EthChangeNotifier extends ChangeNotifier {
   double extra = 20000;
   double total = 1000000000000000;
   List<bool> selectedBoolMask = [];
+  List<bool> selectedExBoolMask = [];
 
   double etherBalance = 0;
 
@@ -216,18 +217,22 @@ class EthChangeNotifier extends ChangeNotifier {
 
   void sortExtracts(res) async {
     print('extracts:  ' + res.toString());
+    data.myMonsterExtracts = [];
     int l = res.length;
     if (l == 0) {
       return;
     }
     data.myMonsterExtracts = [];
     for (int j = 0; j < l; j++) {
-      if (res[0][j][2] < DateTime.now().millisecondsSinceEpoch / 1000) {
-        continue;
-      }
-      Monster beast = await getBeast(res[0][j][1]);
+      Monster beast = await getBeast(res[j]);
+      //if (beast.readyTime < DateTime.now().millisecondsSinceEpoch / 1000) {
+      //  continue;
+      //}
+
       data.myMonsterExtracts.add(beast);
     }
+    selectedExBoolMask =
+        List<bool>.filled(data.myMonsterExtracts.length, false);
   }
 
 //#################################################
@@ -239,7 +244,9 @@ class EthChangeNotifier extends ChangeNotifier {
     sortInventory(inv);
     await getMarketMonsters(10);
     List<dynamic> res = await getExtracts(data.myPublicAddress);
+
     sortExtracts(res);
+    battleRefresh();
     notifyListeners();
     return;
   }
@@ -372,7 +379,7 @@ class EthChangeNotifier extends ChangeNotifier {
       case 3:
         //mke Arguments [beastId, auctionNo]
         BigInt beastId = selectedMonsters[0].id;
-        BigInt auctionId = BigInt.from(selectedAuctions[0]);
+        BigInt auctionId = BigInt.from(selectedAuctions[0].id);
         arguments = [beastId, auctionId];
         print([beastId, auctionId]);
         String res = await submit('buyExtractFromAuction', arguments, 'market');
@@ -455,7 +462,7 @@ class EthChangeNotifier extends ChangeNotifier {
         transactionSuccess.add(null);
 
         selectedMonsters = [];
-        selectedBoolMask = [];
+        selectedBoolMask = List<bool>.filled(data.ready.length, false);
         return;
         break;
       case 9:
@@ -469,7 +476,7 @@ class EthChangeNotifier extends ChangeNotifier {
         transactionSuccess.add(null);
 
         selectedMonsters = [];
-        selectedBoolMask = [];
+        selectedBoolMask = List<bool>.filled(data.ready.length, false);
         return;
         break;
       case 10:
@@ -484,7 +491,7 @@ class EthChangeNotifier extends ChangeNotifier {
         transactionSuccess.add(null);
 
         selectedMonsters = [];
-        selectedBoolMask = [];
+        selectedBoolMask = List<bool>.filled(data.ready.length, false);
         return;
         break;
     }
@@ -583,7 +590,7 @@ class EthChangeNotifier extends ChangeNotifier {
     while (n < limit && n < int.parse(response[1].toString())) {
       List<dynamic> res =
           await query("extractAuctions", [BigInt.from(n)], 'market');
-      print(res);
+      //print(res);
       if (res[4]) {
         n += 1;
         continue;
@@ -692,7 +699,33 @@ class EthChangeNotifier extends ChangeNotifier {
   void clearSelected() {
     selectedMonsters = [];
     selectedBoolMask = List<bool>.filled(data.ready.length, false);
+    selectedExBoolMask =
+        List<bool>.filled(data.myMonsterExtracts.length, false);
     notifyListeners();
+  }
+
+  Widget extractView(type, context) {
+    if (type != 6) {
+      return Container();
+    }
+    return Column(
+      children: [
+        ListTile(
+          title: Text('available extracts'),
+          subtitle: Text('for use as secondary beast'),
+        ),
+        GridView.builder(
+          shrinkWrap: true,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 4, childAspectRatio: 1),
+          physics: ClampingScrollPhysics(),
+          itemBuilder: (context, position) {
+            return ExSelector(context: context, position: position);
+          },
+          itemCount: data.myMonsterExtracts.length,
+        )
+      ],
+    );
   }
 
 //Other functions to get stuffs like market monsters, and inventory.
@@ -723,6 +756,7 @@ class EthChangeNotifier extends ChangeNotifier {
                   },
                   itemCount: data.ready.length,
                 ),
+                extractView(type, context),
                 ElevatedButton(
                     onPressed: () async {
                       if (selectedMonsters.length == 0) {
@@ -757,11 +791,23 @@ class EthChangeNotifier extends ChangeNotifier {
     return selectedBoolMask[position];
   }
 
+  bool isExSelected(position) {
+    return selectedExBoolMask[position];
+  }
+
   void changeSelected(position) {
     selectedBoolMask[position] = selectedBoolMask[position] ? false : true;
     selectedBoolMask[position]
         ? selectedMonsters.add(data.ready[position])
         : selectedMonsters.remove(data.ready[position]);
+    notifyListeners();
+  }
+
+  void changeExSelected(position) {
+    selectedExBoolMask[position] = selectedExBoolMask[position] ? false : true;
+    selectedExBoolMask[position]
+        ? selectedMonsters.add(data.myMonsterExtracts[position])
+        : selectedMonsters.remove(data.myMonsterExtracts[position]);
     notifyListeners();
   }
 
@@ -1225,7 +1271,6 @@ class FullScreenDialog extends ConsumerWidget {
                 ],
               ),
             )),
-            Spacer(),
             Row(
               children: [
                 Spacer(),
@@ -1298,6 +1343,40 @@ class Selector extends ConsumerWidget {
             ),
             MonsterPicSmall(
               data: info.data.ready[position],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ExSelector extends ConsumerWidget {
+  ExSelector({@required this.context, @required this.position});
+  final context;
+  final position;
+
+  @override
+  build(BuildContext context, ScopedReader watch) {
+    final info = watch(myEthDataProvider);
+
+    return InkWell(
+      splashColor: Colors.white,
+      onTap: () {
+        info.changeExSelected(position);
+      },
+      child: Container(
+        height: 50,
+        width: 50,
+        child: Stack(
+          children: [
+            Container(
+              color: info.isExSelected(position)
+                  ? Color(0xfffef0d1)
+                  : Colors.transparent,
+            ),
+            MonsterPicSmall(
+              data: info.data.myMonsterExtracts[position],
             ),
           ],
         ),

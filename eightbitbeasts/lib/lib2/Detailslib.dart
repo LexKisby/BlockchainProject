@@ -324,7 +324,7 @@ class MarketButtons extends ConsumerWidget {
     info.selectedMonsters.add(data.monster);
     info.selectedAuctions.add(data);
     await info.getEtherBalance();
-    return await info.prepTransaction(context, type + 1);
+    return await info.prepTransaction(context, type + 2);
     //print("buying monster");
   }
 
@@ -626,6 +626,21 @@ class ChallengeButtons extends ConsumerWidget {
     );
   }
 
+  Widget button(type, info, context) {
+    if (type == -1) {
+      return Container();
+    }
+    return RaisedButton(
+      disabledColor: Colors.grey,
+      color: Theme.of(context).accentColor,
+      onPressed: () async {
+        info.arguments = [data.index];
+        info.openSelector(context, 10);
+      },
+      child: Text('accept', style: style(15.0)),
+    );
+  }
+
   Future<String> retrieve(context, info) async {
     info.selectedMonsters = [];
     info.selectedAuctions = [];
@@ -649,15 +664,7 @@ class ChallengeButtons extends ConsumerWidget {
               Navigator.of(context).pop();
             },
             child: Text("return", style: style(15.0))),
-        RaisedButton(
-          disabledColor: Colors.grey,
-          color: Theme.of(context).accentColor,
-          onPressed: () async {
-            info.arguments = [data.index];
-            info.openSelector(context, 10);
-          },
-          child: Text('accept', style: style(15.0)),
-        ),
+        button(type, info, context),
       ],
     );
   }
