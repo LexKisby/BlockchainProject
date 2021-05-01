@@ -60,7 +60,7 @@ class LabContent extends ConsumerWidget {
           GridView.builder(
             shrinkWrap: true,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2, childAspectRatio: itemWidth / itemHeight),
+                crossAxisCount: 2, childAspectRatio: 0.82),
             physics: ClampingScrollPhysics(),
             itemBuilder: (context, position) {
               return MonsterFlipCard(

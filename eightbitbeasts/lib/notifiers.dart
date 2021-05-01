@@ -225,9 +225,9 @@ class EthChangeNotifier extends ChangeNotifier {
     data.myMonsterExtracts = [];
     for (int j = 0; j < l; j++) {
       Monster beast = await getBeast(res[j]);
-      //if (beast.readyTime < DateTime.now().millisecondsSinceEpoch / 1000) {
-      //  continue;
-      //}
+      if (beast.readyTime < DateTime.now().millisecondsSinceEpoch / 1000) {
+        continue;
+      }
 
       data.myMonsterExtracts.add(beast);
     }
@@ -714,18 +714,26 @@ class EthChangeNotifier extends ChangeNotifier {
           title: Text('available extracts'),
           subtitle: Text('for use as secondary beast'),
         ),
-        GridView.builder(
-          shrinkWrap: true,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 4, childAspectRatio: 1),
-          physics: ClampingScrollPhysics(),
-          itemBuilder: (context, position) {
-            return ExSelector(context: context, position: position);
-          },
-          itemCount: data.myMonsterExtracts.length,
+        Container(
+          height: MediaQuery.of(context).size.height / 5,
+          child: GridView.builder(
+            shrinkWrap: true,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 4, childAspectRatio: 1),
+            physics: ClampingScrollPhysics(),
+            itemBuilder: (context, position) {
+              return ExSelector(context: context, position: position);
+            },
+            itemCount: data.myMonsterExtracts.length,
+          ),
         )
       ],
     );
+  }
+
+  double snum(type, context) {
+    if (type == 6) return MediaQuery.of(context).size.height / 5;
+    return MediaQuery.of(context).size.height / 2.4;
   }
 
 //Other functions to get stuffs like market monsters, and inventory.
@@ -744,17 +752,20 @@ class EthChangeNotifier extends ChangeNotifier {
                           clearSelected();
                         },
                         child: Text('clear'))),
-                GridView.builder(
-                  shrinkWrap: true,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    childAspectRatio: 1,
-                    crossAxisCount: 4,
+                Container(
+                  height: snum(type, context),
+                  child: GridView.builder(
+                    shrinkWrap: true,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      childAspectRatio: 1,
+                      crossAxisCount: 4,
+                    ),
+                    physics: ClampingScrollPhysics(),
+                    itemBuilder: (context, position) {
+                      return Selector(context: context, position: position);
+                    },
+                    itemCount: data.ready.length,
                   ),
-                  physics: ClampingScrollPhysics(),
-                  itemBuilder: (context, position) {
-                    return Selector(context: context, position: position);
-                  },
-                  itemCount: data.ready.length,
                 ),
                 extractView(type, context),
                 ElevatedButton(
