@@ -99,10 +99,10 @@ class AuctionDetails extends StatelessWidget {
                           Row(
                             children: [
                               Container(
-                                height: size.width / 3.7,
-                                width: size.width / 3.7,
+                                height: size.height / 4.5,
+                                width: size.height / 4.5,
                                 transform: Matrix4.translationValues(
-                                    -size.width / 20, -size.height / 40, 100),
+                                    -size.width / 20, -size.height / 20, 100),
                                 child: Hero(
                                   tag: data.monster.id,
                                   child: MonsterPicSmall(data: data.monster),
@@ -172,7 +172,7 @@ class AuctionDetails extends StatelessWidget {
                               )),
                           GridView.count(
                             primary: false,
-                            childAspectRatio: 4,
+                            childAspectRatio: size.width / 100,
                             crossAxisCount: 2,
                             shrinkWrap: true,
                             children: [
@@ -493,7 +493,7 @@ class ChallengeDetails extends StatelessWidget {
                               )),
                           GridView.count(
                             primary: false,
-                            childAspectRatio: 4,
+                            childAspectRatio: size.width / 100,
                             crossAxisCount: 2,
                             shrinkWrap: true,
                             children: [

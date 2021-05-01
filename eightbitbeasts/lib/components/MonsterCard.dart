@@ -310,7 +310,7 @@ class _MonsterFlipCardState extends State<MonsterFlipCard> {
                         fontsize: 17)),
                 GridView.count(
                   primary: false,
-                  childAspectRatio: itemWidth / itemHeight,
+                  childAspectRatio: 4,
                   crossAxisCount: 2,
                   shrinkWrap: true,
                   children: [
