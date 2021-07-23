@@ -9,7 +9,7 @@ https://bitbeasts--server.web.app/#/
 
 kind of like crypto kitties, with PVP and PVE activities.
 
-#Notes
+# Notes
 
    currency: 
     0: essence
