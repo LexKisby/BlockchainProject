@@ -9,7 +9,7 @@ Battle Contract = 0x0f8bEEbA79355e5b358dAC45BC135049a919FA03
 backup market 0x7E6b3cB6d99d60ae0127C571A67604946F7E8f53;
 
 account 2: ca994b1a7a17b25ce90a9da11e92d30bb3ff5bb6de050b8f88af9b924e0c94e7
-account 1: 09fa63a415d391bcc3bfbd9025eb88e0da80d9924e1e7ed00b665261d14061a5
+account 1: [removed for public release]
 acc3: 6cb10bdd1e59c217968c94f62c0263a99327516c87eba0ac12feeddda5ec062e
 
 my public address : 0x6c7382c47830c20b1a2746ddd5bb48f2eab08795
